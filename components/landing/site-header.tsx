@@ -22,7 +22,10 @@ export function SiteHeader() {
         ))}
       </nav>
       <div className="header-actions">
-        <a href="#contact" className={buttonVariants({ size: "marketing" })}>
+        <a
+          href="#contact"
+          className={buttonVariants({ variant: "emerald", size: "marketing" })}
+        >
           Let’s talk <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
         </a>
         <Button

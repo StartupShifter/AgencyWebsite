@@ -4,7 +4,7 @@ Implementation notes, not additional company policy. Business copy remains gover
 
 ## Visual direction
 
-The supplied reference inspired the lime hero, warm neutral imagery, generous rounded panels, oversized sans-serif typography, and quiet navigation. The new composition represents ecommerce and connected operations instead of unrelated products.
+The latest supplied reference inspires a centered hero with a rounded emerald-to-mint background, white typography, translucent stepped forms, and three layered commerce illustrations. The hero fills the available viewport width with a 12px gap on each side at every breakpoint and no maximum width. The center shows a concept storefront with an original SVG tote; the supporting panels show catalog organization and an order workflow. These are service illustrations, not client work, a live store, or performance evidence. The header logo and CTA use the same emerald accent. Lower-page layouts and business terms are preserved.
 
 | Role                       | Token                | Value   |
 | -------------------------- | -------------------- | ------- |
@@ -15,14 +15,14 @@ The supplied reference inspired the lime hero, warm neutral imagery, generous ro
 | Supporting text            | muted-foreground     | #616458 |
 | Olive illustration surface | surface-olive        | #e9eddc |
 
-Geist is used throughout. The type hierarchy, section gutters, responsive breakpoints, and semantic tokens live in app/globals.css. Mobile stacks at 760px. Reduced motion disables smooth scrolling and transitions.
+DM Sans is used throughout; Geist Mono remains available for monospace UI. Hero-specific tokens are commerce-deep (#075c3f), commerce-green (#08734f), commerce-mint (#9ed9b8), commerce-white (#ffffff), commerce-ink (#233e32), and commerce-soft (#edf5ef). The type hierarchy, section gutters, responsive breakpoints, and semantic tokens live in app/globals.css. The hero adapts at 1000px, 760px, and 480px; small phones show the central storefront without the side panels. Other page sections stack at 760px. Reduced motion disables smooth scrolling and transitions.
 
 ## Component structure
 
 - app/page.tsx composes the page without embedding section designs.
 - components/landing/ contains the header, hero, service illustrations, about, process, pricing, FAQ, contact flow, brand, and footer.
-- components/ui/ contains the shared shadcn primitives. Button has a marketing size and lime variant; Badge has a service variant.
-- public/images/connected-commerce.webp is the optimized original hero illustration (approximately 112 KB). Small service diagrams are code-native, decorative graphics with readable service descriptions alongside.
+- components/ui/ contains the shared shadcn primitives. Button has a marketing size and lime, emerald, and white hero variants; Badge has a service variant.
+- The current hero illustrations are responsive HTML/SVG in components/landing/hero-section.tsx and require no raster image download. public/images/connected-commerce.webp is the retained earlier hero asset (approximately 112 KB). Small service diagrams are code-native, decorative graphics with readable service descriptions alongside.
 
 ## Contact flow
 
@@ -32,7 +32,7 @@ No public contact address was available when implemented. ContactSection accepts
 
 Pricing shows the confirmed $1,000 default reference, adjustable up or down by scope, with currency and final quote agreed individually. Monthly coverage and third-party costs remain separate. No fixed packages, delivery deadlines, invented case studies, or testimonials are published.
 
-## Image provenance
+## Earlier image provenance (retained asset)
 
 Generated with the built-in imagegen tool. The source remains at /Users/lakshay/.codex/generated_images/01a12647-266b-7790-8514-11aab2542310/exec-32f43485-4c89-4795-9989-efc9d06d4311.png. The project consumes only the workspace WebP file above.
 

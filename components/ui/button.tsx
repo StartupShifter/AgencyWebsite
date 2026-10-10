@@ -7,6 +7,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        hero: "bg-[var(--commerce-white)] text-[var(--commerce-deep)] hover:bg-[var(--commerce-soft)] focus-visible:ring-white/80",
+        emerald:
+          "bg-[var(--commerce-green)] text-[var(--commerce-white)] hover:bg-[var(--commerce-deep)]",
         lime: "bg-accent text-accent-foreground hover:bg-accent/80",
         default: "bg-primary text-primary-foreground hover:bg-primary/80",
         outline:
