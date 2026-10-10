@@ -20,6 +20,12 @@ const ToggleGroupContext = React.createContext<
   orientation: "horizontal",
 })
 
+const gapClasses: Record<number, string> = {
+  0: "gap-0", 1: "gap-1", 2: "gap-2", 3: "gap-3", 4: "gap-4",
+  5: "gap-5", 6: "gap-6", 7: "gap-7", 8: "gap-8",
+  9: "gap-9", 10: "gap-10", 11: "gap-11", 12: "gap-12",
+}
+
 function ToggleGroup({
   className,
   variant,
@@ -40,9 +46,9 @@ function ToggleGroup({
       data-size={size}
       data-spacing={spacing}
       data-orientation={orientation}
-      style={{ "--gap": spacing } as React.CSSProperties}
       className={cn(
-        "group/toggle-group flex w-fit flex-row items-center gap-[--spacing(var(--gap))] rounded-lg data-[size=sm]:rounded-[min(var(--radius-md),10px)] data-vertical:flex-col data-vertical:items-stretch",
+        "group/toggle-group flex w-fit flex-row items-center rounded-lg data-[size=sm]:rounded-[min(var(--radius-md),10px)] data-vertical:flex-col data-vertical:items-stretch",
+        gapClasses[spacing] ?? "gap-2",
         className
       )}
       {...props}

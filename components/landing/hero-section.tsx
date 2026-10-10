@@ -1,3 +1,4 @@
+import { twLanding } from "@/lib/landing-styles";
 import {
   ArrowUpRight,
   ArrowDown,
@@ -64,54 +65,54 @@ function ToteIllustration() {
 function CommerceIllustration() {
   return (
     <figure
-      className="commerce-figure"
+      className={twLanding("commerce-figure")}
       aria-label="Concept illustration of a storefront, product catalog, and connected order workflow"
     >
-      <div className="commerce-stage" aria-hidden="true">
-        <div className="commerce-window commerce-catalog">
-          <div className="commerce-window-heading">
-            <span className="commerce-icon">
+      <div className={twLanding("commerce-stage")} aria-hidden="true">
+        <div className={twLanding("commerce-window commerce-catalog")}>
+          <div className={twLanding("commerce-window-heading")}>
+            <span className={twLanding("commerce-icon")}>
               <Layers3 />
             </span>
             <span>Product catalog</span>
-            <span className="commerce-dots">•••</span>
+            <span className={twLanding("commerce-dots")}>•••</span>
           </div>
-          <div className="catalog-labels">
+          <div className={twLanding("catalog-labels")}>
             <span>Product</span>
             <span>Availability</span>
           </div>
-          <div className="catalog-product">
-            <span className="catalog-thumb">
+          <div className={twLanding("catalog-product")}>
+            <span className={twLanding("catalog-thumb")}>
               <ShoppingBag />
             </span>
             <span>
               <strong>Everyday tote</strong>
               <small>Accessories</small>
             </span>
-            <span className="catalog-stock">
+            <span className={twLanding("catalog-stock")}>
               <Check /> In stock
             </span>
           </div>
-          <div className="catalog-product">
-            <span className="catalog-thumb catalog-thumb-sand">
+          <div className={twLanding("catalog-product")}>
+            <span className={twLanding("catalog-thumb catalog-thumb-sand")}>
               <Shirt />
             </span>
             <span>
               <strong>Essential tee</strong>
               <small>Clothing</small>
             </span>
-            <span className="catalog-stock">
+            <span className={twLanding("catalog-stock")}>
               <Check /> In stock
             </span>
           </div>
-          <div className="catalog-footer">
+          <div className={twLanding("catalog-footer")}>
             <Check /> Products, variants & collections
           </div>
         </div>
 
-        <div className="commerce-window commerce-storefront">
-          <div className="storefront-browser">
-            <span className="browser-lights">
+        <div className={twLanding("commerce-window commerce-storefront")}>
+          <div className={twLanding("storefront-browser")}>
+            <span className={twLanding("browser-lights")}>
               <i />
               <i />
               <i />
@@ -121,39 +122,39 @@ function CommerceIllustration() {
             </span>
             <ArrowUpRight />
           </div>
-          <div className="storefront-navigation">
-            <span className="concept-store-name">
+          <div className={twLanding("storefront-navigation")}>
+            <span className={twLanding("concept-store-name")}>
               everyday<span>®</span>
             </span>
-            <span className="concept-store-links">
+            <span className={twLanding("concept-store-links")}>
               Shop <ChevronDown /> <span>Our story</span>
             </span>
-            <span className="concept-store-icons">
+            <span className={twLanding("concept-store-icons")}>
               <Search />
               <ShoppingBag />
             </span>
           </div>
-          <div className="storefront-collection">
-            <div className="collection-copy">
+          <div className={twLanding("storefront-collection")}>
+            <div className={twLanding("collection-copy")}>
               <span>Made for the everyday.</span>
               <strong>
                 Good things.
                 <br />
                 On repeat.
               </strong>
-              <span className="collection-link">
+              <span className={twLanding("collection-link")}>
                 Explore the collection <ArrowUpRight />
               </span>
             </div>
-            <div className="collection-product">
+            <div className={twLanding("collection-product")}>
               <ToteIllustration />
             </div>
           </div>
-          <div className="storefront-bottom">
+          <div className={twLanding("storefront-bottom")}>
             <span>
               <ShoppingBag /> Thoughtfully made essentials
             </span>
-            <span className="product-swatches">
+            <span className={twLanding("product-swatches")}>
               <i />
               <i />
               <i />
@@ -161,16 +162,16 @@ function CommerceIllustration() {
           </div>
         </div>
 
-        <div className="commerce-window commerce-orders">
-          <div className="commerce-window-heading">
-            <span className="commerce-icon">
+        <div className={twLanding("commerce-window commerce-orders")}>
+          <div className={twLanding("commerce-window-heading")}>
+            <span className={twLanding("commerce-icon")}>
               <PackageCheck />
             </span>
             <span>Connected orders</span>
-            <span className="commerce-dots">•••</span>
+            <span className={twLanding("commerce-dots")}>•••</span>
           </div>
-          <p className="order-intro">From checkout to dispatch</p>
-          <div className="order-step">
+          <p className={twLanding("order-intro")}>From checkout to dispatch</p>
+          <div className={twLanding("order-step")}>
             <span>
               <ShoppingBag />
             </span>
@@ -180,7 +181,7 @@ function CommerceIllustration() {
             </div>
             <Check />
           </div>
-          <div className="order-step">
+          <div className={twLanding("order-step")}>
             <span>
               <Layers3 />
             </span>
@@ -190,7 +191,7 @@ function CommerceIllustration() {
             </div>
             <Check />
           </div>
-          <div className="order-step">
+          <div className={twLanding("order-step")}>
             <span>
               <Truck />
             </span>
@@ -211,20 +212,20 @@ function CommerceIllustration() {
 
 export function HeroSection() {
   return (
-    <section aria-labelledby="hero-heading" className="hero-section">
-      <div className="commerce-hero">
-        <div className="commerce-steps commerce-steps-left" aria-hidden="true">
+    <section aria-labelledby="hero-heading" className={twLanding("hero-section")}>
+      <div className={twLanding("commerce-hero")}>
+        <div className={twLanding("commerce-steps commerce-steps-left")} aria-hidden="true">
           <i />
           <i />
           <i />
         </div>
-        <div className="commerce-steps commerce-steps-right" aria-hidden="true">
+        <div className={twLanding("commerce-steps commerce-steps-right")} aria-hidden="true">
           <i />
           <i />
           <i />
         </div>
-        <div className="commerce-copy">
-          <p className="commerce-eyebrow">
+        <div className={twLanding("commerce-copy")}>
+          <p className={twLanding("commerce-eyebrow")}>
             <span /> Your e‑commerce & digital growth agency
           </p>
           <h1 id="hero-heading">
@@ -232,12 +233,12 @@ export function HeroSection() {
             <br />
             starts with a better store.
           </h1>
-          <p className="commerce-description">
+          <p className={twLanding("commerce-description")}>
             From your first online store to the systems behind it. We bring
             design, e‑commerce, and connected operations together, built around
             your business.
           </p>
-          <div className="commerce-actions">
+          <div className={twLanding("commerce-actions")}>
             <a
               href="#contact"
               className={buttonVariants({ variant: "hero", size: "marketing" })}
@@ -245,20 +246,20 @@ export function HeroSection() {
               Let’s build your store{" "}
               <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
             </a>
-            <a href="#services" className="commerce-explore">
+            <a href="#services" className={twLanding("commerce-explore")}>
               Explore our services <ArrowDown aria-hidden="true" />
             </a>
           </div>
-          <p className="commerce-note">
+          <p className={twLanding("commerce-note")}>
             <Globe2 aria-hidden="true" /> Your business. Your scope. Wherever
             you are.
           </p>
         </div>
         <CommerceIllustration />
       </div>
-      <div className="service-summary section-shell">
+      <div className={twLanding("service-summary section-shell")}>
         <div>
-          <span className="summary-icon">
+          <span className={twLanding("summary-icon")}>
             <Store aria-hidden="true" />
           </span>
           <div>
@@ -267,7 +268,7 @@ export function HeroSection() {
           </div>
         </div>
         <div>
-          <span className="summary-icon">
+          <span className={twLanding("summary-icon")}>
             <Layers3 aria-hidden="true" />
           </span>
           <div>
@@ -276,7 +277,7 @@ export function HeroSection() {
           </div>
         </div>
         <div>
-          <span className="summary-icon">
+          <span className={twLanding("summary-icon")}>
             <MessageCircle aria-hidden="true" />
           </span>
           <div>

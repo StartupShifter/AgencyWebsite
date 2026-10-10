@@ -1,3 +1,4 @@
+import { twLanding } from "@/lib/landing-styles";
 const steps = [
   {
     number: "01",
@@ -29,31 +30,31 @@ export function ProcessSection() {
   return (
     <section
       id="process"
-      className="section-shell section-space"
+      className={twLanding("section-shell section-space")}
       aria-labelledby="process-heading"
     >
-      <div className="section-topline">
+      <div className={twLanding("section-topline")}>
         <div>
-          <p className="section-kicker">How we work</p>
-          <h2 id="process-heading" className="section-heading">
+          <p className={twLanding("section-kicker")}>How we work</p>
+          <h2 id="process-heading" className={twLanding("section-heading")}>
             A clear next step.
             <br />
             At every step.
           </h2>
         </div>
-        <p className="section-intro">
+        <p className={twLanding("section-intro")}>
           From the first conversation to the final handover, your goals give the
           project its direction. Your agreed scope sets the plan.
         </p>
       </div>
-      <ol className="process-grid">
+      <ol className={twLanding("process-grid")}>
         {steps.map((step) => (
-          <li className="process-step" key={step.number}>
-            <span className="process-step-number" aria-hidden="true">
+          <li className={twLanding("process-step")} key={step.number}>
+            <span className={twLanding("process-step-number")} aria-hidden="true">
               {step.number}
             </span>
-            <h3 className="process-step-heading">{step.title}</h3>
-            <p className="process-step-copy">{step.description}</p>
+            <h3 className={twLanding("process-step-heading")}>{step.title}</h3>
+            <p className={twLanding("process-step-copy")}>{step.description}</p>
           </li>
         ))}
       </ol>

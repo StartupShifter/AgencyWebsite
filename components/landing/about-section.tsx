@@ -1,14 +1,15 @@
+import { twLanding } from "@/lib/landing-styles";
 import { ArrowUpRight, Globe2, Focus, Waypoints } from "lucide-react";
 export function AboutSection() {
   return (
     <section
       id="about"
-      className="about-section section-shell section-space"
+      className={twLanding("about-section section-shell section-space")}
       aria-labelledby="about-heading"
     >
-      <div className="about-statement">
-        <p className="section-kicker">A little about us</p>
-        <h2 id="about-heading" className="section-heading">
+      <div className={twLanding("about-statement")}>
+        <p className={twLanding("section-kicker")}>A little about us</p>
+        <h2 id="about-heading" className={twLanding("section-heading")}>
           For the business
           <br />
           you’re becoming.
@@ -18,11 +19,11 @@ export function AboutSection() {
           online. We connect research, design, development, and automation
           around one thing: what your business needs next.
         </p>
-        <a href="#contact" className="action-link">
+        <a href="#contact" className={twLanding("action-link")}>
           Tell us what you’re building <ArrowUpRight aria-hidden="true" />
         </a>
       </div>
-      <div className="about-principles">
+      <div className={twLanding("about-principles")}>
         {[
           {
             icon: Focus,

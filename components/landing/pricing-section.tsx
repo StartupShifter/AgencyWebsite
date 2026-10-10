@@ -1,3 +1,4 @@
+import { twLanding } from "@/lib/landing-styles";
 import { ArrowUpRight, CirclePlus, Wrench } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -6,18 +7,18 @@ export function PricingSection() {
   return (
     <section
       id="pricing"
-      className="section-shell"
+      className={twLanding("section-shell")}
       aria-labelledby="pricing-heading"
     >
-      <div className="pricing-panel">
-        <div className="pricing-intro">
-          <p className="pricing-eyebrow">Built around your business</p>
-          <h2 id="pricing-heading" className="section-heading">
+      <div className={twLanding("pricing-panel")}>
+        <div className={twLanding("pricing-intro")}>
+          <p className={twLanding("pricing-eyebrow")}>Built around your business</p>
+          <h2 id="pricing-heading" className={twLanding("section-heading")}>
             Your priorities.
             <br />
             Your project.
           </h2>
-          <p className="pricing-copy">
+          <p className={twLanding("pricing-copy")}>
             A tailored, one-time engagement. Choose the services your business
             needs, and we’ll shape the scope and quote around them.
           </p>
@@ -29,19 +30,19 @@ export function PricingSection() {
             <ArrowUpRight data-icon="inline-end" />
           </a>
         </div>
-        <div className="pricing-quote">
-          <p className="pricing-eyebrow">Default one-time reference</p>
-          <p className="pricing-amount">$1,000</p>
-          <p className="pricing-unit">Flexible scope. No preset packages.</p>
-          <p className="pricing-footnote">
+        <div className={twLanding("pricing-quote")}>
+          <p className={twLanding("pricing-eyebrow")}>Default one-time reference</p>
+          <p className={twLanding("pricing-amount")}>$1,000</p>
+          <p className={twLanding("pricing-unit")}>Flexible scope. No preset packages.</p>
+          <p className={twLanding("pricing-footnote")}>
             The price can move up or down as services are added or removed.
             Final deliverables, currency, and the total quote are agreed before
             work begins. This reference isn’t an all-services bundle.
           </p>
         </div>
       </div>
-      <div className="pricing-details">
-        <div className="pricing-detail">
+      <div className={twLanding("pricing-details")}>
+        <div className={twLanding("pricing-detail")}>
           <Wrench aria-hidden="true" />
           <div>
             <h3>Support when you need it</h3>
@@ -51,7 +52,7 @@ export function PricingSection() {
             </p>
           </div>
         </div>
-        <div className="pricing-detail">
+        <div className={twLanding("pricing-detail")}>
           <CirclePlus aria-hidden="true" />
           <div>
             <h3>Third-party costs stay separate</h3>

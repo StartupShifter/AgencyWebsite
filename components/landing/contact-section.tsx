@@ -1,4 +1,5 @@
 "use client";
+import { twLanding } from "@/lib/landing-styles";
 
 import { useState, type FormEvent, type SyntheticEvent } from "react";
 import { ArrowUpRight, Download, Mail } from "lucide-react";
@@ -107,21 +108,21 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
   return (
     <section
       id="contact"
-      className="contact-section section-shell"
+      className={twLanding("contact-section section-shell")}
       aria-labelledby="contact-heading"
     >
-      <div className="contact-panel">
-        <div className="contact-copy">
-          <p className="section-eyebrow">Let’s make your next move</p>
-          <h2 id="contact-heading" className="contact-heading">
+      <div className={twLanding("contact-panel")}>
+        <div className={twLanding("contact-copy")}>
+          <p className={twLanding("section-eyebrow")}>Let’s make your next move</p>
+          <h2 id="contact-heading" className={twLanding("contact-heading")}>
             Your next chapter starts with a conversation.
           </h2>
-          <p className="contact-description">
+          <p className={twLanding("contact-description")}>
             A new online store, a better customer experience, or fewer manual
             tasks. Start with what your business needs.
           </p>
         </div>
-        <div className="contact-actions">
+        <div className={twLanding("contact-actions")}>
           <Dialog
             onOpenChange={() => {
               setStatus("");
@@ -134,8 +135,8 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
               Plan your project
               <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
             </DialogTrigger>
-            <DialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl [&>[data-slot=dialog-close]]:size-11">
-              <DialogHeader className="pr-8">
+            <DialogContent className={twLanding("max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-xl [&>[data-slot=dialog-close]]:size-11")}>
+              <DialogHeader className={twLanding("pr-8")}>
                 <DialogTitle>Tell us what you have in mind.</DialogTitle>
                 <DialogDescription>
                   {contactEmail
@@ -145,11 +146,11 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
               </DialogHeader>
               <form onSubmit={prepareBrief} onInput={clearFeedback}>
                 <FieldGroup>
-                  <FieldGroup className="sm:flex-row">
+                  <FieldGroup className={twLanding("sm:flex-row")}>
                     <Field data-invalid={Boolean(errors.name)}>
                       <FieldLabel htmlFor="brief-name">Your name</FieldLabel>
                       <Input
-                        className="h-11"
+                        className={twLanding("h-11")}
                         id="brief-name"
                         name="name"
                         autoComplete="name"
@@ -171,7 +172,7 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
                     <Field data-invalid={Boolean(errors.email)}>
                       <FieldLabel htmlFor="brief-email">Email</FieldLabel>
                       <Input
-                        className="h-11"
+                        className={twLanding("h-11")}
                         id="brief-email"
                         name="email"
                         type="email"
@@ -196,7 +197,7 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
                       Company (optional)
                     </FieldLabel>
                     <Input
-                      className="h-11"
+                      className={twLanding("h-11")}
                       id="brief-company"
                       name="company"
                       autoComplete="organization"
@@ -270,7 +271,7 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
                     <p
                       role="status"
                       aria-live="polite"
-                      className="brief-status"
+                      className={twLanding("brief-status")}
                     >
                       {status}
                     </p>
@@ -279,7 +280,7 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
               </form>
             </DialogContent>
           </Dialog>
-          <p className="contact-caption">
+          <p className={twLanding("contact-caption")}>
             Your business. Your priorities. A scope built around both.
           </p>
         </div>

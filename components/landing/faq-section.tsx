@@ -1,3 +1,4 @@
+import { twLanding } from "@/lib/landing-styles";
 import {
   Accordion,
   AccordionContent,
@@ -48,22 +49,22 @@ export function FaqSection() {
   return (
     <section
       id="faq"
-      className="section-shell section-space faq-layout"
+      className={twLanding("section-shell section-space faq-layout")}
       aria-labelledby="faq-heading"
     >
       <div>
-        <p className="section-kicker">A little more clarity</p>
-        <h2 id="faq-heading" className="section-heading">
+        <p className={twLanding("section-kicker")}>A little more clarity</p>
+        <h2 id="faq-heading" className={twLanding("section-heading")}>
           Good questions.
           <br />
           Clear answers.
         </h2>
-        <p className="section-intro">
+        <p className={twLanding("section-intro")}>
           Every business starts somewhere different. Here’s what to know before
           we start together.
         </p>
       </div>
-      <Accordion className="faq-accordion" defaultValue={["services"]}>
+      <Accordion className={twLanding("faq-accordion")} defaultValue={["services"]}>
         {questions.map((item) => (
           <AccordionItem key={item.id} value={item.id}>
             <AccordionTrigger>{item.question}</AccordionTrigger>

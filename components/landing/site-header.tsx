@@ -1,4 +1,5 @@
 "use client";
+import { twLanding } from "@/lib/landing-styles";
 import { useState } from "react";
 import { Menu, X, ArrowUpRight } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -12,16 +13,16 @@ const links = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
-    <header className="site-header section-shell">
+    <header className={twLanding("site-header section-shell")}>
       <Brand />
-      <nav className="desktop-nav" aria-label="Main navigation">
+      <nav className={twLanding("desktop-nav")} aria-label="Main navigation">
         {links.map((link) => (
           <a key={link.href} href={link.href}>
             {link.label}
           </a>
         ))}
       </nav>
-      <div className="header-actions">
+      <div className={twLanding("header-actions")}>
         <a
           href="#contact"
           className={buttonVariants({ variant: "emerald", size: "marketing" })}
@@ -29,7 +30,7 @@ export function SiteHeader() {
           Let’s talk <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
         </a>
         <Button
-          className="mobile-menu-toggle"
+          className={twLanding("mobile-menu-toggle")}
           variant="ghost"
           size="icon-lg"
           aria-label={open ? "Close navigation" : "Open navigation"}
@@ -43,7 +44,7 @@ export function SiteHeader() {
       {open && (
         <nav
           id="mobile-navigation"
-          className="mobile-navigation"
+          className={twLanding("mobile-navigation")}
           aria-label="Mobile navigation"
         >
           {links.map((link) => (
