@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -36,7 +36,7 @@ const navigation = [
   { id: "agreement", icon: CreditCard },
 ] as const;
 const navClass =
-  "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[13px] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d5fa43]";
+  "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[13px] [@media(max-height:540px)]:py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d5fa43]";
 
 export function DashboardShell({
   children,
@@ -62,6 +62,10 @@ export function DashboardShell({
   loading?: boolean;
 }) {
   const router = useRouter();
+  const contentRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0 });
+  }, [view]);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -89,7 +93,7 @@ export function DashboardShell({
       onKeyDown={(event) => {
         if (event.key === "Escape") setMobileOpen(false);
       }}
-      className="min-h-svh bg-[#e9ecef] p-2 text-[#242720] [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-[#677d19] sm:p-4 lg:p-6"
+      className="h-dvh w-full overflow-hidden bg-[#20231f] text-[#242720] [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-[#677d19]"
     >
       <a
         href="#dashboard-content"
@@ -97,7 +101,7 @@ export function DashboardShell({
       >
         Skip to dashboard
       </a>
-      <div className="mx-auto flex min-h-[calc(100svh-3rem)] max-w-[1600px] overflow-hidden rounded-[26px] bg-[#20231f] shadow-[0_16px_60px_-30px_#35403866]">
+      <div className="flex h-full w-full overflow-hidden bg-[#20231f]">
         {mobileOpen && (
           <button
             aria-label="Close navigation"
@@ -108,12 +112,12 @@ export function DashboardShell({
         <aside
           id="workspace-navigation"
           aria-label="Workspace navigation"
-          className={`${mobileOpen ? "fixed inset-y-2 left-2 z-40 flex w-60 rounded-2xl" : "hidden"} shrink-0 flex-col overflow-y-auto bg-[#20231f] px-5 pb-6 pt-7 text-[#f6f8ef] lg:static lg:flex lg:w-[222px] xl:w-[238px]`}
+          className={`${mobileOpen ? "fixed inset-y-0 left-0 z-40 flex w-60" : "hidden"} h-full shrink-0 flex-col overflow-hidden bg-[#20231f] px-5 py-5 text-[#f6f8ef] lg:static lg:flex lg:w-[222px] xl:w-[238px]`}
         >
           <Link
             href="/"
             aria-label="Starter Shifter home"
-            className="mb-10 flex items-center gap-2.5 px-1 text-[19px] font-semibold tracking-[-.8px]"
+            className="mb-6 flex shrink-0 items-center gap-2.5 px-1 text-[19px] font-semibold tracking-[-.8px]"
           >
             <span className="flex size-9 items-center justify-center rounded-xl bg-[#d5fa43] text-[#20231f]">
               <ArrowUpRight size={24} strokeWidth={2.5} />
@@ -122,7 +126,7 @@ export function DashboardShell({
               starter<span className="font-normal text-[#c3c8bb]">shifter</span>
             </span>
           </Link>
-          <div className="mb-6 rounded-xl border border-white/10 p-3">
+          <div className="mb-5 shrink-0 rounded-xl border border-white/10 p-3 [@media(max-height:640px)]:hidden">
             <div className="flex items-center gap-2 text-[11px] text-[#a7afa1]">
               <span className="size-1.5 rounded-full bg-[#d5fa43]" />
               Client workspace
@@ -134,7 +138,7 @@ export function DashboardShell({
               {businessName}
             </p>
           </div>
-          <nav className="space-y-1.5">
+          <nav className="shrink-0 space-y-1">
             {navigation.map(({ id, icon: Icon }) => (
               <button
                 key={id}
@@ -150,8 +154,8 @@ export function DashboardShell({
               </button>
             ))}
           </nav>
-          <div className="mt-auto pt-16">
-            <div className="relative mb-5 overflow-hidden rounded-2xl border border-white/10 bg-[#2a2e27] p-4">
+          <div className="mt-auto shrink-0 pt-4">
+            <div className="relative mb-3 overflow-hidden rounded-2xl border border-white/10 bg-[#2a2e27] p-4 [@media(max-height:740px)]:hidden">
               <div className="mb-3 flex size-9 items-center justify-center rounded-full border border-[#879176] text-[#d5fa43]">
                 <CircleHelp size={18} />
               </div>
@@ -167,6 +171,13 @@ export function DashboardShell({
                 <ArrowUpRight size={14} />
               </button>
             </div>
+            <button
+              onClick={() => setHelpOpen(true)}
+              className={`${navClass} hidden text-[#d5fa43] [@media(max-height:740px)]:flex`}
+            >
+              <CircleHelp size={17} />
+              Workspace guide
+            </button>
             {preview ? (
               <span className="px-4 text-[11px] text-[#aeb5a7]">
                 Development preview
@@ -183,8 +194,8 @@ export function DashboardShell({
             )}
           </div>
         </aside>
-        <div className="my-2 mr-2 min-w-0 flex-1 rounded-[20px] bg-[#f7f8fa] lg:my-3 lg:mr-3 lg:rounded-[24px]">
-          <header className="flex min-h-[86px] flex-wrap items-center justify-between gap-3 border-b border-[#e9ebee] px-4 py-4 sm:px-7 xl:px-9">
+        <div className="m-2 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[#f7f8fa] sm:m-3 sm:rounded-[30px] lg:ml-0">
+          <header className="flex min-h-[86px] shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[#e9ebee] px-4 py-4 sm:px-7 xl:px-9">
             <div className="flex items-center gap-3">
               <button
                 className="rounded-lg p-2 hover:bg-black/5 lg:hidden"
@@ -243,31 +254,39 @@ export function DashboardShell({
               </button>
             </div>
           </header>
-          {error && (
-            <p
-              role="alert"
-              className="mx-6 mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-800"
-            >
-              {error}
-            </p>
-          )}
-          <main
-            id="dashboard-content"
-            className="px-4 pb-8 pt-6 sm:px-7 xl:px-9"
+          <div
+            ref={contentRef}
+            id="dashboard-scroll-area"
+            className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+            aria-label="Dashboard tab content"
+            tabIndex={0}
           >
-            {children}
-          </main>
-          <footer className="mx-4 flex flex-wrap items-center justify-between gap-2 border-t border-[#e6e9e2] py-5 text-[10px] text-[#858b7d] sm:mx-7 xl:mx-9">
-            <span>Starter Shifter · Your business, connected.</span>
-            <div className="flex items-center gap-4">
-              {preview && <span>Development preview</span>}
-              <Link href="/policies/onboarding-privacy">Project privacy</Link>
-              <span className="flex items-center gap-1.5">
-                <span className="size-1.5 rounded-full bg-[#6d956b]" />
-                {loading ? "Connecting" : "Connected workspace"}
-              </span>
-            </div>
-          </footer>
+            {error && (
+              <p
+                role="alert"
+                className="mx-6 mt-4 rounded-xl bg-red-50 p-3 text-sm text-red-800"
+              >
+                {error}
+              </p>
+            )}
+            <main
+              id="dashboard-content"
+              className="px-4 pb-8 pt-6 sm:px-7 xl:px-9"
+            >
+              {children}
+            </main>
+            <footer className="mx-4 flex flex-wrap items-center justify-between gap-2 border-t border-[#e6e9e2] py-5 text-[10px] text-[#858b7d] sm:mx-7 xl:mx-9">
+              <span>Starter Shifter · Your business, connected.</span>
+              <div className="flex items-center gap-4">
+                {preview && <span>Development preview</span>}
+                <Link href="/policies/onboarding-privacy">Project privacy</Link>
+                <span className="flex items-center gap-1.5">
+                  <span className="size-1.5 rounded-full bg-[#6d956b]" />
+                  {loading ? "Connecting" : "Connected workspace"}
+                </span>
+              </div>
+            </footer>
+          </div>
         </div>
       </div>
       <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
