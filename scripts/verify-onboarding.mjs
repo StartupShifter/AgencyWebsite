@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
+import { completeFixture } from "./onboarding-fixture.mjs";
 import { spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { ConvexHttpClient } from "convex/browser";
 import { makeFunctionReference } from "convex/server";
-import { getPages, getAllowedAnswerStates, validateSubmission, SHARED_PAGES, MODULE_PAGES } from "../lib/onboarding/questionnaire.ts";
+import { getPages, validateSubmission, SHARED_PAGES, MODULE_PAGES } from "../lib/onboarding/questionnaire.ts";
 
 // This suite changes fixture data and privacy configuration only on anonymous local Convex.
 const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
@@ -50,47 +51,9 @@ async function createClient(number) {
 }
 
 const answered = value => ({ state: "answered", value });
-function completeFixture(client) {
-  const answers = {};
-  for (const page of [...SHARED_PAGES, ...MODULE_PAGES]) for (const question of page.questions) {
-    if (page.kind === "module") {
-      assert.ok(getAllowedAnswerStates(question).includes("help"));
-      answers[question.id] = { state: "help", value: "", detail: "Please help us agree this workflow." };
-      continue;
-    }
-    let value;
-    if (question.type === "checkbox") value = true;
-    else if (question.type === "email") value = client.email;
-    else if (question.type === "tel") value = "+12025550123";
-    else if (question.type === "url") value = "https://example.test";
-    else if (question.type === "date") value = "2027-01-15";
-    else if (question.type === "range") value = question.minimum ?? 1;
-    else if (question.fields) value = Object.fromEntries(question.fields.map(field => [field.id, field.type === "email" ? client.email : field.type === "url" ? "https://example.test" : `Fixture ${field.label}`]));
-    else if (question.type === "select") value = question.options[0];
-    else if (question.type === "multi-select") value = [question.options[0]];
-    else if (question.type === "assets") value = { Logo: "ready" };
-    else if (question.type === "list") value = ["Fixture service"];
-    else value = `Fixture response for ${question.id}`;
-    answers[question.id] = answered(value);
-    if (question.priority) answers[question.id].priority = value[0];
-  }
-  answers["P01.1"] = answered(client.name);
-  answers["P04.1"] = answered(["Project-based services"]);
-  answers["P08.1"] = answered(["Website/store/application", "Task automation"]);
-  answers["P08.2"] = answered(["Learn/contact"]);
-  answers["P11.1"] = answered(["None known"]);
-  answers["P11.2"] = answered(["Ordinary contact/order details"]);
-  answers["P11.3"] = answered(["None known"]);
-  answers["P12.2"] = answered({ currency: "USD", setup: "1000", recurring: "0", advertising: "0" });
-  answers["P14.1"] = answered("Matches my agreement");
-  answers["P14.2"] = answered({ legalName: client.name, billingEmail: client.email });
-  answers["P14.3"] = answered("I believe the agreement is signed and the advance is paid.");
-  answers["P15.2"] = { state: "not-applicable", value: "" };
-  return answers;
-}
 
-async function save(client, answers, extraModules = [], currentPage = "P01", privacyVersion = revision) {
-  return client.convex.mutation(references.saveDraft, { answers, extraModules, currentPage, privacyVersion });
+async function save(client, answers, extraModules = [], currentPage = "P01", privacyVersion = revision, currentQuestion) {
+  return client.convex.mutation(references.saveDraft, { answers, extraModules, currentPage, privacyVersion, ...(currentQuestion !== undefined ? { currentQuestion } : {}) });
 }
 const read = client => client.convex.query(references.getMine, {});
 const submit = client => client.convex.mutation(references.submit, { privacyVersion: revision });
@@ -147,6 +110,16 @@ try {
   assert.deepEqual(saved.draft.extraModules, extras);
   assert.equal(saved.draft.currentPage, "P16");
   console.log("PASS all 16 base pages and 26 modules persist using stable question/page IDs");
+  await save(first, answers, extras, "P01", revision, "P01.3");
+  assert.equal((await read(first)).draft.currentQuestion, "P01.3");
+  await assert.rejects(() => save(first, answers, extras, "P01", revision, "P15.1"), /question/i);
+  await assert.rejects(() => save(first, answers, extras, "P01", revision, "unknown-question"), /question/i);
+  await assert.rejects(() => save(first, answers, extras, "P01", revision, ""), /question/i);
+  await save(first, answers, extras, "P16", revision, "review");
+  assert.equal((await read(first)).draft.currentQuestion, "review");
+  await save(first, answers, extras, "P16");
+  assert.equal((await read(first)).draft.currentQuestion, null);
+  console.log("PASS exact question/review progress persists; cross-topic cursors are rejected and legacy saves remain supported");
 
   const invalidEmail = { ...answers, "P01.3": answered("not-an-email") };
   await save(first, invalidEmail, extras, "P16");

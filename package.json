@@ -9,7 +9,8 @@
     "lint": "eslint",
     "dev:backend": "convex dev --local-cloud-port 3220 --local-site-port 3221",
     "test:auth": "node --env-file=.env.local scripts/verify-auth.mjs",
-    "test:onboarding": "bun --env-file=.env.local scripts/verify-onboarding.mjs"
+    "test:onboarding": "bun --env-file=.env.local scripts/verify-onboarding.mjs",
+    "test:onboarding-preview": "bun --env-file=.env.local scripts/verify-onboarding-preview.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
@@ -20,6 +21,7 @@
     "cmdk": "^1.1.1",
     "cn": "^0.4.0",
     "convex": "^1.46.0",
+    "convex-helpers": "0.1.128",
     "date-fns": "^4.4.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.5.0",

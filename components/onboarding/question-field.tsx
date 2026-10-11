@@ -1,5 +1,6 @@
 "use client";
 
+import { ChoiceIcon } from "./choice-icon";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,7 +12,7 @@ const stateLabels: Record<AnswerState, string> = { answered: "Answer now", unkno
 const countries = ["Australia", "Bangladesh", "Brazil", "Canada", "China", "France", "Germany", "India", "Indonesia", "Ireland", "Italy", "Japan", "Kenya", "Malaysia", "Mexico", "Nepal", "Netherlands", "New Zealand", "Nigeria", "Pakistan", "Philippines", "Saudi Arabia", "Singapore", "South Africa", "Spain", "Sri Lanka", "United Arab Emirates", "United Kingdom", "United States"];
 const timezones = Intl.supportedValuesOf("timeZone");
 
-export function QuestionField({ question: q, answer, error, onChange }: { question: Question; answer?: Answer; error?: string; onChange: (answer: Answer) => void }) {
+export function QuestionField({ question: q, answer, error, onChange, guided = false }: { guided?: boolean; question: Question; answer?: Answer; error?: string; onChange: (answer: Answer) => void }) {
   const [search, setSearch] = useState("");
   const [detailsOpen, setDetailsOpen] = useState(Boolean(answer?.detail));
   const value = answer?.value ?? "";
@@ -41,7 +42,8 @@ export function QuestionField({ question: q, answer, error, onChange }: { questi
     }
   };
   return <fieldset id={`question-${q.id}`} tabIndex={-1} className="ob-question" aria-invalid={Boolean(error)} aria-describedby={inputProps["aria-describedby"]}>
-    <legend className="ob-question-label"><span>{q.label}</span><span className="ob-required">{q.required ? "Required" : "Optional"}</span></legend>
+    <legend className={`ob-question-label ${guided ? "ob-question-label-guided" : ""}`}><span>{q.label}</span><span className="ob-required">{q.required ? "Required" : "Optional"}</span></legend>
+    {guided && <div className="ob-answer-hint"><span>{q.required ? "Required" : "Optional"}</span>{q.options?.length ? <span>{q.type === "select" ? "Choose one" : q.maxSelections ? `Choose up to ${q.maxSelections}` : "Choose all that apply"}</span> : null}</div>}
     <p id={`${q.id}-help`} className="ob-help">{q.help ?? (q.maxSelections ? `Choose up to ${q.maxSelections}.` : q.required ? "Choose an answer or request guidance where available." : "Skip this if you prefer to provide it later.")}</p>
     {state === "answered" && <>
       {q.acknowledgement ? <label className="ob-choice ob-confirm"><input id={q.id} type="checkbox" checked={value === true} onChange={e => update(e.target.checked)} aria-invalid={Boolean(error)} /><span>{q.acknowledgement === "accuracy" ? "I confirm these details and my authority to share them." : "I have reviewed the onboarding privacy information."}</span></label>
@@ -51,7 +53,7 @@ export function QuestionField({ question: q, answer, error, onChange }: { questi
         : q.id === "P15.2" ? <InvitationFields question={q} record={record} update={update} />
         : q.options?.length && q.type !== "two-lists" ? <div>{q.options.length > 10 && <Input className="ob-input ob-search" aria-label={`Search options for ${q.label}`} placeholder="Search options…" value={search} onChange={e => setSearch(e.target.value)} />}<div className="ob-choices">{q.options.filter(option => option.toLowerCase().includes(search.toLowerCase())).map(option => {
           const checked = q.type === "select" ? value === option : selected.includes(option);
-          return <label key={option} className={`ob-choice ${checked ? "ob-choice-selected" : ""}`}><input type={q.type === "select" ? "radio" : "checkbox"} name={q.id} value={option} checked={checked} onChange={() => choose(option)} disabled={!checked && q.type !== "select" && Boolean(q.maxSelections && selected.length >= q.maxSelections)} /><span>{option}</span></label>;
+          return <label key={option} className={`ob-choice ${checked ? "ob-choice-selected" : ""}`}><input type={q.type === "select" ? "radio" : "checkbox"} name={q.id} value={option} checked={checked} onChange={() => choose(option)} disabled={!checked && q.type !== "select" && Boolean(q.maxSelections && selected.length >= q.maxSelections)} />{guided && <ChoiceIcon option={option} />}<span>{option}</span></label>;
         })}{q.allowOther && <label className="ob-subfield ob-other"><span>Something else</span><Input className="ob-input" value={record.other ?? answer?.detail ?? ""} placeholder="Add your own option or explain" maxLength={6000} onChange={e => onChange({ ...answer, state: "answered", value: q.type === "select" ? "Other" : selected.includes("Other") ? selected : [...selected, "Other"], detail: e.target.value })} /></label>}</div></div>
         : q.type === "country-timezone" ? <div className="ob-fields"><label className="ob-subfield" htmlFor={`${q.id}-country`}><span>Country or region</span><Input className="ob-input" id={`${q.id}-country`} list="ob-countries" value={record.country ?? ""} placeholder="Search or enter a country / region" onChange={e => updateRecord("country", e.target.value)} /><datalist id="ob-countries">{countries.map(country => <option key={country} value={country} />)}</datalist></label><label className="ob-subfield" htmlFor={`${q.id}-timezone`}><span>Timezone</span><Input className="ob-input" id={`${q.id}-timezone`} list="ob-timezones" value={record.timezone ?? ""} placeholder="Search a timezone, e.g. Asia/Kolkata" onChange={e => updateRecord("timezone", e.target.value)} /><datalist id="ob-timezones">{timezones.map(zone => <option key={zone} value={zone} />)}</datalist></label></div>
         : q.type === "two-lists" ? <div className="ob-fields">{(q.fields?.map(field => [field.id, field.label]) ?? [["now", "For the first launch"], ["later", "Can wait until later"]]).map(([key, label]) => <label className="ob-subfield" key={key} htmlFor={`${q.id}-${key}`}><span>{label}</span>{q.options?.length ? <select className="ob-input" aria-label={`Quick choices for ${label}`} value={q.options.includes(record[key] ?? "") ? record[key] : ""} onChange={e => updateRecord(key, e.target.value)}><option value="">Choose a market or describe below</option>{q.options.map(option => <option key={option}>{option}</option>)}</select> : null}<Textarea className="ob-input" id={`${q.id}-${key}`} rows={3} maxLength={6000} value={record[key] ?? ""} placeholder={key === "now" ? "Start with up to three priorities" : "Ideas for a future phase"} onChange={e => updateRecord(key, e.target.value)} /></label>)}</div>

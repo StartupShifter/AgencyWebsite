@@ -26,3 +26,11 @@ export const engagementValidator = v.object({
   dependencies: v.array(v.object({ label: v.string(), owner: v.string(), verified: v.boolean() })),
   updatedAt: v.number(),
 });
+
+
+export const draftValidator = v.object({
+  version: v.string(), answers: answersValidator, extraModules: v.array(v.string()),
+  currentPage: v.string(), currentQuestion: v.union(v.string(), v.null()),
+  status: v.union(v.literal("draft"), v.literal("submitted")),
+  updatedAt: v.number(), submittedAt: v.union(v.number(), v.null()), privacyVersion: v.string(),
+});

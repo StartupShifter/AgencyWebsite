@@ -2,8 +2,10 @@ import { ConvexError, v } from "convex/values";
 import { authComponent } from "./auth";
 import { query, mutation, internalMutation } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
-import { answersValidator, engagementValidator } from "./onboardingValidators";
-import { getPages, getPageById, validateAnswerShape, validateSubmission, ONBOARDING_VERSION } from "../lib/onboarding/questionnaire";
+import { answersValidator, engagementValidator, draftValidator } from "./onboardingValidators";
+import { validateSubmission, ONBOARDING_VERSION } from "../lib/onboarding/questionnaire";
+
+import { validateDraftInput } from "./validateOnboardingDraft";
 
 function privacySettings() {
   const text = process.env.ONBOARDING_PRIVACY_TEXT ?? "";
@@ -33,7 +35,7 @@ function prerequisites(user: { emailVerified: boolean; email: string }, engageme
 export const getMine = query({
   args: {},
   returns: v.union(v.null(), v.object({
-    draft: v.union(v.null(), v.object({ version: v.string(), answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), status: v.union(v.literal("draft"), v.literal("submitted")), updatedAt: v.number(), submittedAt: v.union(v.number(), v.null()), privacyVersion: v.string() })),
+    draft: v.union(v.null(), draftValidator),
     engagement: v.union(v.null(), engagementValidator),
     pending: v.array(v.string()),
     workspaceReady: v.boolean(),
@@ -52,7 +54,7 @@ export const getMine = query({
     if (draft && draft.version !== ONBOARDING_VERSION) pending.push("Review the updated questionnaire and resubmit your brief.");
     else if (draft?.status === "submitted" && Object.keys(validateSubmission(draft.answers, draft.extraModules)).length > 0) pending.push("Review the required answers in your current questionnaire route.");
     return {
-      draft: draft ? { version: draft.version, answers: draft.answers, extraModules: draft.extraModules, currentPage: draft.currentPage, status: draft.status, updatedAt: draft.updatedAt, submittedAt: draft.submittedAt ?? null, privacyVersion: draft.privacyVersion } : null,
+      draft: draft ? { version: draft.version, answers: draft.answers, extraModules: draft.extraModules, currentPage: draft.currentPage, currentQuestion: draft.currentQuestion ?? null, status: draft.status, updatedAt: draft.updatedAt, submittedAt: draft.submittedAt ?? null, privacyVersion: draft.privacyVersion } : null,
       engagement: engagement ? { authUserId: engagement.authUserId, summary: engagement.summary, scope: engagement.scope, plan: engagement.plan, currency: engagement.currency, setupFee: engagement.setupFee, recurringFee: engagement.recurringFee, exclusions: engagement.exclusions, thirdPartyCosts: engagement.thirdPartyCosts, legalName: engagement.legalName, billingEmail: engagement.billingEmail, signedAgreementRef: engagement.signedAgreementRef, advancePaymentRef: engagement.advancePaymentRef, identityVerificationRef: engagement.identityVerificationRef, verifiedEmails: engagement.verifiedEmails, dependencies: engagement.dependencies, updatedAt: engagement.updatedAt } : null,
       pending,
       workspaceReady: draft?.status === "submitted" && pending.length === 0,
@@ -60,28 +62,16 @@ export const getMine = query({
   },
 });
 export const saveDraft = mutation({
-  args: { answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), privacyVersion: v.string() },
+  args: { answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), currentQuestion: v.optional(v.string()), privacyVersion: v.string() },
   returns: v.number(),
   handler: async (ctx, args) => {
     const user = await authComponent.getAuthUser(ctx);
     const privacy = privacySettings();
     if (!privacy.approved || args.privacyVersion !== privacy.version) throw new ConvexError("The approved privacy notice must be available before saving details. Refresh the page.");
-    const pages = getPages(args.answers, args.extraModules);
-    const allIds = getPages({}, Array.from({ length: 26 }, (_, i) => `M${String(i + 1).padStart(2, "0")}`)).flatMap(p => p.questions.map(q => q.id));
-    if (Object.keys(args.answers).some(id => !allIds.includes(id))) throw new ConvexError("Unknown question ID.");
-    if (args.extraModules.length > 26 || args.extraModules.some(id => !/^M(0[1-9]|1[0-9]|2[0-6])$/.test(id))) throw new ConvexError("Invalid workflow selection.");
-    if (!pages.some(p => p.id === args.currentPage)) throw new ConvexError("This page is not part of your current route.");
-    if (JSON.stringify(args.answers).length > 180_000) throw new ConvexError("Your answers are too long. Please use a document link for additional detail.");
-    for (const [id, answer] of Object.entries(args.answers)) {
-      const question = getPageById(id.split(".")[0])?.questions.find(question => question.id === id);
-      if (!question) throw new ConvexError("Unknown question.");
-      const error = validateAnswerShape(question, answer);
-      if (error) throw new ConvexError(`${id}: ${error}`);
-      if (typeof answer.value === "string" && answer.value.length > 6000 || (answer.detail?.length ?? 0) > 6000) throw new ConvexError("Please keep each answer under 6,000 characters.");
-    }
+    validateDraftInput(args);
     const existing = await ctx.db.query("onboarding").withIndex("by_authUserId", q => q.eq("authUserId", user._id)).unique();
     const updatedAt = Date.now();
-    const value = { ...args, extraModules: [...new Set(args.extraModules)], authUserId: user._id, version: ONBOARDING_VERSION, status: existing?.status === "submitted" && existing.version === ONBOARDING_VERSION && existing.privacyVersion === args.privacyVersion && JSON.stringify(existing.answers) === JSON.stringify(args.answers) && JSON.stringify(existing.extraModules) === JSON.stringify(args.extraModules) ? "submitted" as const : "draft" as const, updatedAt };
+    const value = { ...args, currentQuestion: args.currentQuestion ?? null, extraModules: [...new Set(args.extraModules)], authUserId: user._id, version: ONBOARDING_VERSION, status: existing?.status === "submitted" && existing.version === ONBOARDING_VERSION && existing.privacyVersion === args.privacyVersion && JSON.stringify(existing.answers) === JSON.stringify(args.answers) && JSON.stringify(existing.extraModules) === JSON.stringify(args.extraModules) ? "submitted" as const : "draft" as const, updatedAt };
     if (existing) await ctx.db.patch(existing._id, value);
     else await ctx.db.insert("onboarding", value);
     return updatedAt;
