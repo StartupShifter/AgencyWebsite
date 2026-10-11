@@ -36,6 +36,14 @@ The service section uses three owner-confirmed groups: Web application, Social m
 - components/ui/ contains the shared shadcn primitives. Button has a marketing size and lime, emerald, and white hero variants; Badge has a service variant.
 - The current hero illustrations are responsive HTML/SVG in components/landing/hero-section.tsx and require no raster image download. public/images/connected-commerce.webp is the retained earlier hero asset (approximately 112 KB). Small service diagrams are code-native, decorative graphics with readable service descriptions alongside.
 
+## About section reference (2026-10-11)
+
+The owner supplied a seven-card reference and requested service-focused illustrations without divider lines. Their refinement requests minimal, monochrome SVGs matching the “What we do” section, less text, more reactive artwork, and no visible demo buttons or selectors. The section retains the staggered three-column composition, with a single pale neutral card surface and a charcoal contact card. Each service has one short explanation.
+
+Hovering any service card activates its illustration: research sheets separate under a magnifier; website layers unfold; social post frames spread; connected nodes lift and pass a short signal; replies and human handoff become visible; and a performance curve reveals a finding. These are illustrative service concepts, not live integrations or client results. There are no labelled chips, view selectors, or playback controls. The artwork itself is the accessible interaction surface: keyboard focus reveals the same state immediately, and touch users can tap the illustration. Reduced motion removes animated offsets and signal motion.
+
+`about-section.tsx` keeps the introduction server-rendered; `about-benefits.tsx` contains the SVGs and shared interaction wrapper. Component-prefixed rules live in `about-section.css`, following the existing section stylesheet pattern. Cards adapt to two columns on tablets and one column on phones. The short scope note retains agreed deliverables, supported-tool limits, plan-dependent ongoing care, and separate third-party costs.
+
 ## Contact flow
 
 No public contact address was available when implemented. ContactSection accepts an optional contactEmail prop. Without it, the accessible project brief dialog downloads a local text file and explicitly says no enquiry has been sent. With it, submission opens an email draft for the visitor to review and send. There is no backend submission, database storage, or email service.
