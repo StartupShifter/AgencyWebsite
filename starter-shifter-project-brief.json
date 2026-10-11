@@ -1,0 +1,284 @@
+{
+  "business": "Lakshay Goyal",
+  "status": "draft",
+  "lastSaved": "2026-10-11T19:45:21.012Z",
+  "submittedAt": null,
+  "topics": [
+    {
+      "title": "Let's meet",
+      "answers": [
+        {
+          "question": "What is your full name?",
+          "answer": "Lakshay Goyal"
+        },
+        {
+          "question": "What is your company, organization, or professional name?",
+          "answer": "Use my personal name"
+        },
+        {
+          "question": "Which email address should we use for your project?",
+          "answer": "ui_auth_check@gmail.com"
+        },
+        {
+          "question": "What phone number can we contact you on?",
+          "answer": "Not sure yet"
+        }
+      ]
+    },
+    {
+      "title": "How we should work with you",
+      "answers": [
+        {
+          "question": "What is your role in this project?",
+          "answer": "Owner/founder"
+        },
+        {
+          "question": "Where are you based?",
+          "answer": "timezone: Asia/Calcutta"
+        },
+        {
+          "question": "How would you prefer us to communicate?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Your business at a glance",
+      "answers": [
+        {
+          "question": "In a few sentences, what does your business or organization do?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Which industry or field best describes your work?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What stage is the business at?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "What you offer",
+      "answers": [
+        {
+          "question": "What do you provide, and how do people receive it?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What are the main products, services, or activities we should focus on first?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Where do you currently serve people, and where do you want to serve them next?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Who this is for",
+      "answers": [
+        {
+          "question": "Who is the main customer or user we should prioritize?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Is the person using your offer also the person choosing and paying for it?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What usually makes someone need your offer, and what makes them hesitate?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Why you are starting this project",
+      "answers": [
+        {
+          "question": "Why do you want Starter Shifter's help now?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What would you most like this project to improve?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What result would make this project worthwhile to you?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "How things work today",
+      "answers": [
+        {
+          "question": "Where can we see your current business online?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "How does one typical customer request or internal task move from start to finish?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Where does that process take the most effort or go wrong?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "What you want help with",
+      "answers": [
+        {
+          "question": "Which parts of the business should this project help with?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What should people be able to do when this is ready?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What must be ready for the first launch, and what can wait?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Your market and reasons to choose you",
+      "answers": [
+        {
+          "question": "Who or what would people choose if they did not choose you?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Why do people choose you, or why do you hope they will?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What evidence or insights could help us understand your market and customers?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Brand and content readiness",
+      "answers": [
+        {
+          "question": "What brand and business content do you already have?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "How should your business feel and sound to people?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Who can supply or approve the content we will need?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Requirements we should know early",
+      "answers": [
+        {
+          "question": "Do your products, services, or users have any special restrictions or approval requirements?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Will the project handle private information or different levels of access?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Are there language, accessibility, device, or connectivity needs we should design around?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Timing and practical limits",
+      "answers": [
+        {
+          "question": "Is there a target launch date or event we should plan around?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What investment limits should guide our recommendations?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "What could affect your ability to launch or respond to us?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Decisions, reviews, and handover",
+      "answers": [
+        {
+          "question": "Who gives final approval for scope, design, content, and launch?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Who should help review the first research and design direction?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Who will run the website, customer work, and connected systems after launch?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Your engagement details",
+      "answers": [
+        {
+          "question": "Does this project summary match what you agreed with us?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Are the contracting and billing details correct?",
+          "answer": "billingEmail: ui_auth_check@gmail.com; legalName: Lakshay Goyal"
+        },
+        {
+          "question": "Is anything preventing you from completing the agreement or advance payment?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Your workspace and remaining inputs",
+      "answers": [
+        {
+          "question": "Should we use your project email for your client dashboard invitation?",
+          "answer": "ui_auth_check@gmail.com"
+        },
+        {
+          "question": "Who else should be invited to your project workspace or onboarding group?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "How would you like to provide the remaining files or account access?",
+          "answer": "Not answered"
+        }
+      ]
+    },
+    {
+      "title": "Review and submit",
+      "answers": [
+        {
+          "question": "Is there anything else we should understand before we begin?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Are these details accurate to the best of your knowledge, and are you authorized to share them for this project?",
+          "answer": "Not answered"
+        },
+        {
+          "question": "Have you reviewed how your onboarding information will be used?",
+          "answer": "Confirmed"
+        }
+      ]
+    }
+  ]
+}
