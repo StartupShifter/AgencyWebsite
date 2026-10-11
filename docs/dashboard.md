@@ -4,6 +4,8 @@ The authenticated client workspace is at `/dashboard`. The development-only `/da
 
 The shell fills the viewport with no exterior whitespace. A rounded content panel sits inside a dark frame that matches the sidebar, with an 8px frame on mobile and 12px on larger screens. The header and full-height sidebar stay stationary; only `dashboard-scroll-area` scrolls. Short viewports use a compact guide button so sidebar controls remain visible. Changing tabs returns the content area to the top.
 
+Dashboard styling is scoped by `workspace-theme` in `components/dashboard/dashboard.css`, including portaled dialogs. It reuses the landing page's commerce emerald, white, mint, and sand tokens and DM Sans font. Sidebar selection uses a white surface with an emerald icon, with hover, press, and keyboard-focus feedback; brief topics use neutral selection surfaces, and journey stages use a white surface with an emerald border. Reduced-motion preferences disable dashboard transitions. Keep these overrides scoped so the landing and onboarding pages retain their own styling.
+
 Next.js Cache Components and Partial Prefetching are enabled in `next.config.ts`. The development “Cache disabled” badge describes a request that bypassed caching (for example, a hard reload), rather than an application configuration setting. Normal navigation uses the configured caching behavior; live client data continues to come from authenticated Convex subscriptions.
 
 The interface uses Tailwind and shared shadcn buttons, dialogs, and progress controls. `components/dashboard/` contains the shell, overview, brief, journey, resource, and engagement views. `lib/onboarding/dashboard.ts` derives the view model from the existing Convex query results; it does not write client or agency data.

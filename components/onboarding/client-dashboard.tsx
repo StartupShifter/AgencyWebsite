@@ -18,11 +18,11 @@ export function ClientDashboard({ name }: { name: string }) {
   if (isLoading || mine === undefined) return <DashboardLoading />;
   if (!mine)
     return (
-      <div className="flex min-h-svh flex-col items-center justify-center gap-4 bg-[#f7f8fa] p-6">
+      <div className="workspace-theme flex min-h-svh flex-col items-center justify-center gap-4 bg-[var(--workspace-surface)] p-6 text-[var(--workspace-ink)]">
         <h1 className="text-xl font-medium">Your session has ended.</h1>
         <Link
           href="/login"
-          className="rounded-full bg-[#d5fa43] px-5 py-3 text-sm"
+          className="rounded-full bg-[var(--commerce-green)] px-5 py-3 text-sm text-white transition-colors hover:bg-[var(--commerce-deep)]"
         >
           Sign in again
         </Link>

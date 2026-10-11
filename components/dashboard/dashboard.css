@@ -1,0 +1,191 @@
+.workspace-theme {
+  /* Reuse the landing page's commerce palette without changing other routes. */
+  --workspace-frame: var(--foreground);
+  --workspace-ink: var(--commerce-ink);
+  --workspace-muted: #596c63;
+  --workspace-subtle: #65776e;
+  --workspace-line: #dce5df;
+  --workspace-surface: #f5f7f6;
+  --workspace-soft: #eef2ef;
+  --workspace-tint: #e3efe8;
+  --workspace-sand: var(--commerce-sand);
+  --workspace-inverse-muted: #c1d9cb;
+  --background: var(--commerce-white);
+  --foreground: #20221c;
+  --primary: var(--commerce-green);
+  --primary-foreground: var(--commerce-white);
+  --accent: var(--commerce-green);
+  --accent-foreground: var(--commerce-white);
+  --muted: var(--workspace-soft);
+  --muted-foreground: var(--workspace-muted);
+  --border: var(--workspace-line);
+  --input: var(--workspace-line);
+  --ring: var(--commerce-green);
+  --card: var(--commerce-white);
+  --popover: var(--commerce-white);
+  --card-foreground: var(--workspace-ink);
+  --popover-foreground: var(--workspace-ink);
+  font-family: var(--font-dm-sans), sans-serif;
+}
+
+.workspace-theme :is(h1, h2) {
+  text-wrap: balance;
+}
+
+.workspace-theme :is(button, a, input, select):focus-visible {
+  outline: 2px solid var(--commerce-green);
+  outline-offset: 3px;
+}
+
+.workspace-theme label:has(input:focus-visible) {
+  border-color: var(--commerce-green);
+  box-shadow: 0 0 0 3px rgb(8 115 79 / 10%);
+}
+
+.workspace-theme label input:focus-visible {
+  outline: none;
+}
+
+.workspace-sidebar {
+  background: radial-gradient(ellipse at 0 0, rgb(8 115 79 / 20%), transparent 55%), var(--workspace-frame);
+}
+
+.workspace-sidebar :is(button, a):focus-visible {
+  outline-color: white;
+}
+
+.workspace-nav-button {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 48px;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  padding: 8px 12px;
+  color: #c0cac3;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: left;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+
+.workspace-nav-icon {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 8px;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.workspace-nav-button[aria-current="page"] {
+  border-color: white;
+  background: white;
+  color: var(--commerce-ink);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 8%);
+}
+
+.workspace-nav-button[aria-current="page"] .workspace-nav-icon {
+  background: var(--commerce-deep);
+  color: white;
+}
+
+.workspace-nav-arrow {
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.workspace-nav-button[aria-current="page"] .workspace-nav-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.workspace-nav-button:active {
+  transform: scale(0.98);
+}
+
+.workspace-stat-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(7 92 63 / 6%);
+  font-variant-numeric: tabular-nums;
+  transition: background-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
+}
+
+.workspace-stat-card > p:last-child {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.workspace-stat-card:active {
+  transform: scale(0.99);
+}
+
+.workspace-next-step {
+  background: radial-gradient(ellipse at 100% 100%, rgb(158 217 184 / 30%), transparent 70%), linear-gradient(155deg, var(--commerce-deep), var(--commerce-green));
+}
+
+.workspace-topic-button,
+.workspace-stage-button,
+.workspace-filter-button {
+  transition: background-color 160ms ease, color 160ms ease, box-shadow 160ms ease, border-color 160ms ease, transform 120ms ease;
+}
+
+.workspace-topic-button[aria-current="true"] {
+  background: var(--workspace-soft);
+  box-shadow: inset 3px 0 var(--commerce-green);
+}
+
+.workspace-stage-button[aria-pressed="true"] {
+  border-color: var(--commerce-green);
+  background: white;
+  box-shadow: inset 0 3px var(--commerce-green), 0 3px 12px rgb(7 92 63 / 6%);
+}
+
+.workspace-compact-guide { display: none; }
+
+.workspace-theme svg {
+  flex-shrink: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .workspace-nav-button:not([aria-current="page"]):hover {
+    border-color: rgb(255 255 255 / 10%);
+    background: rgb(255 255 255 / 7%);
+    color: white;
+  }
+
+  .workspace-nav-button:hover .workspace-nav-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .workspace-stat-card:hover {
+    box-shadow: 0 5px 16px rgb(7 92 63 / 8%);
+  }
+}
+
+@media (max-height: 740px) {
+  .workspace-compact-guide { display: flex; }
+}
+
+@media (max-height: 540px) {
+  .workspace-nav-button { min-height: 40px; padding-block: 5px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workspace-theme *, .workspace-theme *::before, .workspace-theme *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .workspace-theme :is(button, a):active, .workspace-nav-arrow {
+    transform: none;
+  }
+}

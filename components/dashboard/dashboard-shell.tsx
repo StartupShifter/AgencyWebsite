@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/dialog";
 import { viewNames, type WorkspaceView } from "@/lib/onboarding/dashboard";
 
+import "./dashboard.css";
+
 const navigation = [
   { id: "overview", icon: LayoutGrid },
   { id: "brief", icon: BookOpen },
@@ -35,8 +37,7 @@ const navigation = [
   { id: "resources", icon: FolderOpen },
   { id: "agreement", icon: CreditCard },
 ] as const;
-const navClass =
-  "flex w-full items-center gap-3 rounded-xl px-4 py-3 text-[13px] [@media(max-height:540px)]:py-2 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d5fa43]";
+const navClass = "workspace-nav-button";
 
 export function DashboardShell({
   children,
@@ -93,15 +94,15 @@ export function DashboardShell({
       onKeyDown={(event) => {
         if (event.key === "Escape") setMobileOpen(false);
       }}
-      className="h-dvh w-full overflow-hidden bg-[#20231f] text-[#242720] [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-[#677d19]"
+      className="workspace-theme h-dvh w-full overflow-hidden bg-[var(--workspace-frame)] text-[var(--workspace-ink)]"
     >
       <a
         href="#dashboard-content"
-        className="sr-only z-50 rounded-lg bg-[#d5fa43] p-3 text-black focus:not-sr-only focus:fixed focus:left-6 focus:top-6"
+        className="sr-only z-50 rounded-lg bg-white p-3 text-[var(--commerce-deep)] focus:not-sr-only focus:fixed focus:left-6 focus:top-6"
       >
         Skip to dashboard
       </a>
-      <div className="flex h-full w-full overflow-hidden bg-[#20231f]">
+      <div className="flex h-full w-full overflow-hidden bg-[var(--workspace-frame)]">
         {mobileOpen && (
           <button
             aria-label="Close navigation"
@@ -112,23 +113,23 @@ export function DashboardShell({
         <aside
           id="workspace-navigation"
           aria-label="Workspace navigation"
-          className={`${mobileOpen ? "fixed inset-y-0 left-0 z-40 flex w-60" : "hidden"} h-full shrink-0 flex-col overflow-hidden bg-[#20231f] px-5 py-5 text-[#f6f8ef] lg:static lg:flex lg:w-[222px] xl:w-[238px]`}
+          className={`workspace-sidebar ${mobileOpen ? "fixed inset-y-0 left-0 z-40 flex w-64" : "hidden"} h-full shrink-0 flex-col overflow-y-auto overscroll-contain px-5 py-5 text-white lg:static lg:flex lg:w-[242px] xl:w-[258px]`}
         >
           <Link
             href="/"
             aria-label="Starter Shifter home"
             className="mb-6 flex shrink-0 items-center gap-2.5 px-1 text-[19px] font-semibold tracking-[-.8px]"
           >
-            <span className="flex size-9 items-center justify-center rounded-xl bg-[#d5fa43] text-[#20231f]">
+            <span className="flex size-9 items-center justify-center rounded-[11px_11px_3px_11px] bg-[var(--commerce-green)] text-white">
               <ArrowUpRight size={24} strokeWidth={2.5} />
             </span>
             <span>
-              starter<span className="font-normal text-[#c3c8bb]">shifter</span>
+              starter<span className="font-normal text-[#c4d0c9]">shifter</span>
             </span>
           </Link>
           <div className="mb-5 shrink-0 rounded-xl border border-white/10 p-3 [@media(max-height:640px)]:hidden">
-            <div className="flex items-center gap-2 text-[11px] text-[#a7afa1]">
-              <span className="size-1.5 rounded-full bg-[#d5fa43]" />
+            <div className="flex items-center gap-2 text-[11px] text-[#c0cac3]">
+              <span className="size-1.5 rounded-full bg-[var(--commerce-mint)]" />
               Client workspace
             </div>
             <p
@@ -144,38 +145,36 @@ export function DashboardShell({
                 key={id}
                 aria-current={view === id ? "page" : undefined}
                 onClick={() => navigate(id)}
-                className={`${navClass} ${view === id ? "bg-[#d5fa43] font-semibold text-[#20231f]" : "text-[#aeb5a7] hover:bg-white/5 hover:text-white"}`}
+                className={navClass}
               >
-                <Icon size={18} />
-                {viewNames[id]}
-                {view === id && (
-                  <span className="ml-auto size-1.5 rounded-full bg-[#20231f]" />
-                )}
+                <span className="workspace-nav-icon"><Icon size={17} aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">{viewNames[id]}</span>
+                <ArrowUpRight size={14} className="workspace-nav-arrow" aria-hidden="true" />
               </button>
             ))}
           </nav>
           <div className="mt-auto shrink-0 pt-4">
-            <div className="relative mb-3 overflow-hidden rounded-2xl border border-white/10 bg-[#2a2e27] p-4 [@media(max-height:740px)]:hidden">
-              <div className="mb-3 flex size-9 items-center justify-center rounded-full border border-[#879176] text-[#d5fa43]">
+            <div className="relative mb-3 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 [@media(max-height:740px)]:hidden">
+              <div className="mb-3 flex size-9 items-center justify-center rounded-xl border border-white/20 text-[var(--commerce-mint)]">
                 <CircleHelp size={18} />
               </div>
               <h2 className="text-sm font-medium">A little guidance?</h2>
-              <p className="mb-4 mt-1.5 text-xs leading-relaxed text-[#aeb5a7]">
+              <p className="mb-4 mt-1.5 text-xs leading-relaxed text-[#c0cac3]">
                 Every next step, explained.
               </p>
               <button
                 onClick={() => setHelpOpen(true)}
-                className="flex items-center gap-2 text-xs font-medium text-[#d5fa43]"
+                className="group flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-white/10"
               >
                 Workspace guide
-                <ArrowUpRight size={14} />
+                <ArrowUpRight size={14} className="transition-transform group-hover:translate-x-0.5 motion-reduce:transform-none" />
               </button>
             </div>
             <button
               onClick={() => setHelpOpen(true)}
-              className={`${navClass} hidden text-[#d5fa43] [@media(max-height:740px)]:flex`}
+              className={`${navClass} workspace-compact-guide`}
             >
-              <CircleHelp size={17} />
+              <span className="workspace-nav-icon"><CircleHelp size={17} /></span>
               Workspace guide
             </button>
             {preview ? (
@@ -184,18 +183,18 @@ export function DashboardShell({
               </span>
             ) : (
               <button
-                className={`${navClass} text-[#aeb5a7] hover:bg-white/5`}
+                className={`${navClass} disabled:opacity-50`}
                 disabled={signingOut}
                 onClick={() => void signOut()}
               >
-                <LogOut size={17} />
+                <span className="workspace-nav-icon"><LogOut size={17} /></span>
                 {signingOut ? "Signing out…" : "Sign out"}
               </button>
             )}
           </div>
         </aside>
-        <div className="m-2 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[#f7f8fa] sm:m-3 sm:rounded-[30px] lg:ml-0">
-          <header className="flex min-h-[86px] shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[#e9ebee] px-4 py-4 sm:px-7 xl:px-9">
+        <div className="m-2 flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-[24px] bg-[var(--workspace-surface)] sm:m-3 sm:rounded-[30px] lg:ml-0">
+          <header className="flex min-h-[86px] shrink-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--workspace-line)] bg-white/70 px-4 py-4 sm:px-7 xl:px-9">
             <div className="flex items-center gap-3">
               <button
                 className="rounded-lg p-2 hover:bg-black/5 lg:hidden"
@@ -206,21 +205,21 @@ export function DashboardShell({
               >
                 {mobileOpen ? <X size={20} /> : <Menu size={20} />}
               </button>
-              <div className="flex items-center gap-2 text-xs text-[#8a8e87]">
+              <div className="flex items-center gap-2 text-xs text-[var(--workspace-muted)]">
                 <span className="hidden sm:inline">Workspace</span>
                 <span className="hidden sm:inline">/</span>
-                <span className="text-[#343a30]">{viewNames[view]}</span>
+                <span className="text-[var(--workspace-ink)]">{viewNames[view]}</span>
               </div>
             </div>
             <div className="flex items-center gap-2 sm:gap-4">
-              <label className="hidden items-center gap-2 rounded-full border border-[#e2e5df] bg-white px-3 py-2 md:flex">
-                <Search size={15} className="text-[#777d70]" />
+              <label className="hidden h-10 items-center gap-2 rounded-full border border-[var(--workspace-line)] bg-white px-3 md:flex">
+                <Search size={15} className="text-[var(--workspace-muted)]" />
                 <input
                   aria-label="Search your project brief"
                   type="search"
                   value={searchQuery}
                   placeholder="Search your brief…"
-                  className="w-[138px] bg-transparent text-xs outline-none placeholder:text-[#92978c] focus:w-[160px]"
+                  className="w-[148px] min-w-0 bg-transparent text-xs outline-none placeholder:text-[var(--workspace-muted)]"
                   onChange={(event) => onSearch(event.target.value)}
                   disabled={loading}
                 />
@@ -229,16 +228,16 @@ export function DashboardShell({
                 aria-label="View workspace updates"
                 onClick={onUpdates}
                 disabled={loading}
-                className="rounded-full border border-[#e2e5df] bg-white p-2.5 hover:bg-[#edf1e6]"
+                className="flex size-10 items-center justify-center rounded-full border border-[var(--workspace-line)] bg-white transition-colors hover:bg-[var(--workspace-soft)]"
               >
                 <Bell size={16} />
               </button>
               <button
                 aria-label="Open your profile"
                 onClick={() => setAccountOpen(true)}
-                className="flex items-center gap-2.5 rounded-full border border-[#e2e5df] bg-white py-1.5 pl-1.5 pr-3"
+                className="flex h-10 items-center gap-2.5 rounded-full border border-[var(--workspace-line)] bg-white py-1 pl-1 pr-3 transition-colors hover:bg-[var(--workspace-soft)]"
               >
-                <span className="flex size-8 items-center justify-center rounded-full bg-[#e7e2f2] text-[11px] font-semibold">
+                <span className="flex size-8 items-center justify-center rounded-full bg-[var(--commerce-deep)] text-[11px] font-semibold text-white">
                   {name
                     .trim()
                     .split(/\s+/)
@@ -275,13 +274,13 @@ export function DashboardShell({
             >
               {children}
             </main>
-            <footer className="mx-4 flex flex-wrap items-center justify-between gap-2 border-t border-[#e6e9e2] py-5 text-[10px] text-[#858b7d] sm:mx-7 xl:mx-9">
+            <footer className="mx-4 flex flex-wrap items-center justify-between gap-2 border-t border-[var(--workspace-line)] py-5 text-[10px] text-[var(--workspace-muted)] sm:mx-7 xl:mx-9">
               <span>Starter Shifter · Your business, connected.</span>
               <div className="flex items-center gap-4">
                 {preview && <span>Development preview</span>}
                 <Link href="/policies/onboarding-privacy">Project privacy</Link>
                 <span className="flex items-center gap-1.5">
-                  <span className="size-1.5 rounded-full bg-[#6d956b]" />
+                  <span className="size-1.5 rounded-full bg-[var(--commerce-green)]" />
                   {loading ? "Connecting" : "Connected workspace"}
                 </span>
               </div>
@@ -290,24 +289,24 @@ export function DashboardShell({
         </div>
       </div>
       <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="workspace-theme sm:max-w-lg">
           <DialogTitle>Your workspace guide</DialogTitle>
           <DialogDescription>
             Keep your project moving, one step at a time.
           </DialogDescription>
-          <div className="space-y-4 text-sm leading-relaxed text-[#66705d]">
+          <div className="space-y-4 text-sm leading-relaxed text-[var(--workspace-muted)]">
             <p>
-              <strong className="text-[#242720]">Project brief</strong> holds
+              <strong className="text-[var(--workspace-ink)]">Project brief</strong> holds
               every answer you have saved. Choose a topic to review it or return
               to onboarding to make changes.
             </p>
             <p>
-              <strong className="text-[#242720]">Project journey</strong> shows
+              <strong className="text-[var(--workspace-ink)]">Project journey</strong> shows
               your submission and verified prerequisites. Delivery stages become
               relevant after activation and follow your agreed scope.
             </p>
             <p>
-              <strong className="text-[#242720]">Agreement & billing</strong>{" "}
+              <strong className="text-[var(--workspace-ink)]">Agreement & billing</strong>{" "}
               shows the agency’s recorded scope, fees, agreement, and advance
               verification.
             </p>
@@ -321,7 +320,7 @@ export function DashboardShell({
               setHelpOpen(false);
               navigate("brief");
             }}
-            variant="lime"
+            variant="emerald"
           >
             Explore my brief
             <ArrowUpRight size={16} />
@@ -329,18 +328,18 @@ export function DashboardShell({
         </DialogContent>
       </Dialog>
       <Dialog open={accountOpen} onOpenChange={setAccountOpen}>
-        <DialogContent>
+        <DialogContent className="workspace-theme">
           <DialogTitle>Your profile</DialogTitle>
           <DialogDescription>
             {preview ? "Your saved preview workspace" : "Your client workspace"}
           </DialogDescription>
           <dl className="space-y-4 text-sm">
             <div>
-              <dt className="text-[#79816f]">Name</dt>
+              <dt className="text-[var(--workspace-muted)]">Name</dt>
               <dd className="mt-1 font-medium">{name || "Not provided yet"}</dd>
             </div>
             <div>
-              <dt className="text-[#79816f]">Business</dt>
+              <dt className="text-[var(--workspace-muted)]">Business</dt>
               <dd className="mt-1 font-medium">{businessName}</dd>
             </div>
           </dl>
@@ -372,9 +371,9 @@ export function DashboardLoading({ preview = false }: { preview?: boolean }) {
       loading
     >
       <div role="status" className="py-20 text-center">
-        <div className="mx-auto mb-4 size-10 animate-pulse rounded-full bg-[#d5fa43] motion-reduce:animate-none" />
+        <div className="mx-auto mb-4 size-10 animate-pulse rounded-full bg-[var(--commerce-green)] motion-reduce:animate-none" />
         <h1 className="text-xl font-medium">Loading your workspace…</h1>
-        <p className="mt-2 text-sm text-[#777f6c]">
+        <p className="mt-2 text-sm text-[var(--workspace-muted)]">
           Getting your saved details and progress.
         </p>
       </div>

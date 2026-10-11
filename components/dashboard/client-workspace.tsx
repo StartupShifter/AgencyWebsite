@@ -134,7 +134,7 @@ export function ClientWorkspace({
       )}
       {view === "agreement" && <AgreementView data={data} />}
       <Dialog open={updatesOpen} onOpenChange={setUpdatesOpen}>
-        <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-w-lg">
+        <DialogContent className="workspace-theme max-h-[85svh] overflow-y-auto sm:max-w-lg">
           <DialogTitle>Updates & follow-ups</DialogTitle>
           <DialogDescription>
             Your latest saved progress and details to revisit.
@@ -147,13 +147,13 @@ export function ClientWorkspace({
                   setUpdatesOpen(false);
                   navigate(item.view);
                 }}
-                className="flex w-full items-start gap-3 rounded-xl bg-[#f2f5ec] p-4 text-left"
+                className="flex w-full items-start gap-3 rounded-xl bg-[var(--workspace-soft)] p-4 text-left transition-colors hover:bg-[var(--workspace-tint)]"
               >
-                <Check size={17} className="mt-0.5 shrink-0 text-[#81946a]" />
+                <Check size={17} className="mt-0.5 shrink-0 text-[var(--commerce-green)]" />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{item.title}</p>
-                  <p className="mt-1 text-xs text-[#8a937d]">{item.detail}</p>
-                  <p className="mt-2 text-[10px] text-[#9fa791]">
+                  <p className="mt-1 text-xs text-[var(--workspace-muted)]">{item.detail}</p>
+                  <p className="mt-2 text-[10px] text-[var(--workspace-subtle)]">
                     {new Date(item.time).toLocaleDateString("en", {
                       month: "short",
                       day: "numeric",
@@ -161,11 +161,11 @@ export function ClientWorkspace({
                     })}
                   </p>
                 </div>
-                <ArrowUpRight size={15} className="shrink-0 text-[#8a937d]" />
+                <ArrowUpRight size={15} className="shrink-0 text-[var(--workspace-muted)]" />
               </button>
             ))}
             {!model.activity.length && (
-              <p className="rounded-xl bg-[#f2f5ec] p-4 text-sm text-[#8a937d]">
+              <p className="rounded-xl bg-[var(--workspace-tint)] p-4 text-sm text-[var(--workspace-muted)]">
                 Start your project brief to see your updates here.
               </p>
             )}
@@ -182,12 +182,12 @@ export function ClientWorkspace({
                     setUpdatesOpen(false);
                     openTopic(item.pageId);
                   }}
-                  className="flex w-full items-start gap-3 rounded-xl border border-[#e9ecdf] p-3 text-left"
+                  className="flex w-full items-start gap-3 rounded-xl border border-[var(--workspace-line)] p-3 text-left"
                 >
-                  <Flag size={15} className="mt-0.5 shrink-0 text-[#a29767]" />
+                  <Flag size={15} className="mt-0.5 shrink-0 text-[#74652b]" />
                   <div>
                     <p className="text-xs leading-relaxed">{item.label}</p>
-                    <p className="mt-1 text-[11px] text-[#9a9f8b]">
+                    <p className="mt-1 text-[11px] text-[var(--workspace-subtle)]">
                       {item.detail || "Revisit this answer with your agency."}
                     </p>
                   </div>
@@ -195,7 +195,7 @@ export function ClientWorkspace({
               ))}
             </div>
           ) : (
-            <p className="text-xs text-[#8a937d]">
+            <p className="text-xs text-[var(--workspace-muted)]">
               No follow-ups flagged in your brief.
             </p>
           )}
@@ -210,7 +210,7 @@ export function ClientWorkspace({
           </Button>
           <Link
             href={onboardingHref}
-            className="text-center text-xs text-[#71835e]"
+            className="text-center text-xs text-[var(--workspace-muted)]"
           >
             {data.draft ? "Update my brief" : "Start my brief"}
           </Link>

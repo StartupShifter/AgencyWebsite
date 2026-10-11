@@ -35,12 +35,12 @@ export function ViewHeading({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+    <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
       <div>
-        <h1 className="text-[30px] font-medium leading-tight tracking-[-1px]">
+        <h1 className="text-[28px] font-medium leading-tight tracking-[-1.2px] sm:text-[34px]">
           {title}
         </h1>
-        <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-[#7a8172]">
+        <p className="mt-2 max-w-xl text-[13px] leading-relaxed text-[var(--workspace-muted)]">
           {description}
         </p>
       </div>
@@ -103,7 +103,7 @@ export function BriefView({
       >
         <Link
           href={onboardingHref}
-          className="inline-flex items-center gap-2 rounded-full bg-[#252b24] px-4 py-2.5 text-xs font-medium text-white"
+          className="inline-flex items-center gap-2 rounded-full bg-[var(--commerce-green)] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-[var(--commerce-deep)]"
         >
           Edit my brief
           <ArrowUpRight size={15} />
@@ -113,7 +113,7 @@ export function BriefView({
         <div
           role="group"
           aria-label="Filter brief topics"
-          className="flex flex-wrap gap-1 rounded-full bg-[#e9ece5] p-1"
+          className="flex flex-wrap gap-1 rounded-2xl bg-[var(--workspace-soft)] p-1 sm:rounded-full"
         >
           {[
             { id: "all", label: "All topics" },
@@ -125,14 +125,14 @@ export function BriefView({
               key={item.id}
               aria-pressed={filter === item.id}
               onClick={() => setFilter(item.id)}
-              className={`rounded-full px-3 py-2 text-[11px] font-medium ${filter === item.id ? "bg-[#252b24] text-white" : "text-[#818a74] hover:text-[#252b24]"}`}
+              className={`workspace-filter-button rounded-full px-3 py-2 text-xs font-medium ${filter === item.id ? "bg-[var(--commerce-deep)] text-white shadow-sm" : "text-[var(--workspace-muted)] hover:bg-white hover:text-[var(--workspace-ink)]"}`}
             >
               {item.label}
             </button>
           ))}
         </div>
-        <label className="flex items-center gap-2 rounded-full border border-[#e2e5df] bg-white px-4 py-2.5">
-          <Search size={15} className="text-[#818a74]" />
+        <label className="flex items-center gap-2 rounded-full border border-[var(--workspace-line)] bg-white px-4 py-2.5">
+          <Search size={15} className="text-[var(--workspace-muted)]" />
           <input
             type="search"
             aria-label="Search topics and answers"
@@ -144,15 +144,15 @@ export function BriefView({
         </label>
       </div>
       <div className="grid items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <div className="overflow-hidden rounded-[20px] border border-[#e7eae3] bg-white">
-          <div className="border-b border-[#eef0eb] px-5 py-4 text-xs text-[#7a8172]">
+        <div className="overflow-hidden rounded-[20px] border border-[var(--workspace-line)] bg-white">
+          <div className="border-b border-[var(--workspace-line)] px-5 py-4 text-xs text-[var(--workspace-muted)]">
             {topics.length} {topics.length === 1 ? "topic" : "topics"}
             {normalized ? " found" : " in your brief"}
           </div>
           <div className="p-4 lg:hidden">
             <label
               htmlFor="mobile-brief-topic"
-              className="mb-2 block text-[11px] text-[#7a8172]"
+              className="mb-2 block text-[11px] text-[var(--workspace-muted)]"
             >
               Choose a topic
             </label>
@@ -161,7 +161,7 @@ export function BriefView({
               value={active?.id ?? ""}
               disabled={!topics.length}
               onChange={(event) => onTopic(event.target.value)}
-              className="w-full rounded-xl border border-[#dce3d0] bg-[#f1f5e9] p-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-[#879878]"
+              className="w-full rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-surface)] p-3 text-sm"
             >
               {!topics.length && <option value="">No matching topics</option>}
               {topics.map((topic) => (
@@ -180,10 +180,10 @@ export function BriefView({
                 key={topic.id}
                 onClick={() => onTopic(topic.id)}
                 aria-current={active?.id === topic.id ? "true" : undefined}
-                className={`mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-left ${active?.id === topic.id ? "bg-[#eaf0df]" : "hover:bg-[#f6f7f3]"}`}
+                className="workspace-topic-button mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-left hover:bg-[var(--workspace-soft)]"
               >
                 <span
-                  className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] ${topic.percent === 100 ? "bg-[#dce9d3] text-[#617c50]" : active?.id === topic.id ? "bg-white text-[#71835f]" : "bg-[#f0f2ed] text-[#89917d]"}`}
+                  className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] ${topic.percent === 100 ? "bg-[var(--workspace-tint)] text-[var(--commerce-green)]" : active?.id === topic.id ? "bg-white text-[var(--workspace-muted)]" : "bg-[var(--workspace-soft)] text-[var(--workspace-muted)]"}`}
                 >
                   {topic.percent === 100 ? (
                     <Check size={13} />
@@ -193,11 +193,11 @@ export function BriefView({
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs leading-snug">{topic.title}</p>
-                  <p className="mt-1 text-[10px] text-[#8a917f]">
+                  <p className="mt-1 text-[10px] text-[var(--workspace-muted)]">
                     {topic.completed} of {topic.total} complete
                   </p>
                 </div>
-                <ChevronRight size={13} className="shrink-0 text-[#8a917f]" />
+                <ChevronRight size={13} className="shrink-0 text-[var(--workspace-muted)]" />
               </button>
             ))}
           </nav>
@@ -207,7 +207,7 @@ export function BriefView({
             <>
               <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <span className="text-[10px] text-[#8a917f]">
+                  <span className="text-[10px] text-[var(--workspace-muted)]">
                     {active.kind === "module"
                       ? "Selected requirements"
                       : "Your project details"}
@@ -216,37 +216,37 @@ export function BriefView({
                     {active.title}
                   </h2>
                   {active.description && (
-                    <p className="mt-2 max-w-lg text-xs leading-relaxed text-[#7a8172]">
+                    <p className="mt-2 max-w-lg text-xs leading-relaxed text-[var(--workspace-muted)]">
                       {active.description}
                     </p>
                   )}
                 </div>
-                <span className="rounded-full bg-[#edf2e6] px-3 py-1.5 text-[11px] text-[#71835f]">
+                <span className="rounded-full bg-[var(--workspace-tint)] px-3 py-1.5 text-[11px] text-[var(--workspace-muted)]">
                   {active.percent}% complete
                 </span>
               </div>
               <Progress
                 value={active.percent}
                 aria-label={`${active.title} completion`}
-                className="mb-6 [&_[data-slot=progress-track]]:h-1.5 [&_[data-slot=progress-track]]:bg-[#eef0eb] [&_[data-slot=progress-indicator]]:bg-[#aec68c]"
+                className="mb-6 [&_[data-slot=progress-track]]:h-1.5 [&_[data-slot=progress-track]]:bg-[var(--workspace-line)] [&_[data-slot=progress-indicator]]:bg-[var(--commerce-green)]"
               />
-              <dl className="divide-y divide-[#eef0eb]">
+              <dl className="divide-y divide-[var(--workspace-line)]">
                 {questionMatches.map((question) => {
                   const answer = model.answers[question.id];
                   return (
                     <div key={question.id} className="py-4 first:pt-0">
-                      <dt className="mb-2 text-[12px] font-medium leading-relaxed text-[#4e5745]">
+                      <dt className="mb-2 text-[12px] font-medium leading-relaxed text-[var(--workspace-ink)]">
                         {question.label}
                       </dt>
                       <dd
-                        className={`break-words whitespace-pre-wrap text-sm leading-relaxed ${!answer ? "text-[#a3a999]" : "text-[#252b24]"}`}
+                        className={`break-words whitespace-pre-wrap text-sm leading-relaxed ${!answer ? "text-[var(--workspace-subtle)]" : "text-[var(--workspace-ink)]"}`}
                       >
                         {formatAnswer(answer)}
                       </dd>
                       {answer &&
                         answer.state !== "answered" &&
                         answer.state !== "not-applicable" && (
-                          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#f3efdc] px-2.5 py-1 text-[10px] text-[#897d45]">
+                          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#f3efdc] px-2.5 py-1 text-[10px] text-[#74652b]">
                             <Flag size={11} />
                             {ANSWER_STATE_LABELS[answer.state]}
                           </span>
@@ -255,8 +255,8 @@ export function BriefView({
                   );
                 })}
               </dl>
-              <div className="mt-6 flex items-center justify-between border-t border-[#eef0eb] pt-4">
-                <span className="text-[11px] text-[#8a917f]">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--workspace-line)] pt-4">
+                <span className="text-[11px] text-[var(--workspace-muted)]">
                   Changes are saved through your onboarding brief.
                 </span>
                 <Link href={onboardingHref} className={subtleButton}>
@@ -267,9 +267,9 @@ export function BriefView({
             </>
           ) : (
             <div className="py-16 text-center">
-              <Search size={28} className="mx-auto mb-4 text-[#9ca68c]" />
+              <Search size={28} className="mx-auto mb-4 text-[var(--workspace-muted)]" />
               <h2 className="font-medium">No matching topics</h2>
-              <p className="mt-2 text-xs text-[#7a8172]">
+              <p className="mt-2 text-xs text-[var(--workspace-muted)]">
                 Try a different search or show all topics.
               </p>
               <Button
@@ -360,14 +360,14 @@ export function JourneyView({
       <section className={`${panelClass} mb-5`}>
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-[#858d79]">Current checkpoint</p>
+            <p className="text-xs text-[var(--workspace-muted)]">Current checkpoint</p>
             <h2 className="mt-1.5 text-xl font-medium tracking-[-.4px]">
               {model.workspaceReady
                 ? "Ready to arrange delivery"
                 : stages[current].title}
             </h2>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-[#edf2e5] px-3 py-2 text-xs text-[#6e805b]">
+          <span className="inline-flex items-center gap-2 rounded-full bg-[var(--workspace-tint)] px-3 py-2 text-xs text-[var(--workspace-muted)]">
             <RouteIcon />
             {completed} preparation stages complete
           </span>
@@ -378,17 +378,17 @@ export function JourneyView({
               key={stage.title}
               onClick={() => setSelectedStage(index)}
               aria-pressed={selectedStage === index}
-              className={`relative rounded-2xl border p-4 text-left ${selectedStage === index ? "border-[#b8ca9e] bg-[#f1f5e9]" : "border-[#ecefe7] bg-[#fafbf8] hover:bg-[#f1f5e9]"}`}
+              className="workspace-stage-button relative rounded-2xl border border-[var(--workspace-line)] bg-[var(--workspace-surface)] p-4 text-left hover:bg-[var(--workspace-soft)]"
             >
               <span
-                className={`mb-5 flex size-8 items-center justify-center rounded-full text-xs ${stage.done ? "bg-[#d5fa43]" : index === current ? "bg-[#252b24] text-white" : "border border-[#dfe4d6] text-[#8b957e]"}`}
+                className={`mb-5 flex size-8 items-center justify-center rounded-full text-xs ${stage.done || index === current ? "bg-[var(--commerce-deep)] text-white" : "border border-[var(--workspace-line)] text-[var(--workspace-muted)]"}`}
               >
                 {stage.done ? <Check size={15} /> : index + 1}
               </span>
               <p className="min-h-9 text-xs font-medium leading-relaxed">
                 {stage.title}
               </p>
-              <p className="mt-2 text-[10px] text-[#7f8971]">{stage.status}</p>
+              <p className="mt-2 text-[10px] text-[var(--workspace-muted)]">{stage.status}</p>
             </button>
           ))}
         </div>
@@ -396,17 +396,17 @@ export function JourneyView({
       <div className="grid items-start gap-5 xl:grid-cols-[1.2fr_1fr]">
         <section className={panelClass}>
           <div className="mb-5 flex items-center gap-3">
-            <span className="flex size-10 items-center justify-center rounded-xl bg-[#eae4f4] text-[#806893]">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-[var(--workspace-tint)] text-[var(--workspace-muted)]">
               {selectedStage + 1}
             </span>
             <div>
               <h2 className="text-base font-medium">{selected.title}</h2>
-              <p className="mt-1 text-[11px] text-[#8a937d]">
+              <p className="mt-1 text-[11px] text-[var(--workspace-muted)]">
                 {selected.status}
               </p>
             </div>
           </div>
-          <p className="text-sm leading-relaxed text-[#727e65]">
+          <p className="text-sm leading-relaxed text-[var(--workspace-muted)]">
             {selected.description}
           </p>
           {selectedStage < 2 ? (
@@ -419,22 +419,22 @@ export function JourneyView({
                   <div key={item.id} className="flex items-start gap-3">
                     {item.verified ? (
                       <CircleCheck
-                        className="mt-0.5 shrink-0 text-[#789665]"
+                        className="mt-0.5 shrink-0 text-[var(--commerce-green)]"
                         size={19}
                       />
                     ) : (
                       <CircleDashed
-                        className="mt-0.5 shrink-0 text-[#a1ab94]"
+                        className="mt-0.5 shrink-0 text-[var(--workspace-subtle)]"
                         size={19}
                       />
                     )}
                     <div>
                       <p className="text-xs font-medium">{item.label}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-[#8a937d]">
+                      <p className="mt-1 text-xs leading-relaxed text-[var(--workspace-muted)]">
                         {item.detail}
                       </p>
                     </div>
-                    <span className="ml-auto shrink-0 text-[10px] text-[#859577]">
+                    <span className="ml-auto shrink-0 text-[10px] text-[var(--workspace-muted)]">
                       {item.verified ? "Verified" : "Pending"}
                     </span>
                   </div>
@@ -443,18 +443,18 @@ export function JourneyView({
               {selectedStage === 0 && (
                 <Link
                   href={onboardingHref}
-                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#252b24] px-4 py-2.5 text-xs text-white"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--workspace-ink)] px-4 py-2.5 text-xs text-white"
                 >
                   {model.submitted ? "Review brief" : "Continue brief"}
                   <ArrowUpRight size={14} />
                 </Link>
               )}
               {selectedStage === 1 && data.pending.length > 0 && (
-                <details className="mt-6 rounded-xl bg-[#f7f8f3] p-4">
+                <details className="mt-6 rounded-xl bg-[var(--workspace-soft)] p-4">
                   <summary className="cursor-pointer text-xs font-medium">
                     View all pending verification items ({data.pending.length})
                   </summary>
-                  <ul className="mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[#7a856b]">
+                  <ul className="mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[var(--workspace-muted)]">
                     {data.pending.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -463,9 +463,9 @@ export function JourneyView({
               )}
             </>
           ) : (
-            <div className="mt-6 flex items-start gap-3 rounded-xl bg-[#f3f5ef] p-4">
-              <Clock3 size={17} className="mt-0.5 shrink-0 text-[#8a937d]" />
-              <p className="text-xs leading-relaxed text-[#7a856b]">
+            <div className="mt-6 flex items-start gap-3 rounded-xl bg-[var(--workspace-soft)] p-4">
+              <Clock3 size={17} className="mt-0.5 shrink-0 text-[var(--workspace-muted)]" />
+              <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">
                 No delivery update has been recorded for this stage. Your agency
                 will confirm the applicable work and timing after activation.
               </p>
@@ -479,19 +479,19 @@ export function JourneyView({
               {model.activity.map((item, index) => (
                 <div key={`${item.title}-${item.time}`} className="flex gap-3">
                   <div className="flex flex-col items-center">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#edf2e5] text-[#7b9167]">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--workspace-tint)] text-[var(--commerce-green)]">
                       <Check size={14} />
                     </span>
                     {index < model.activity.length - 1 && (
-                      <span className="mt-2 h-full w-px bg-[#e4e9dc]" />
+                      <span className="mt-2 h-full w-px bg-[var(--workspace-line)]" />
                     )}
                   </div>
                   <div>
                     <p className="text-xs font-medium">{item.title}</p>
-                    <p className="mt-1 text-xs text-[#87917a]">{item.detail}</p>
+                    <p className="mt-1 text-xs text-[var(--workspace-muted)]">{item.detail}</p>
                     <time
                       dateTime={new Date(item.time).toISOString()}
-                      className="mt-2 block text-[10px] text-[#a0a792]"
+                      className="mt-2 block text-[10px] text-[var(--workspace-subtle)]"
                     >
                       {new Date(item.time).toLocaleString("en", {
                         month: "short",
@@ -505,12 +505,12 @@ export function JourneyView({
               ))}
             </div>
           ) : (
-            <p className="text-sm leading-relaxed text-[#87917a]">
+            <p className="text-sm leading-relaxed text-[var(--workspace-muted)]">
               Your saved progress and submission updates will appear here once
               you start your brief.
             </p>
           )}
-          <p className="mt-6 border-t border-[#eef0e9] pt-4 text-[11px] leading-relaxed text-[#939b88]">
+          <p className="mt-6 border-t border-[var(--workspace-line)] pt-4 text-[11px] leading-relaxed text-[var(--workspace-muted)]">
             These are your latest saved records. Delivery dates and completion
             are confirmed separately by your agency.
           </p>
@@ -520,7 +520,7 @@ export function JourneyView({
   );
 }
 function RouteIcon() {
-  return <span className="size-1.5 rounded-full bg-[#82956e]" />;
+  return <span className="size-1.5 rounded-full bg-[var(--commerce-green)]" />;
 }
 
 export function ResourcesView({
@@ -565,7 +565,7 @@ export function ResourcesView({
       >
         <Link
           href={onboardingHref}
-          className="inline-flex items-center gap-2 rounded-full bg-[#252b24] px-4 py-2.5 text-xs text-white"
+          className="inline-flex items-center gap-2 rounded-full bg-[var(--workspace-ink)] px-4 py-2.5 text-xs text-white"
         >
           Update resources
           <ArrowUpRight size={15} />
@@ -576,35 +576,35 @@ export function ResourcesView({
           <h2 className="mb-2 text-base font-medium">
             Brand & content readiness
           </h2>
-          <p className="mb-6 text-xs text-[#8a937d]">
+          <p className="mb-6 text-xs text-[var(--workspace-muted)]">
             The asset statuses you recorded during onboarding.
           </p>
           {model.assets.length ? (
             <div className="grid gap-3 sm:grid-cols-2">
               {model.assets.map((asset) => (
-                <div key={asset.label} className="rounded-2xl bg-[#f4f6ef] p-4">
-                  <FolderOpen size={23} className="mb-5 text-[#879878]" />
+                <div key={asset.label} className="rounded-2xl bg-[var(--workspace-soft)] p-4">
+                  <FolderOpen size={23} className="mb-5 text-[var(--commerce-green)]" />
                   <h3 className="text-sm font-medium">{asset.label}</h3>
-                  <span className="mt-2 inline-block rounded-full bg-white px-2.5 py-1 text-[10px] text-[#7f8b72]">
+                  <span className="mt-2 inline-block rounded-full bg-white px-2.5 py-1 text-[10px] text-[var(--workspace-muted)]">
                     {asset.status}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl bg-[#f4f6ef] p-8 text-center">
-              <FolderOpen size={28} className="mx-auto mb-4 text-[#879878]" />
+            <div className="rounded-2xl bg-[var(--workspace-soft)] p-8 text-center">
+              <FolderOpen size={28} className="mx-auto mb-4 text-[var(--commerce-green)]" />
               <h3 className="text-sm font-medium">
                 Let’s gather your starting points.
               </h3>
-              <p className="mt-2 text-xs leading-relaxed text-[#87917a]">
+              <p className="mt-2 text-xs leading-relaxed text-[var(--workspace-muted)]">
                 Add your logo, photos, copy, and content readiness to your
                 brief. Final files can be shared securely with your agency.
               </p>
             </div>
           )}
-          <div className="mt-6 border-t border-[#eef0e9] pt-4">
-            <p className="mb-2 text-[11px] text-[#939b88]">Content contact</p>
+          <div className="mt-6 border-t border-[var(--workspace-line)] pt-4">
+            <p className="mb-2 text-[11px] text-[var(--workspace-muted)]">Content contact</p>
             <p className="text-sm leading-relaxed">
               {formatAnswer(model.answers["P10.3"])}
             </p>
@@ -612,11 +612,11 @@ export function ResourcesView({
         </section>
         <section className={panelClass}>
           <h2 className="mb-2 text-base font-medium">Your shared links</h2>
-          <p className="mb-5 text-xs text-[#8a937d]">
+          <p className="mb-5 text-xs text-[var(--workspace-muted)]">
             Website, folder, and reference links from your answers.
           </p>
           {urls.length ? (
-            <ul className="divide-y divide-[#eef0e9]">
+            <ul className="divide-y divide-[var(--workspace-line)]">
               {urls.map((item) => (
                 <li key={item.url}>
                   <a
@@ -625,20 +625,20 @@ export function ResourcesView({
                     rel="noopener noreferrer"
                     className="flex items-center gap-3 py-4"
                   >
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e1edf8] text-[#65809a]">
+                    <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--workspace-tint)] text-[var(--workspace-muted)]">
                       <ExternalLink size={16} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-xs font-medium">
                         {item.host}
                       </p>
-                      <p className="mt-1 truncate text-[10px] text-[#939b88]">
+                      <p className="mt-1 truncate text-[10px] text-[var(--workspace-muted)]">
                         {item.url}
                       </p>
                     </div>
                     <ArrowUpRight
                       size={16}
-                      className="shrink-0 text-[#939b88]"
+                      className="shrink-0 text-[var(--workspace-muted)]"
                     />
                     <span className="sr-only">Opens in a new tab</span>
                   </a>
@@ -646,14 +646,14 @@ export function ResourcesView({
               ))}
             </ul>
           ) : (
-            <p className="rounded-xl bg-[#f7f8f3] p-5 text-xs leading-relaxed text-[#87917a]">
+            <p className="rounded-xl bg-[var(--workspace-soft)] p-5 text-xs leading-relaxed text-[var(--workspace-muted)]">
               No reference links shared yet. You can add them while updating
               your brief.
             </p>
           )}
-          <div className="mt-6 flex items-start gap-3 rounded-xl border border-[#e5eadc] p-4">
-            <ShieldCheck size={19} className="mt-0.5 shrink-0 text-[#879878]" />
-            <p className="text-xs leading-relaxed text-[#87917a]">
+          <div className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--workspace-line)] p-4">
+            <ShieldCheck size={19} className="mt-0.5 shrink-0 text-[var(--commerce-green)]" />
+            <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">
               Share files and access using your agreed secure method. Account
               passwords do not belong in your project brief.
             </p>
@@ -675,27 +675,27 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
       {engagement ? (
         <>
           <div className="mb-5 grid gap-4 md:grid-cols-3">
-            <section className="rounded-[20px] bg-[#eae4f4] p-6">
-              <p className="text-xs text-[#806893]">Your engagement</p>
+            <section className="rounded-[20px] bg-[var(--workspace-tint)] p-6">
+              <p className="text-xs text-[var(--workspace-muted)]">Your engagement</p>
               <p className="mt-4 text-3xl font-medium tracking-[-1px]">
                 {engagement.plan}
               </p>
-              <p className="mt-3 text-xs leading-relaxed text-[#806893]">
+              <p className="mt-3 text-xs leading-relaxed text-[var(--workspace-muted)]">
                 {engagement.summary}
               </p>
             </section>
-            <section className="rounded-[20px] bg-[#e1edf8] p-6">
-              <p className="text-xs text-[#65809a]">Setup fee</p>
+            <section className="rounded-[20px] bg-[var(--workspace-tint)] p-6">
+              <p className="text-xs text-[var(--workspace-muted)]">Setup fee</p>
               <p className="mt-4 text-3xl font-medium tracking-[-1px]">
                 <span className="mr-2 text-base">{engagement.currency}</span>
                 {engagement.setupFee.toLocaleString()}
               </p>
-              <p className="mt-3 text-xs text-[#65809a]">
+              <p className="mt-3 text-xs text-[var(--workspace-muted)]">
                 As recorded in your engagement
               </p>
             </section>
-            <section className="rounded-[20px] bg-[#e0eee3] p-6">
-              <p className="text-xs text-[#617a61]">Ongoing fee</p>
+            <section className="rounded-[20px] bg-[var(--workspace-tint)] p-6">
+              <p className="text-xs text-[var(--workspace-muted)]">Ongoing fee</p>
               <p className="mt-4 text-3xl font-medium tracking-[-1px]">
                 {engagement.recurringFee !== undefined ? (
                   <>
@@ -708,7 +708,7 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
                   "Not recorded"
                 )}
               </p>
-              <p className="mt-3 text-xs text-[#617a61]">
+              <p className="mt-3 text-xs text-[var(--workspace-muted)]">
                 {engagement.recurringFee !== undefined
                   ? "Per month, according to agreed scope"
                   : "Ongoing work follows your agreement"}
@@ -726,21 +726,21 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
                   >
                     <CircleCheck
                       size={17}
-                      className="mt-0.5 shrink-0 text-[#879878]"
+                      className="mt-0.5 shrink-0 text-[var(--commerce-green)]"
                     />
                     {item}
                   </li>
                 ))}
               </ul>
-              <details className="mt-6 border-t border-[#eef0e9] pt-4">
+              <details className="mt-6 border-t border-[var(--workspace-line)] pt-4">
                 <summary className="cursor-pointer text-xs font-medium">
                   Exclusions & third-party costs
                 </summary>
-                <p className="mt-3 text-xs leading-relaxed text-[#87917a]">
+                <p className="mt-3 text-xs leading-relaxed text-[var(--workspace-muted)]">
                   {engagement.exclusions.join(", ") ||
                     "See your agreement for exclusions."}
                 </p>
-                <p className="mt-3 text-xs leading-relaxed text-[#87917a]">
+                <p className="mt-3 text-xs leading-relaxed text-[var(--workspace-muted)]">
                   {engagement.thirdPartyCosts}
                 </p>
               </details>
@@ -764,31 +764,31 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
                     key={item.label}
                     className="flex items-center gap-2.5 text-xs"
                   >
-                    <FileText size={17} className="text-[#879878]" />
+                    <FileText size={17} className="text-[var(--commerce-green)]" />
                     <span className="flex-1">{item.label}</span>
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] ${item.verified ? "bg-[#edf2e5] text-[#6e805b]" : "bg-[#f3efdc] text-[#897d45]"}`}
+                      className={`rounded-full px-2.5 py-1 text-[10px] ${item.verified ? "bg-[var(--workspace-tint)] text-[var(--workspace-muted)]" : "bg-[#f3efdc] text-[#74652b]"}`}
                     >
                       {item.verified ? "Verified" : "Pending"}
                     </span>
                   </div>
                 ))}
               </div>
-              <dl className="mt-6 space-y-4 border-t border-[#eef0e9] pt-4 text-xs">
+              <dl className="mt-6 space-y-4 border-t border-[var(--workspace-line)] pt-4 text-xs">
                 <div>
-                  <dt className="text-[#939b88]">Billing name</dt>
+                  <dt className="text-[var(--workspace-muted)]">Billing name</dt>
                   <dd className="mt-1.5">
                     {engagement.legalName || "Not recorded"}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[#939b88]">Billing email</dt>
+                  <dt className="text-[var(--workspace-muted)]">Billing email</dt>
                   <dd className="mt-1.5 break-all">
                     {engagement.billingEmail || "Not recorded"}
                   </dd>
                 </div>
               </dl>
-              <p className="mt-5 text-[11px] leading-relaxed text-[#939b88]">
+              <p className="mt-5 text-[11px] leading-relaxed text-[var(--workspace-muted)]">
                 Payment status reflects agency verification. This workspace does
                 not collect payments.
               </p>
@@ -799,19 +799,19 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
         <section
           className={`${panelClass} flex flex-col items-center py-16 text-center`}
         >
-          <span className="mb-5 flex size-16 items-center justify-center rounded-2xl bg-[#eae4f4] text-[#806893]">
+          <span className="mb-5 flex size-16 items-center justify-center rounded-2xl bg-[var(--workspace-tint)] text-[var(--workspace-muted)]">
             <FileText size={27} />
           </span>
           <h2 className="text-xl font-medium">Your agreement comes next.</h2>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-[#87917a]">
+          <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--workspace-muted)]">
             Once your agency records your engagement, you’ll see the approved
             scope, fees, billing details, and verification status here.
           </p>
-          <div className="mt-7 flex flex-wrap justify-center gap-3 text-[11px] text-[#939b88]">
-            <span className="rounded-full bg-[#f3f5ef] px-3 py-2">
+          <div className="mt-7 flex flex-wrap justify-center gap-3 text-[11px] text-[var(--workspace-muted)]">
+            <span className="rounded-full bg-[var(--workspace-soft)] px-3 py-2">
               Agreement awaiting confirmation
             </span>
-            <span className="rounded-full bg-[#f3f5ef] px-3 py-2">
+            <span className="rounded-full bg-[var(--workspace-soft)] px-3 py-2">
               40% advance awaiting verification
             </span>
           </div>
