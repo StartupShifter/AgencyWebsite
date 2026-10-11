@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectPreview } from "@/components/projects/project-preview";
-import { hasConceptPreviews, projects } from "@/lib/projects";
+import { projects } from "@/lib/projects";
 import { twLanding } from "@/lib/landing-styles";
 import "./projects-section.css";
 

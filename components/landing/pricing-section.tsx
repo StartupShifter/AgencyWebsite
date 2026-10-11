@@ -1,4 +1,4 @@
-import { ArrowUpRight, Box, Check, Phone, Sparkles } from "lucide-react";
+import { ArrowUpRight, Box, Check, Sparkles } from "lucide-react";
 
 import { twLanding } from "@/lib/landing-styles";
 import "./pricing-section.css";

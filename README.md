@@ -34,3 +34,9 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Client portal
+
+Login and signup use Better Auth + Convex. The onboarding library covers all 42 topics and 127 questions from the parent `onboarding.md`, with conditional routes, interactive answers, saved drafts, review, and a client dashboard.
+
+Read [authentication setup](docs/authentication.md) and [onboarding setup and verification](docs/onboarding.md). Run `bun run dev:backend` alongside `bun run dev`. Google/Facebook require OAuth credentials. Live onboarding answer collection waits for approved privacy configuration; `http://localhost:3000/onboarding/preview` is a development-only in-memory preview.

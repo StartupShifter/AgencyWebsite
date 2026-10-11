@@ -1,0 +1,7 @@
+import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
+
+export type PrivacySettings = { approved: boolean; text: string; contact: string; retention: string; version: string };
+export function PrivacyNotice({ privacy, compact = false }: { privacy: PrivacySettings; compact?: boolean }) {
+  return <section className={`ob-notice ${compact ? "ob-notice-compact" : ""}`} aria-label="Onboarding privacy information"><ShieldCheck size={22} aria-hidden="true" /><div><h2>{privacy.approved ? "Your details, with a clear purpose." : "Onboarding privacy information is awaiting approval."}</h2><p>Onboarding answers are stored in Starter Shifter’s Convex database and linked to your signed-in account. They help prepare and review your project brief. Each client account can access its own answers.</p>{privacy.approved ? <><p className="ob-policy-text">{privacy.text}</p><p>Retention: {privacy.retention}</p><p>Privacy contact: {privacy.contact}</p></> : <p>Live collection is paused until the agency has approved the notice, retention details, and privacy contact. Your project answers cannot be saved or submitted yet.</p>}<p>Share document links and redacted examples. Keep passwords, verification codes, API secrets, payment-card details, and raw customer, patient, or employee records out of this form.</p><Link href="/policies/onboarding-privacy" target="_blank" rel="noopener noreferrer">Read onboarding privacy information (opens a new tab) →</Link></div></section>;
+}
