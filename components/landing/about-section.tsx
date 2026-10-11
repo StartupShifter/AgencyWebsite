@@ -15,7 +15,6 @@ export function AboutSection() {
         </div>
       </div>
       <AboutBenefits />
-      <p className="aboutBenefits-scope">Illustrations of our services. Scope and supported tools agreed per project. Ongoing care depends on your plan; third-party costs are separate.</p>
     </section>
   );
 }

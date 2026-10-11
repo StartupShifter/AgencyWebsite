@@ -102,10 +102,6 @@ export function ProcessSection() {
           </li>
         ))}
       </ol>
-      <p className="process-onboarding">
-        Before we begin: an agreed scope, signed contract, 40% advance, and your
-        company details. Then we bring you into your onboarding group.
-      </p>
     </section>
   );
 }

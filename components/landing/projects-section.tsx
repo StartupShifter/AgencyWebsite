@@ -127,7 +127,6 @@ export function ProjectsSection() {
             {!reducedMotion && <Button variant="ghost" size="icon-lg" className="size-11 rounded-full" aria-label={paused ? "Play project animation" : "Pause project animation"} aria-pressed={paused} onClick={() => setPaused((current) => !current)}>{paused ? <Play aria-hidden="true" /> : <Pause aria-hidden="true" />}</Button>}
           </div>
         </div>
-        {hasConceptPreviews && <p className="mt-5 max-w-md text-xs leading-5 text-muted-foreground">Concept previews shown. Completed project screenshots will be added to the collection.</p>}
     </section>
   );
 }

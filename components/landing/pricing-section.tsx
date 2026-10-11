@@ -118,23 +118,6 @@ export function PricingSection() {
           ))}
         </div>
 
-        <aside className="ss-pricing-consultation" aria-labelledby="pricing-help">
-          <div className="ss-pricing-help-icons" aria-hidden="true">
-            <span>
-              <ArrowUpRight />
-            </span>
-            <span>
-              <Phone />
-            </span>
-          </div>
-          <h3 id="pricing-help">Not sure which plan is right for you?</h3>
-          <p>Tell us about your business. We’ll help you find the right fit.</p>
-          <a href="#contact" className="ss-pricing-button ss-pricing-help-button">
-            Let’s talk about your project
-            <ArrowUpRight aria-hidden="true" />
-          </a>
-        </aside>
-
         <p className="ss-pricing-terms">
           Deliverables, quantities, supported tools, and monthly coverage are
           agreed before work begins. You provide business content, account
