@@ -42,7 +42,11 @@ No public contact address was available when implemented. ContactSection accepts
 
 ## Content boundaries
 
-Pricing shows the confirmed $1,000 default reference, adjustable up or down by scope, with currency and final quote agreed individually. Monthly coverage and third-party costs remain separate. No fixed packages, delivery deadlines, invented case studies, or testimonials are published.
+Pricing now shows owner-approved Basic ($1,000 one-time) and Pro ($2,000 setup plus $500/month maintenance). Basic covers digitalization and post templates; Pro adds ongoing support, lead generation, client handling, and growth strategy. Exact deliverables and monthly coverage are agreed, with third-party costs separate and no guaranteed lead volumes. No delivery deadlines, invented case studies, or testimonials are published.
+
+## Pricing reference (2026-10-11)
+
+The owner supplied a two-plan pricing reference. The section follows its centered heading, pale rounded shared frame, unfilled Basic card and white Pro card, checklist inclusions, dark pill buttons, and rounded gradient help panel. DM Sans and existing emerald/mint/charcoal tokens match the application. Both plans expose their inclusions; Pro explicitly inherits Basic. Payment-type copy replaces the monthly/annual toggle because no annual offer was confirmed. Brand/phone icons replace an unverified staff portrait. The help link uses the existing contact flow without claiming a booking integration. At 600px and below the cards stack; focus states, 46px links, and reduced-motion behavior are included. Component-prefixed styles live in `components/landing/pricing-section.css`.
 
 ## Earlier image provenance (retained asset)
 

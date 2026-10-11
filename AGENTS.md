@@ -30,8 +30,8 @@ This repository is currently a Next.js starter, not a published description of t
 ## Working rules
 
 - Preserve confirmed company facts and distinguish **Confirmed**, **Proposed**, **TBD**, and **Conflict**. Existing placeholder content and unverified site claims are not business evidence.
-- Write clear, specific, client-friendly copy tied to practical needs. Explain technical terms. State the agreed service scope, limits, client responsibilities, third-party charges, and dependencies explicitly. Starter Shifter has no preset packages; do not say “we handle everything.”
-- The owner gave a $1,000 default one-time reference price and a 40% advance requirement; read [docs/company-context.md](docs/company-context.md) for their limits before using either. Do not invent other prices, guarantees, clients, testimonials, results, certifications, partnerships, awards, or statistics. Keep unresolved terms as questions, not published promises.
+- Write clear, specific, client-friendly copy tied to practical needs. Explain technical terms. State the agreed service scope, limits, client responsibilities, third-party charges, and dependencies explicitly. The owner now offers Basic and Pro plans (2026-10-11); do not say “we handle everything.”
+- The owner confirmed Basic at $1,000 one-time and Pro at $2,000 setup plus $500/month maintenance, with a 40% advance requirement; read [docs/company-context.md](docs/company-context.md) for their limits before using them. Do not invent other prices, guarantees, clients, testimonials, results, certifications, partnerships, awards, or statistics. Keep unresolved terms as questions, not published promises.
 - Keep credentials, tokens, passwords, private client data, and confidential account details out of these files. Update the docs when the owner explicitly changes an offering or policy.
 
 <!-- BEGIN:nextjs-agent-feedback -->

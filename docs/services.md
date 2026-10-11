@@ -1,6 +1,8 @@
 # Service scope guide
 
-The owner confirmed these ten service areas and describes a $1,000 default one-time engagement covering the listed services, with a flexible price as services are added or removed. **Exact features, quantities, and boundaries at that price remain undefined.** The scope items below are possibilities to define for each client, not automatic unlimited inclusions. Specify setup versus ongoing management, deliverables and quantities, client inputs, dependencies, exclusions, price factors, and timing before sale. See [company-context.md](company-context.md) for pricing and publication rules and [questions.md](questions.md) for open decisions.
+The owner confirmed these ten service areas and, on **2026-10-11**, requested two public plans: **Basic at $1,000 one-time** and **Pro at $2,000 setup plus $500/month maintenance**. This supersedes the earlier no-package/default-reference model. Basic covers one-time digitalization and basic post templates; the client handles posting, ads, and lead generation. Pro adds agency-managed ongoing maintenance, lead generation, client handling, and business growth strategy.
+
+**Exact quantities, complexity limits, supported tools, monthly capacity, and cadence remain to be agreed.** The scope items below help define each client's deliverables; they are not unlimited inclusions. Separate setup from ongoing management, client inputs, dependencies, exclusions, third-party costs, and timing before sale. See [company-context.md](company-context.md) and [questions.md](questions.md).
 
 ## 1. Ecommerce websites and applications
 
@@ -14,7 +16,7 @@ The owner confirmed these ten service areas and describes a $1,000 default one-t
 
 ## 2. Social media and campaign management
 
-- **Confirmed owner clarification (2026-10-11):** Social business-page setup is offered on agreed channels. The goal is establishing a digital presence; lead generation and lead volumes are not guaranteed, and the agency does not take responsibility for how many leads a client receives.
+- **Confirmed owner pricing update (2026-10-11):** Basic includes social business-page setup and basic post templates. It excludes agency-run ads and lead generation. Pro includes agency-managed lead generation, campaign work, client handling, and business growth strategy. Lead volumes and growth results are not guaranteed; channels, content quantities, handling/escalation responsibilities, approvals, and campaign scope must be agreed. Ad spend stays separate from agency fees.
 - **Business need and confirmed service:** Help clients maintain and manage social media campaigns and a consistent presence.
 - **Potential scoped deliverables:** Strategy/planning, content calendar, agreed content creation, posting and scheduling, organic campaign management, monitoring, reporting, and optimization. Define networks, formats, quantities, approvals, and whether community management or paid advertising is included.
 - **Define the engagement:** Separate one-time account/campaign setup from any ongoing management and state its monthly coverage and charge. The client may need to provide account access, brand material, product information, legal approvals, and a contact for timely content approval.
@@ -59,7 +61,7 @@ The owner confirmed these ten service areas and describes a $1,000 default one-t
 
 - **Business need and confirmed service:** Keep agreed websites and systems maintained and provide technical help after launch.
 - **Potential scoped deliverables:** Routine checks, applicable updates and compatibility checks, bug fixes, monitoring, backup/recovery tasks where agreed, and support handling.
-- **Define the engagement:** Maintenance requested as an ongoing service carries a separate monthly charge based on chosen coverage. Specify covered systems, included capacity, support channel/hours, response targets, escalation, and work billed separately. The client may need to maintain licenses/accounts, provide access, report issues with evidence, and approve disruptive changes.
+- **Define the engagement:** Pro's confirmed ongoing maintenance charge is $500/month, in addition to its $2,000 setup fee. Basic's $1,000 fee covers one-time setup; ongoing maintenance is separate and needs agreement. Specify covered systems, included capacity, support channel/hours, response targets, escalation, and work billed separately. The client may need to maintain licenses/accounts, provide access, report issues with evidence, and approve disruptive changes.
 - **Price/timing drivers and boundaries:** Platform mix, site complexity, update risk, incident volume, coverage hours, recovery requirements, and legacy issues. Distinguish maintenance, defect correction, and new feature development. Do not imply 24/7 coverage, unlimited changes, resolution guarantees, or an SLA without approval.
 - **Website explanation:** Publish a simple coverage table once approved: tasks, capacity, hours, response method, exclusions, and how new work is quoted.
 

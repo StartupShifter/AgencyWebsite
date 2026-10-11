@@ -26,7 +26,7 @@ const steps = [
     title: ["A social", "presence"],
     description: "We set up your business pages on the agreed social channels and create a consistent presence. The focus is bringing your company online and making it easier to find and understand.",
     details: ["Page setup", "Brand consistency", "Content direction"],
-    note: "Lead generation and lead volumes are not guaranteed. Ongoing management is scoped separately.",
+    note: "Basic includes post templates; you manage posting and ads. Pro adds lead generation and growth work, with no guaranteed lead volume.",
     icon: MessagesSquare,
     phase: "Establish",
     tone: "social",

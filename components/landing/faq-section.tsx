@@ -11,13 +11,13 @@ const questions = [
     id: "services",
     question: "Can we work on just one part of my business?",
     answer:
-      "Yes. We tailor each engagement to your priorities, whether that’s an ecommerce website, a connected order workflow, creative direction, or another agreed service. There are no preset packages, and the selected work is written into your project scope.",
+      "Yes. Basic and Pro describe our digital setup and ongoing growth options. If you need a smaller or different engagement, we can discuss a tailored scope. The selected deliverables and price are agreed before work begins.",
   },
   {
     id: "price",
-    question: "What does the $1,000 reference cover?",
+    question: "What’s the difference between Basic and Pro?",
     answer:
-      "It’s a default reference for a one-time project, with the price adjusted as services are added or removed. Exact deliverables, quantities, complexity, currency, and price are agreed in your quote. It doesn’t mean unlimited work or every service is automatically included.",
+      "Basic costs $1,000 once and covers the agreed digital setup: research and design, website or ecommerce application development, social page setup and basic post templates, automation, supported integrations, and launch. You manage posting, ads, and lead generation after handover. Pro costs $2,000 for setup plus $500 per month for ongoing maintenance and support, with lead generation, campaign management, client handling, and business growth strategy. We agree the deliverables and coverage in advance; lead volumes are not guaranteed, and third-party costs including ad spend are separate.",
   },
   {
     id: "getting-started",
@@ -41,7 +41,7 @@ const questions = [
     id: "support",
     question: "Can you help after launch?",
     answer:
-      "Yes. Maintenance, technical support, and other ongoing services can be arranged for a separate monthly charge. We agree on the systems covered, tasks, capacity, and support terms. New features and changes outside that coverage need their own scope.",
+      "Yes. Pro includes ongoing maintenance and support for $500 per month in addition to its $2,000 setup fee. Basic is a one-time setup; ongoing support is separate. We agree on the covered systems, tasks, capacity, and support terms. New features and changes outside that coverage need their own scope.",
   },
 ];
 

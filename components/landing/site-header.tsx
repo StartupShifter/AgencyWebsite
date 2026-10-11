@@ -67,7 +67,7 @@ const sections: NavSection[] = [
       { icon: Presentation, title: "Presentations & planning", description: "A shared view of your project, early.", href: "/services/project-planning" },
     ],
     footer: {
-      text: "One-time engagements from a $1,000 reference, shaped to your scope.",
+      text: "Basic for $1,000 once. Pro for $2,000 plus $500/month.",
       linkLabel: "See pricing",
       href: "#pricing",
     },
@@ -75,9 +75,9 @@ const sections: NavSection[] = [
   {
     label: "Pricing",
     items: [
-      { icon: BadgeDollarSign, title: "One-time engagement", description: "From a $1,000 reference, adjusted to your scope.", href: "#pricing" },
-      { icon: CalendarCheck, title: "Monthly care", description: "Ongoing service, billed monthly by coverage.", href: "#pricing" },
-      { icon: Scale, title: "How pricing works", description: "What moves your price up or down.", href: "#pricing" },
+      { icon: BadgeDollarSign, title: "Basic plan", description: "$1,000 once to bring your business online.", href: "#pricing" },
+      { icon: CalendarCheck, title: "Pro plan", description: "$2,000 setup plus $500/month for ongoing support.", href: "#pricing" },
+      { icon: Scale, title: "Compare plans", description: "Digital setup or ongoing growth and care.", href: "#pricing" },
       { icon: Handshake, title: "Onboarding terms", description: "Signed contract and 40% advance to begin.", href: "#process" },
     ],
   },
