@@ -1,0 +1,56 @@
+/* Scoped monochrome SVG interactions; section layout remains in Tailwind. */
+.service-motion-card {
+  --art-open: 0;
+  --art-ease: cubic-bezier(.23, 1, .32, 1);
+}
+.service-motion-demo {
+  opacity: .65;
+  transition: opacity 220ms ease;
+}
+.service-motion-lines {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.service-motion-plane { fill: var(--background); }
+.service-motion-detail { opacity: .5; }
+.service-motion-webRear, .service-motion-webMiddle, .service-motion-webFront,
+.service-motion-socialRear, .service-motion-socialMiddle, .service-motion-socialFront,
+.service-motion-aiSource, .service-motion-aiTop, .service-motion-aiBottom, .service-motion-aiHub {
+  transition: transform 450ms var(--art-ease);
+}
+.service-motion-webRear { transform: translateY(calc(var(--art-open) * 7px)); }
+.service-motion-webMiddle { transform: translateY(calc(var(--art-open) * -2px)); }
+.service-motion-webFront { transform: translateY(calc(var(--art-open) * -12px)); }
+.service-motion-socialRear { transform: translate(calc(var(--art-open) * -10px), calc(var(--art-open) * -4px)); }
+.service-motion-socialMiddle { transform: translateY(calc(var(--art-open) * -3px)); }
+.service-motion-socialFront { transform: translate(calc(var(--art-open) * 10px), calc(var(--art-open) * 3px)); }
+.service-motion-aiHub { transform: translateY(calc(var(--art-open) * -6px)); }
+.service-motion-aiTop { transform: translateY(calc(var(--art-open) * -3px)); }
+.service-motion-aiBottom { transform: translateY(calc(var(--art-open) * 3px)); }
+.service-motion-socialOrbit, .service-motion-aiSignal, .service-motion-nodeTick {
+  opacity: 0;
+  transition: opacity 250ms ease;
+}
+.service-motion-socialOrbit, .service-motion-aiSignal { opacity: calc(var(--art-open) * .5); }
+.service-motion-socialHeart { transition: fill 200ms ease; }
+.service-motion-card[data-expanded="true"] { --art-open: 1.3; }
+.service-motion-card[data-expanded="true"] .service-motion-demo { opacity: .9; }
+.service-motion-card[data-expanded="true"] .service-motion-socialHeart { fill: currentColor; }
+.service-motion-card[data-expanded="true"] .service-motion-nodeTick { opacity: 1; }
+.service-motion-card[data-expanded="true"] .service-motion-nodeIdle { opacity: 0; }
+.service-motion-card:has(.service-motion-demo:focus-visible) * { transition: none; }
+@media (hover: hover) and (pointer: fine) {
+  .service-motion-card:hover { --art-open: 1; }
+  .service-motion-card:hover .service-motion-demo { opacity: .9; }
+  .service-motion-card[data-expanded="true"]:hover { --art-open: 1.3; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .service-motion-card * { transition: none; }
+  /* Keep the SVG's fixed projection transforms, only remove animated offsets. */
+  .service-motion-card, .service-motion-card:hover,
+  .service-motion-card[data-expanded="true"],
+  .service-motion-card[data-expanded="true"]:hover { --art-open: 0; }
+}

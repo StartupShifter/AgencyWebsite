@@ -8,7 +8,7 @@ The latest supplied reference inspires a centered hero with a rounded emerald-to
 
 | Role                       | Token                | Value   |
 | -------------------------- | -------------------- | ------- |
-| Page                       | background           | #f7f7f2 |
+| Page                       | background           | #ffffff |
 | Text / primary button      | foreground / primary | #20221c |
 | Highlight                  | accent               | #d5fa43 |
 | Muted surface              | secondary            | #eaece3 |
@@ -18,6 +18,8 @@ The latest supplied reference inspires a centered hero with a rounded emerald-to
 DM Sans is used throughout; Geist Mono remains available for monospace UI. Hero-specific tokens are commerce-deep (#075c3f), commerce-green (#08734f), commerce-mint (#9ed9b8), commerce-white (#ffffff), commerce-ink (#233e32), and commerce-soft (#edf5ef). The type hierarchy, section gutters, responsive breakpoints, and semantic tokens live in app/globals.css. The hero adapts at 1000px, 760px, and 480px; small phones show the central storefront without the side panels. Other page sections stack at 760px. Reduced motion disables smooth scrolling and transitions.
 
 ## Component structure
+
+The service section uses three owner-confirmed groups: Web application, Social media, and AI workflow. Original monochrome SVG line illustrations depict browser layers, social posts, and connected workflow nodes. The blocks use fine dividers, concise descriptions, and no tags or scope footnote. Hover subtly separates the layers; click, tap, or keyboard activation toggles a slightly expanded state. A second activation or Escape resets it. Layout uses the shared Tailwind map; scoped animation classes in `service-card.css` handle motion. Reduced motion keeps the fixed SVG projections and disables movement. The page background is pure white.
 
 - app/page.tsx composes the page without embedding section designs.
 - components/landing/ contains the header, hero, service illustrations, about, process, pricing, FAQ, contact flow, brand, and footer.

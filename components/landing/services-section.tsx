@@ -1,195 +1,49 @@
+import { ServiceCard } from "@/components/landing/service-card";
 import { twLanding } from "@/lib/landing-styles";
-import {
-  ArrowUpRight,
-  Store,
-  PenTool,
-  Workflow,
-  MessagesSquare,
-  Package,
-  Megaphone,
-  Check,
-  ShoppingBag,
-  Truck,
-  Database,
-  PanelsTopLeft,
-  MousePointer2,
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
+
 const services = [
   {
-    icon: Store,
-    title: "A storefront that feels like you.",
-    text: "Ecommerce websites and applications shaped around your products, your customers, and the way you sell.",
-    tags: ["Ecommerce", "Store design"],
-    visual: "store",
+    title: "Web application",
+    text: "Websites and web applications, with design and development shaped around how your business works.",
+    visual: "web" as const,
   },
   {
-    icon: Workflow,
-    title: "Your tools, working together.",
-    text: "Connect your store, customer records, and business software. Give repeated tasks a simpler path from start to finish.",
-    tags: ["ERP & CRM", "Automation"],
-    visual: "workflow",
+    title: "Social media",
+    text: "Content planning, creative direction, and campaign management for a consistent social presence.",
+    visual: "social" as const,
   },
   {
-    icon: PenTool,
-    title: "A direction worth building on.",
-    text: "Company, market, and competitor research. Thoughtful creative direction and Figma drafts to explore what comes next.",
-    tags: ["Research", "Creative direction"],
-    visual: "design",
+    title: "AI workflow",
+    text: "Connected tools, task automation, and customer chat flows that bring your team in when needed.",
+    visual: "ai" as const,
   },
 ];
-function ServiceVisual({ type }: { type: string }) {
-  if (type === "store")
-    return (
-      <div className={twLanding("service-art store-art")} aria-hidden="true">
-        <div className={twLanding("mini-browser")}>
-          <div className={twLanding("mini-browser-bar")}>
-            <i />
-            <i />
-            <i />
-            <span>your next storefront</span>
-          </div>
-          <div className={twLanding("mini-store")}>
-            <div>
-              <span>
-                Made for
-                <br />
-                your everyday.
-              </span>
-              <div className={twLanding("mini-store-button")}>Discover the collection</div>
-            </div>
-            <ShoppingBag strokeWidth={1} />
-          </div>
-          <div className={twLanding("mini-store-bottom")}>
-            <span>Thoughtful design</span>
-            <span>
-              Seamless shopping <ArrowUpRight />
-            </span>
-          </div>
-        </div>
-      </div>
-    );
-  if (type === "workflow")
-    return (
-      <div className={twLanding("service-art workflow-art")} aria-hidden="true">
-        <div className={twLanding("workflow-node")}>
-          <Store />
-          <span>Your store</span>
-        </div>
-        <div className={twLanding("workflow-connector")} />
-        <div className={twLanding("workflow-hub")}>
-          <Workflow />
-        </div>
-        <div className={twLanding("workflow-branches")}>
-          <div>
-            <Package />
-            <span>Inventory</span>
-            <Check />
-          </div>
-          <div>
-            <Truck />
-            <span>Shipping</span>
-            <Check />
-          </div>
-          <div>
-            <Database />
-            <span>Customer records</span>
-            <Check />
-          </div>
-        </div>
-      </div>
-    );
-  return (
-    <div className={twLanding("service-art design-art")} aria-hidden="true">
-      <div className={twLanding("design-sheet")}>
-        <span className={twLanding("design-sheet-title")}>
-          <PanelsTopLeft /> A clear creative direction
-        </span>
-        <div className={twLanding("design-swatches")}>
-          <i />
-          <i />
-          <i />
-        </div>
-        <div className={twLanding("design-type")}>
-          Aa<span>Ideas take shape.</span>
-        </div>
-      </div>
-      <div className={twLanding("design-cursor")}>
-        <MousePointer2 />
-        <span>Your next chapter</span>
-      </div>
-    </div>
-  );
-}
+
 export function ServicesSection() {
   return (
-    <section
-      id="services"
-      className={twLanding("section-shell section-space")}
-      aria-labelledby="services-heading"
-    >
+    <section id="services" className={twLanding("section-shell section-space")} aria-labelledby="services-heading">
       <div className={twLanding("section-topline")}>
         <div>
           <p className={twLanding("section-kicker")}>What we do</p>
           <h2 id="services-heading" className={twLanding("section-heading")}>
-            Good on the outside.
-            <br />
-            Connected on the inside.
+            Good on the outside.<br />Connected on the inside.
           </h2>
         </div>
         <p className={twLanding("section-intro")}>
-          A digital presence is only the beginning. We help connect the
-          experience your customers see with the operations that make it work.
+          Your online presence. Your social voice. The workflows behind it.
+          Three connected services, shaped around your business.
         </p>
       </div>
       <div className={twLanding("services-grid")}>
-        {services.map(({ icon: Icon, title, text, tags, visual }) => (
-          <article className={twLanding("service-item")} key={title}>
-            <ServiceVisual type={visual} />
+        {services.map(({ title, text, visual }) => (
+          <ServiceCard key={visual} type={visual}>
             <div className={twLanding("service-item-copy")}>
-              <Icon className={twLanding("service-icon")} aria-hidden="true" />
               <h3>{title}</h3>
               <p>{text}</p>
-              <div className={twLanding("service-tags")}>
-                {tags.map((tag) => (
-                  <Badge variant="outline" key={tag}>
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
             </div>
-          </article>
+          </ServiceCard>
         ))}
       </div>
-      <div className={twLanding("services-more")}>
-        {[
-          {
-            icon: Megaphone,
-            title: "Social & campaigns",
-            text: "Plan your content and manage your presence.",
-          },
-          {
-            icon: MessagesSquare,
-            title: "Chatbots & customer flows",
-            text: "Answer common questions. Route the rest.",
-          },
-          {
-            icon: Package,
-            title: "Operations & ongoing care",
-            text: "Stock, shipping workflows, maintenance & performance.",
-          },
-        ].map(({ icon: Icon, title, text }) => (
-          <div key={title}>
-            <Icon aria-hidden="true" />
-            <h3>{title}</h3>
-            <p>{text}</p>
-          </div>
-        ))}
-      </div>
-      <p className={twLanding("scope-note")}>
-        The right combination for your business. Deliverables, integrations, and
-        ongoing work are agreed in your project scope.
-      </p>
     </section>
   );
 }

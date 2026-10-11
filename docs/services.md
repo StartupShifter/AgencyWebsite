@@ -4,6 +4,8 @@ The owner confirmed these ten service areas and describes a $1,000 default one-t
 
 ## 1. Ecommerce websites and applications
 
+**Confirmed homepage grouping (2026-10-11):** The owner names three general service areas: **Web application**, **Social media**, and **AI workflow**. Web application covers the website/application offering and related design; Social media covers the social presence and campaign offering; AI workflow groups automation, chatbots, and connected tools. This grouping does not establish new platform support, unlimited scope, or fully autonomous operation. Use the boundaries below when defining a project.
+
 - **Business need and confirmed service:** Help a business sell online through an ecommerce website or application. The agency builds on Shopify, WordPress + WooCommerce, or another suitable platform or website builder **subject to support confirmation**. “Woo” is shorthand for WooCommerce, not a separate platform.
 - **Potential scoped deliverables:** Requirements and platform recommendation; store structure and navigation; theme selection/customization; agreed custom design or development; products, variants, collections/categories, and catalog organization; cart and checkout configuration within platform capabilities; payment and shipping setup; relevant system integrations; mobile usability; testing, launch, and handover.
 - **Define the engagement:** Identify the one-time build scope and separately agreed ongoing store management, if any. The client may need to provide product data, imagery, copy, policies, tax/shipping rules, accounts, payment approval, and timely reviews.
