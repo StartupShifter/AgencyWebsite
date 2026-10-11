@@ -2,6 +2,16 @@
 
 Implementation notes, not additional company policy. Business copy remains governed by company-context.md and services.md.
 
+## Footer (2026-10-11)
+
+The owner's final direction is a simple footer focused on navigation and company information. It uses the application's DM Sans, charcoal, emerald accents, and a quiet off-white surface. HTML navigation covers Services, Company, and Information, alongside the brand, project CTA, copyright, and back-to-top link. It is shared across the homepage, Products, About, and policy information pages. Mobile stacks the navigation in two columns.
+
+The footer has no illustrated scene, platform selectors, platform logos, screenshots, large closing headline, or decorative motion effects. Styles are component-prefixed in site-footer.css.
+
+The About page uses confirmed company facts. Privacy, Cookies, and Service terms destinations show their pending approval status and limited current information; they are not complete approved legal policies and are excluded from search indexing. No new contractual terms are invented. The current brief downloads locally without transmitting an enquiry. Replace the pending policy content after the owner supplies approved text, and revisit privacy information if the contact flow changes.
+
+Official social handles and a public contact email have not been supplied. SiteFooter accepts an optional socialLinks array. Only approved URLs should be passed; the default displays an honest coming-soon message instead of invented profile links.
+
 ## Project showcase (2026-10-11)
 
 The owner requested an infinite project showcase immediately after “What we do,” with a “View All Products” link to `/products`. The implementation uses a large featured browser preview over a continuously moving ribbon, with previous, next, and pause controls. Motion pauses during hover/focus, outside the viewport, in hidden tabs, and for reduced-motion preferences. The Products page lists the same collection; featured previews link to their corresponding entries.

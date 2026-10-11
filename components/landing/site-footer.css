@@ -1,0 +1,60 @@
+.agencyFooter {
+  --footer-ink: var(--foreground);
+  --footer-muted: var(--muted-foreground);
+  margin: 28px 12px 12px;
+  overflow: hidden;
+  border-radius: 28px;
+  color: var(--footer-ink);
+  background: #f7f8f5;
+}
+.agencyFooter-shell { max-width: 1344px; margin-inline: auto; padding-inline: 40px; }
+.agencyFooter-top { display: grid; grid-template-columns: 1.55fr 1fr 1fr .9fr 1.25fr; gap: 34px; padding-block: 64px 40px; }
+.agencyFooter-brand > p { max-width: 245px; font-size: 14px; line-height: 1.7; margin-top: 21px; color: var(--footer-muted); }
+.agencyFooter-brand .brand-mark { background: var(--commerce-green); color: white; }
+.agencyFooter-brand .agencyFooter-socialPending { font-size: 12px; margin-top: 23px; }
+.agencyFooter-social { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.agencyFooter-social a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border: 1px solid #c6d7ca; border-radius: 8px; padding: 9px; font-size: 12px; }
+.agencyFooter-social svg { width: 17px; height: 17px; }
+.agencyFooter-navHeading { display: flex; align-items: center; gap: 9px; margin-bottom: 12px; font-size: 14px; font-weight: 650; }
+.agencyFooter-navHeading::before { content: ""; width: 7px; height: 7px; background: var(--commerce-green); }
+.agencyFooter-top ul { padding: 0; margin: 0; list-style: none; }
+.agencyFooter-top li a { display: inline-flex; align-items: center; min-height: 36px; font-size: 13px; color: var(--footer-muted); text-underline-offset: 5px; }
+.agencyFooter-policyNote { max-width: 150px; margin-top: 8px; font-size: 12px; line-height: 1.6; color: var(--footer-muted); }
+.agencyFooter-project h2 { font-size: 24px; line-height: 1.15; font-weight: 550; letter-spacing: -.055em; }
+.agencyFooter-project p { font-size: 13px; line-height: 1.65; color: var(--footer-muted); margin-top: 13px; }
+.agencyFooter-cta { display: inline-flex; align-items: center; justify-content: space-between; gap: 18px; min-height: 46px; padding: 10px 17px; border-radius: 8px; margin-top: 17px; color: white; background: var(--commerce-green); font-size: 13px; font-weight: 550; transition: transform 160ms ease-out, background-color 160ms ease-out; }
+.agencyFooter-cta svg { width: 19px; height: 19px; }
+.agencyFooter-project > span { display: block; font-size: 11px; line-height: 1.6; color: var(--footer-muted); margin-top: 12px; }
+.agencyFooter-meta { display: flex; justify-content: space-between; align-items: center; gap: 20px; padding-block: 23px; border-top: 1px solid #cbdccf; font-size: 12px; color: var(--footer-muted); }
+.agencyFooter-metaMessage { display: flex; align-items: center; gap: 9px; }
+.agencyFooter-metaMessage > span { width: 7px; height: 7px; background: var(--commerce-green); }
+.agencyFooter-meta a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; text-underline-offset: 4px; }
+.agencyFooter-meta a svg { width: 15px; height: 15px; }
+@media (hover: hover) and (pointer: fine) {
+  .agencyFooter-top li a:hover, .agencyFooter-meta a:hover { text-decoration: underline; color: var(--commerce-deep); }
+  .agencyFooter-cta:hover { background: var(--commerce-deep); }
+}
+@media (max-width: 1100px) {
+  .agencyFooter-shell { padding-inline: 28px; }
+  .agencyFooter-top { grid-template-columns: 1.4fr 1fr 1fr; gap: 32px; padding-top: 45px; }
+  .agencyFooter-project { grid-column: 2 / 4; }
+  .agencyFooter-project h2 br { display: none; }
+  .agencyFooter-project p { max-width: 350px; }
+}
+@media (max-width: 700px) {
+  .agencyFooter { margin-inline: 8px; border-radius: 22px; }
+  .agencyFooter-shell { padding-inline: 24px; }
+  .agencyFooter-top { grid-template-columns: 1fr 1fr; gap: 30px 20px; padding-block: 36px 28px; }
+  .agencyFooter-brand { grid-column: 1 / -1; }
+  .agencyFooter-brand > p { max-width: 320px; margin-top: 17px; }
+  .agencyFooter-brand .agencyFooter-socialPending { margin-top: 13px; }
+  .agencyFooter-top li a { min-height: 44px; }
+  .agencyFooter-project { grid-column: auto; }
+  .agencyFooter-project h2 { font-size: 23px; }
+  .agencyFooter-meta { flex-wrap: wrap; gap: 5px 16px; padding-block: 16px; font-size: 11px; }
+  .agencyFooter-meta > span:first-child { flex-basis: 100%; }
+  .agencyFooter-metaMessage { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .agencyFooter-cta { transition: none; }
+}
