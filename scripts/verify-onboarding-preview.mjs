@@ -19,6 +19,12 @@ const answered = value => ({ state: "answered", value });
 try {
   assert.equal(await read(first), null);
   await assert.rejects(() => read("preview"), /session/i);
+  await save(first, { "P16.3": answered(true), "P02.2": answered({ country: "", timezone: "Asia/Kolkata" }) });
+  const consentDraft = await read(first);
+  assert.equal(consentDraft.answers["P16.3"].value, true, "The introduction saves the acknowledgement before project answers");
+  assert.equal(consentDraft.currentQuestion, "P01.1", "Consent keeps the first project question ready to resume");
+  await assert.rejects(() => client.mutation(refs.submit, { sessionId: first }), /complete|highlighted/i);
+  console.log("PASS introduction acknowledgement persists; consent alone cannot submit an incomplete brief");
   await save(first, { "P01.1": answered("Preview fixture A") });
   await save(second, { "P01.1": answered("Preview fixture B") });
   assert.equal((await read(first)).answers["P01.1"].value, "Preview fixture A");

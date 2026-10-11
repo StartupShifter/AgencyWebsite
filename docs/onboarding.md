@@ -6,7 +6,9 @@ The question library implements all 42 topics and 127 stable question IDs from t
 
 The landing header links to `/signup` and `/login`. Better Auth creates the client session and continues to `/onboarding`. The wizard prefills the account's name/email, suggests timezone, and reuses the project email and contact for billing and workspace details. `/dashboard` shows the saved brief, open questions, agency engagement record, and outstanding project prerequisites. Both routes validate the live session on the server and through authenticated Convex subscriptions.
 
-The guided interface presents one visible question at a time with Shift, an original mint and emerald SVG rocket companion. Shift reacts to answers, guidance requests, validation errors, and review; reactions respect reduced-motion preferences. A fixed bottom action bar keeps Back and Continue within reach. Native radio and checkbox cards have illustrative icons and selected states. All topics remains available for navigation, and a dedicated editable review precedes the final confirmations.
+The welcome page is a minimal single column: a short introduction, a checkbox linked to privacy information, and Continue. The previous story panel, illustrations, numbered explainer, reassurance badges, and expandable help are removed. Service terms remain available as a quiet link. Continue requires explicit acknowledgement and saves the current-version P16.3 answer before showing any questions; a failed save keeps the client on the introduction with a retryable error. Returning drafts with a valid current-version acknowledgement resume directly. The header shows the saved business name and account name when available. There is no portal footer.
+
+The guided interface presents one visible question at a time with a compact SVG companion based on the brand’s upward arrow. Its face responds to answers and review; hover effects respect reduced-motion preferences. Back and Continue sit within the question panel, with save status beside the progress heading. Native radio and checkbox cards have illustrative icons and selected states. All topics remains available for navigation, and a dedicated editable review precedes the final confirmations.
 
 Progress counts valid answers and explicit follow-up states on the current route; untouched optional questions do not count. Continuing past an empty optional question records “Provide later.” The total adapts when selections add or remove modules. Drafts store the owning page ID and exact question or review step in Convex; returning resumes at that step. Older drafts resume at the first unanswered or invalid visible question on the saved page. The standalone mascot is in `public/mascot/shift.svg`.
 
@@ -16,15 +18,15 @@ Drafts autosave after a short pause. Continue, Back, topic navigation, and Save 
 
 ## Privacy prerequisite
 
-The source questionnaire explicitly requires approved privacy information before live collection. The older `/policies/privacy` text describes only the local-download contact feature, so the portal has a separate `/policies/onboarding-privacy` notice. Live answer storage and submission remain gated until the actual notice is approved and all these Convex environment variables are present:
+The portal uses the owner-confirmed project-use notice in `lib/onboarding/privacy-copy.ts`, with a stable revision, by default. A client must explicitly check the welcome checkbox; Continue saves P16.3 with that revision before opening the questions. Missing optional agency contact or retention settings do not disable the checkbox or block this flow.
 
-- `ONBOARDING_PRIVACY_APPROVED=true`
-- `ONBOARDING_PRIVACY_VERSION` — a stable approved revision
-- `ONBOARDING_PRIVACY_TEXT` — approved collection, use, storage, and access information
-- `ONBOARDING_PRIVACY_CONTACT` — approved privacy-request contact
-- `ONBOARDING_PRIVACY_RETENTION` — approved retention/deletion information
+Convex environment settings can override the default:
 
-These are configured on Convex, not as `NEXT_PUBLIC_` frontend values. A new notice version clears the existing client acknowledgement for review; stale notices cannot submit. `/onboarding/preview` is available only under `next dev` and autosaves answers to the local Convex database. It renders the not-found boundary in production. Preview storage has its own development notice and does not require changing the live client privacy configuration. Account signup remains operational while onboarding collection is gated; approve full account/privacy disclosures before public release as well.
+- `ONBOARDING_PRIVACY_APPROVED=false` explicitly pauses collection; unset or `true` enables the current notice.
+- `ONBOARDING_PRIVACY_TEXT` and `ONBOARDING_PRIVACY_VERSION` specify a custom notice and its stable revision. A custom text requires a version.
+- `ONBOARDING_PRIVACY_CONTACT` and `ONBOARDING_PRIVACY_RETENTION` add confirmed contact and retention information when available. Unconfirmed details are not invented or shown as empty fields.
+
+These settings belong to Convex, not `NEXT_PUBLIC_` frontend values. Changing the notice version requires a fresh acknowledgement; stale notices cannot save or submit. `/onboarding/preview` is development-only and stores sample drafts separately without changing live privacy settings. The onboarding notice describes project-use consent; the full site privacy policy remains a separate document.
 
 ## Database and ownership
 

@@ -1,7 +1,21 @@
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
+import { ChevronDown, ShieldCheck } from "lucide-react";
+import { onboardingPrivacyCopy } from "@/lib/onboarding/privacy-copy";
 
 export type PrivacySettings = { approved: boolean; text: string; contact: string; retention: string; version: string };
-export function PrivacyNotice({ privacy, compact = false }: { privacy: PrivacySettings; compact?: boolean }) {
-  return <section className={`ob-notice ${compact ? "ob-notice-compact" : ""}`} aria-label="Onboarding privacy information"><ShieldCheck size={22} aria-hidden="true" /><div><h2>{privacy.approved ? "Your details, with a clear purpose." : "Onboarding privacy information is awaiting approval."}</h2><p>Onboarding answers are stored in Starter Shifter’s Convex database and linked to your signed-in account. They help prepare and review your project brief. Each client account can access its own answers.</p>{privacy.approved ? <><p className="ob-policy-text">{privacy.text}</p><p>Retention: {privacy.retention}</p><p>Privacy contact: {privacy.contact}</p></> : <p>Live collection is paused until the agency has approved the notice, retention details, and privacy contact. Your project answers cannot be saved or submitted yet.</p>}<p>Share document links and redacted examples. Keep passwords, verification codes, API secrets, payment-card details, and raw customer, patient, or employee records out of this form.</p><Link href="/policies/onboarding-privacy" target="_blank" rel="noopener noreferrer">Read onboarding privacy information (opens a new tab) →</Link></div></section>;
+
+export function PrivacyNotice({ privacy, compact = false, preview = false }: { privacy: PrivacySettings; compact?: boolean; preview?: boolean }) {
+  return <section className={`ob-privacy ${compact ? "ob-privacy-compact" : ""}`} aria-label="How we use your information">
+    <div className="ob-privacy-heading"><ShieldCheck size={20} aria-hidden="true" /><h2>Your information has a purpose.</h2></div>
+    <p>{onboardingPrivacyCopy.purpose}</p>
+    <details className="ob-privacy-details" open={compact || undefined}>
+      <summary>How we care for your details<ChevronDown size={16} aria-hidden="true" /></summary>
+      <div>
+        <p>{onboardingPrivacyCopy.responsibility}</p>
+        <p>{onboardingPrivacyCopy.safeSharing}</p>
+        {preview ? <p>This is a preview. Your sample answers are saved so you can try the journey and return to it in this browser. Use example business details.</p> : privacy.approved ? <><p className="ob-policy-text">{privacy.text}</p>{privacy.retention && <p>How long we keep your details: {privacy.retention}</p>}{privacy.contact && <p>Questions about your information? {privacy.contact}</p>}</> : <p>Onboarding is temporarily paused. Please review the current privacy information when it reopens.</p>}
+        <nav aria-label="Onboarding information"><Link href="/policies/onboarding-privacy" target="_blank" rel="noopener noreferrer">Privacy information<span className="sr-only"> (opens in a new tab)</span></Link><Link href="/policies/terms" target="_blank" rel="noopener noreferrer">Service terms<span className="sr-only"> (opens in a new tab)</span></Link></nav>
+      </div>
+    </details>
+  </section>;
 }

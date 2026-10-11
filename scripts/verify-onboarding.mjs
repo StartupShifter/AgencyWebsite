@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { ONBOARDING_PRIVACY_NOTICE, ONBOARDING_PRIVACY_VERSION } from "../lib/onboarding/privacy-copy.ts";
 import { completeFixture } from "./onboarding-fixture.mjs";
 import { spawnSync } from "node:child_process";
 import { randomBytes } from "node:crypto";
@@ -72,11 +73,26 @@ try {
   console.log("PASS anonymous clients cannot read a draft, save, or submit");
 
   const first = await createClient(1); const second = await createClient(2);
-  cli(["env", "remove", "ONBOARDING_PRIVACY_APPROVED"]);
+  for (const key of privacyKeys) cli(["env", "remove", key]);
+  const defaultPrivacy = await anonymous.query(references.getPrivacySettings, {});
+  assert.equal(defaultPrivacy.approved, true);
+  assert.equal(defaultPrivacy.text, ONBOARDING_PRIVACY_NOTICE);
+  assert.equal(defaultPrivacy.version, ONBOARDING_PRIVACY_VERSION);
+  assert.equal(defaultPrivacy.contact, "");
+  assert.equal(defaultPrivacy.retention, "");
+  await save(first, { "P16.3": answered(true), "P02.2": answered({ country: "", timezone: "Asia/Kolkata" }) }, [], "P01", defaultPrivacy.version, "P01.1");
+  const acceptedDraft = (await read(first)).draft;
+  assert.equal(acceptedDraft.answers["P16.3"].value, true);
+  assert.equal(acceptedDraft.privacyVersion, defaultPrivacy.version);
+  assert.equal(acceptedDraft.currentQuestion, "P01.1");
+  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: defaultPrivacy.version }), /highlighted|complete/i);
+  console.log("PASS default notice permits authenticated acceptance and saves first-question progress without optional settings");
+
+  cli(["env", "set", "ONBOARDING_PRIVACY_APPROVED", "false"]);
   assert.equal((await anonymous.query(references.getPrivacySettings, {})).approved, false);
-  await assert.rejects(() => save(first, {}), /privacy/i);
-  await assert.rejects(() => submit(first), /privacy/i);
-  console.log("PASS privacy gate blocks storage and submission before an approved notice");
+  await assert.rejects(() => save(first, {}, [], "P01", defaultPrivacy.version), /privacy/i);
+  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: defaultPrivacy.version }), /privacy/i);
+  console.log("PASS explicit agency pause still blocks storage and submission");
 
   const temporary = { APPROVED: "true", TEXT: "LOCAL TEST NOTICE ONLY; immediately restored after this suite.", CONTACT: "privacy@example.test", RETENTION: "Local fixture deleted after test", VERSION: revision };
   for (const [key, value] of Object.entries(temporary)) cli(["env", "set", `ONBOARDING_PRIVACY_${key}`, value]);

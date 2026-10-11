@@ -73,6 +73,12 @@ The owner says the client first signs the shared contract, pays the 40% advance,
 
 **Confirmed handoff elements:** company/market/competitor research and a basic Figma design draft with selectable variants. **Proposed additional outline, subject to approval:** goals and priorities; recommended platform and approach; agreed scope; implementation stages; milestones and responsibilities; dependencies and open questions. Research depth must match the time and inputs actually available.
 
+## Confirmed onboarding information use (2026-10-11)
+
+The owner confirmed that Starter Shifter uses client-supplied onboarding details to understand the business and help prepare and deliver its agreed services. Starter Shifter manages this information and does not sell it or share the brief with other businesses for their own use. Client-facing copy should explain purpose and responsibility in plain language, without database or authentication terminology.
+
+The requested “company-only storage” wording cannot describe the current implementation literally: the portal uses Convex and authentication infrastructure. Distinguish Starter Shifter’s use and management of the brief from providers supporting the portal. Do not claim that no provider ever processes information. Retention/deletion details and a privacy-request contact remain unconfirmed and must not be invented. The owner requested a working acceptance-and-continue flow: the versioned, owner-confirmed project-use notice is available by default, while these additional settings are optional. Clients explicitly accept the current notice before starting the questions.
+
 ## Writing and decision rules
 
 Use specific, client-friendly language and explain technical terms when needed. Connect each service to a business need, then show what is selected, what can be added, and what the client supplies. Avoid “we handle everything,” universal compatibility, guaranteed outcomes, and unbounded support promises. Preserve confirmed facts; label recommendations and assumptions in internal work. The confirmed plan prices and advance may be stated with their limits, but unresolved scope and contractual details require owner input before publication. Update this file when the owner explicitly confirms or changes a policy; move answered items from [questions.md](questions.md) into the appropriate confirmed section and note any remaining conflict.

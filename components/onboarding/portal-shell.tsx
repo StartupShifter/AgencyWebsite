@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import "./onboarding.css";
 
-export function PortalShell({ children, preview = false, beforeLeave }: { children: ReactNode; preview?: boolean; beforeLeave?: () => Promise<unknown> }) {
+export function PortalShell({ children, preview = false, beforeLeave, businessName, userName }: { children: ReactNode; preview?: boolean; beforeLeave?: () => Promise<unknown>; businessName?: string; userName?: string }) {
   const router = useRouter();
   const [error, setError] = useState("");
   const [signingOut, setSigningOut] = useState(false);
@@ -26,5 +26,5 @@ export function PortalShell({ children, preview = false, beforeLeave }: { childr
     if (!beforeLeave || !link || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     void beforeLeave().then(() => router.push(link.getAttribute("href") ?? "/"), error => setError(error instanceof Error ? error.message : "Unable to save your progress."));
-  }}><Brand /><div className="ob-header-links"><Link href={preview ? "/dashboard/preview" : "/dashboard"}>My workspace<ArrowUpRight size={16} /></Link>{!preview && <Button variant="ghost" onClick={() => void signOut()} disabled={signingOut}><LogOut size={16} />{signingOut ? "Signing out…" : "Sign out"}</Button>}</div></header>{error && <p role="alert" className="ob-error ob-top-error">{error}</p>}{children}<footer className="ob-footer"><span>Starter Shifter · Your business, connected</span><Link href="/policies/onboarding-privacy" target="_blank" rel="noopener noreferrer">Onboarding privacy</Link></footer></div>;
+  }}><div className="ob-header-company"><Brand /><div className="ob-header-identity"><span>{businessName || "Your project workspace"}</span><small>{userName || "Starter Shifter client portal"}</small></div></div><div className="ob-header-links"><Link href={preview ? "/dashboard/preview" : "/dashboard"}>My workspace<ArrowUpRight size={16} /></Link>{!preview && <Button variant="ghost" onClick={() => void signOut()} disabled={signingOut}><LogOut size={16} />{signingOut ? "Signing out…" : "Sign out"}</Button>}</div></header>{error && <p role="alert" className="ob-error ob-top-error">{error}</p>}{children}</div>;
 }

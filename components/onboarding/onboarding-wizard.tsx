@@ -7,10 +7,11 @@ import { useSessionId } from "convex-helpers/react/sessions";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { PreviewSessionProvider } from "./preview-session";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
-import { ArrowLeft, ArrowRight, Check, CheckCircle2, ChevronDown, Save, Sparkles, ListChecks, ShieldCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Save, Sparkles, ListChecks } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { OnboardingMascot } from "./onboarding-mascot";
+import { OnboardingWelcome } from "./onboarding-welcome";
 import { getGuidedSteps, getGuidedProgress, getResumeStep } from "@/lib/onboarding/guided-flow";
 import { QuestionField } from "./question-field";
 import { PortalShell } from "./portal-shell";
@@ -33,7 +34,7 @@ export function OnboardingWizard({ user, development = false }: { user: User; de
   useEffect(() => { if (!isLoading && !isAuthenticated) router.replace("/login"); }, [isLoading, isAuthenticated, router]);
   if (mine === undefined || !privacy || isLoading) return <PortalShell><div className="ob-loading" role="status">Loading your saved progress…</div></PortalShell>;
   if (!mine) return <PortalShell><div className="ob-loading">Your session has ended. <Link href="/login">Sign in again</Link>.</div></PortalShell>;
-  if (!privacy.approved) return <PortalShell><main className="ob-welcome"><OnboardingMascot mood="welcome" className="ob-welcome-mascot" /><span className="ob-eyebrow">YOUR NEXT CHAPTER</span><h1>Let’s build a clear<br />starting point.</h1><p>A short topic at a time. Relevant questions, useful choices, and progress you can return to.</p><PrivacyNotice privacy={privacy} />{development && <Link className="ob-link-button" href="/onboarding/preview">Review the interactive form preview <ArrowRight size={18} /></Link>}<Link className="ob-text-link" href="/dashboard">Go to your workspace</Link></main></PortalShell>;
+  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome privacy={privacy} name={user.name} development={development} /></PortalShell>;
   return <WizardSession key={`${user.id}:${privacy.version}`} user={user} initial={mine} privacy={privacy} />;
 }
 
@@ -43,9 +44,14 @@ export function OnboardingPreview() {
 function StoredOnboardingPreview() {
   const [sessionId] = useSessionId();
   const draft = useQuery(api.onboardingPreview.getDraft, sessionId ? { sessionId } : "skip");
-  if (!sessionId || draft === undefined) return <PortalShell preview><div className="ob-loading" role="status">Loading your saved progress from Convex…</div></PortalShell>;
+  if (!sessionId || draft === undefined) return <PortalShell preview><div className="ob-loading" role="status">Loading your saved progress…</div></PortalShell>;
   return <WizardSession key={sessionId} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false }} privacy={previewPrivacy} />;
 }
+function getBusinessName(answers?: Answers): string | undefined {
+  const answer = answers?.["P01.2"];
+  return answer?.state === "answered" && typeof answer.value === "string" && answer.value.trim() ? answer.value.trim() : undefined;
+}
+
 function initialAnswers(user: User, mine: Mine, privacy: PrivacySettings): Answers {
   if (mine.draft) {
     if (mine.draft.privacyVersion !== privacy.version) { const answers = { ...mine.draft.answers }; delete answers["P16.3"]; return answers; }
@@ -71,7 +77,10 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     return getResumeStep(getGuidedSteps(getPages(seeded, initial.draft?.extraModules ?? []), seeded), initial.draft?.currentPage ?? "P01", seeded, privacy.approved || preview, initial.draft?.currentQuestion);
   });
   const [returnToReview, setReturnToReview] = useState(false);
-  const [started, setStarted] = useState(Boolean(initial.draft) || preview);
+  const [started, setStarted] = useState(() => {
+    const consent = initial.draft?.answers["P16.3"];
+    return consent?.state === "answered" && consent.value === true && (preview || initial.draft?.privacyVersion === privacy.version);
+  });
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [saveState, setSaveState] = useState(initial.draft ? "All changes saved" : "Ready to save");
   const [busy, setBusy] = useState(false);
@@ -103,7 +112,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     : answers[question.id]?.state === "help" ? "We’ll flag this for guidance. You can keep going."
     : answers[question.id]?.state === "unknown" ? "That’s okay. We’ll keep this as an open question."
     : hasAnswer ? "Got it! Continue whenever you’re ready."
-    : currentStepIndex === 0 ? "I’m Shift, your project guide. Let’s start with you."
+    : currentStepIndex === 0 ? "Let’s start with you. A short answer is all we need."
     : question.type === "multi-select" ? "You can choose more than one. Pick what fits your project."
     : question.type === "select" ? "Choose the option that feels right for you."
     : !isQuestionRequired(question, answers) ? "This one is optional. You can come back to it later."
@@ -225,22 +234,28 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   }
   function toggleModule(id: string) { dirty.current = true; setSaveState("Unsaved changes"); setExtras(old => old.includes(id) ? old.filter(s => s !== id) : [...old, id]); }
 
-  if (!started) return <PortalShell><main className="ob-welcome">
-    <OnboardingMascot mood="welcome" className="ob-welcome-mascot" />
-    <span className="ob-guide-intro">Meet Shift, your project guide</span>
-    <h1>A good project starts<br />with understanding you.</h1>
-    <p>I’ll help you put your brief together, one question at a time. Choose what fits, and ask for guidance whenever you need it.</p>
-    <div className="ob-welcome-points"><span><CheckCircle2 />Quick choices, fewer typed answers</span><span><Save />Saved progress, ready when you are</span><span><Sparkles />Questions shaped around your project</span></div>
-    <PrivacyNotice privacy={privacy} />
-    <Button variant="emerald" size="marketing" onClick={() => { setStarted(true); dirty.current = true; const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; setAnswers(old => ({ ...old, "P02.2": old["P02.2"] ?? { state: "answered", value: { country: "", timezone } } })); }}>Let’s get started<ArrowRight /></Button>
-    <p className="ob-help">Selecting requirements records your needs. Final scope and fees come from your agreement.</p>
-  </main></PortalShell>;
-  return <PortalShell preview={preview} beforeLeave={persist}>
+  if (!started) return <PortalShell preview={preview} businessName={getBusinessName(answers)} userName={user.name}>
+    <OnboardingWelcome privacy={privacy} name={user.name} preview={preview} busy={busy} error={failure} onStart={async () => {
+      if (busy) return;
+      setBusy(true); setFailure("");
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const nextAnswers: Answers = { ...answers,
+        "P16.3": { state: "answered", value: true },
+        "P02.2": answers["P02.2"] ?? { state: "answered", value: { country: "", timezone } },
+      };
+      try {
+        await persist({ answers: nextAnswers, extras, currentId, currentQuestion: step.id });
+        setAnswers(nextAnswers); setStarted(true);
+      } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save your agreement. Please try again."); }
+      finally { setBusy(false); }
+    }} />
+  </PortalShell>;
+  return <PortalShell preview={preview} beforeLeave={persist} businessName={getBusinessName(answers)} userName={user.name}>
     <main className="ob-guided">
-      {preview && <div className="ob-preview-banner">Your answers are saved automatically to Convex. Return in this browser to continue.</div>}
+      {preview && <div className="ob-preview-banner">Preview mode. Use example business details. Your progress is saved for your next visit.</div>}
       {initial.draft?.version && initial.draft.version !== ONBOARDING_VERSION && <div className="ob-preview-banner">The questionnaire has been updated. Your existing answers are retained; review the current questions before submission.</div>}
       <div className="ob-journey-top">
-        <span className="ob-journey-title">Your project brief</span>
+        <div className="ob-journey-title">Your project brief<span className="ob-save-state" role="status">{saveState}</span></div>
         <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={15} />Save and exit</button>
       </div>
       <div className="ob-journey-progress">
@@ -259,7 +274,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
       </div>
       <section className="ob-guided-stage" aria-labelledby="ob-guided-heading">
         <div className="ob-guide" key={step.id}>
-          <div className="ob-guide-character"><OnboardingMascot mood={mood} /><span>Shift</span></div>
+          <div className="ob-guide-character"><OnboardingMascot mood={mood} /></div>
           <div className="ob-speech"><span className="ob-speech-intro">{question ? "Let’s take the next step" : "Ready for a quick look?"}</span><h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{question?.label ?? "Here’s your project brief. How does it look?"}</h1></div>
         </div>
         <form onSubmit={e => { e.preventDefault(); void continueQuestion(); }} noValidate>
@@ -267,9 +282,9 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
             {question?.id === "P14.1" && <EngagementSummary engagement={initial.engagement} />}
             {question?.id === "P15.3" && initial.pending.length > 0 && <div className="ob-context-box"><h2>Remaining project prerequisites</h2><ul>{initial.pending.map(item => <li key={item}>{item}</li>)}</ul><p>These are checked against agency records. No invitations are sent from this form.</p></div>}
             {step.id === "review" && <><p className="ob-help">Check your answers below. You can edit any topic before the final confirmations.</p><ReviewSummary pages={pages} answers={answers} onEdit={editTopic} /></>}
-            {question?.id === "P16.3" && (preview ? <section className="ob-notice" aria-label="Development storage information"><ShieldCheck size={22} /><div><h2>Your project brief is saved in Convex.</h2><p>Your answers, notes, selections, and progress are stored in the development database. This browser keeps a private session key to restore your brief when you return.</p><p>Finishing records this development brief as submitted. Keep passwords, payment-card details, and access secrets out of your answers.</p></div></section> : <PrivacyNotice compact privacy={privacy} />)}
+            {question?.id === "P16.3" && <PrivacyNotice compact privacy={privacy} preview={preview} />}
             <fieldset disabled={busy} className="ob-input-lock">
-              {question && <QuestionField guided key={question.id} question={{ ...question, required: isQuestionRequired(question, answers), ...(preview && question.id === "P16.3" ? { help: "Review the development storage information above before confirming." } : {}) }} answer={answers[question.id]} error={errors[question.id]} onChange={answer => updateAnswer(question.id, answer)} />}
+              {question && <QuestionField guided key={question.id} question={{ ...question, required: isQuestionRequired(question, answers), ...(preview && question.id === "P16.3" ? { help: "Review how your example answers are used in this preview before confirming." } : {}) }} answer={answers[question.id]} error={errors[question.id]} onChange={answer => updateAnswer(question.id, answer)} />}
               {question?.id === "P08.1" && <>
                 <details className="ob-module-picker"><summary>Something else? Add a project topic<ChevronDown size={16} /></summary><p className="ob-help">Your answers select relevant topics automatically. Add a workflow here if we missed it.</p><input className="ob-input" aria-label="Search project topics" placeholder="Search topics…" value={filter} onChange={e => setFilter(e.target.value)} /><div className="ob-choices">{MODULE_PAGES.filter(p => p.title.toLowerCase().includes(filter.toLowerCase())).map(p => <label className="ob-choice" key={p.id}><input type="checkbox" checked={selectedModules.includes(p.id)} disabled={selectedModules.includes(p.id) && !extras.includes(p.id)} onChange={() => toggleModule(p.id)} /><span>{p.title}{selectedModules.includes(p.id) && !extras.includes(p.id) ? " · selected by your answers" : ""}</span></label>)}</div></details>
                 {inactiveModules.length > 0 && <details className="ob-module-picker"><summary>Previously answered topics<ChevronDown size={16} /></summary><p className="ob-help">These answers stay saved outside your current route. Restore a topic or remove its answers.</p>{inactiveModules.map(module => <div className="ob-list-row ob-context-box" key={module.id}><span className="ob-help">{module.title}</span><Button type="button" variant="outline" onClick={() => toggleModule(module.id)}>Restore topic</Button><Button type="button" variant="ghost" onClick={() => { dirty.current = true; setAnswers(previous => Object.fromEntries(Object.entries(previous).filter(([id]) => !id.startsWith(`${module.id}.`)))); }}>Remove saved answers</Button></div>)}</details>}
@@ -282,12 +297,10 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
           </div>
           <div className="ob-guided-actions">
             <Button type="button" variant="ghost" size="marketing" disabled={currentStepIndex === 0 || busy} onClick={() => void navigate(steps[currentStepIndex - 1].id)}><ArrowLeft />Back</Button>
-            <span className="ob-save-state" role="status">{saveState}</span>
             <Button type="submit" variant="emerald" size="marketing" disabled={busy}>{busy ? "Saving…" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? "Skip for now" : "Continue"}<ArrowRight /></Button>
           </div>
         </form>
       </section>
-      <p className="ob-guided-note"><ShieldCheck size={14} />No passwords or payment details. Your requirements are reviewed against your agreed scope.</p>
     </main>
   </PortalShell>;
 }

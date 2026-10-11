@@ -4,15 +4,19 @@ import { query, mutation, internalMutation } from "./_generated/server";
 import type { Doc } from "./_generated/dataModel";
 import { answersValidator, engagementValidator, draftValidator } from "./onboardingValidators";
 import { validateSubmission, ONBOARDING_VERSION } from "../lib/onboarding/questionnaire";
+import { ONBOARDING_PRIVACY_NOTICE, ONBOARDING_PRIVACY_VERSION } from "../lib/onboarding/privacy-copy";
 
 import { validateDraftInput } from "./validateOnboardingDraft";
 
 function privacySettings() {
-  const text = process.env.ONBOARDING_PRIVACY_TEXT ?? "";
+  const customText = process.env.ONBOARDING_PRIVACY_TEXT?.trim();
+  const text = customText || ONBOARDING_PRIVACY_NOTICE;
   const contact = process.env.ONBOARDING_PRIVACY_CONTACT ?? "";
   const retention = process.env.ONBOARDING_PRIVACY_RETENTION ?? "";
-  const version = process.env.ONBOARDING_PRIVACY_VERSION ?? "";
-  return { approved: process.env.ONBOARDING_PRIVACY_APPROVED === "true" && Boolean(text && contact && retention && version), text, contact, retention, version };
+  const version = process.env.ONBOARDING_PRIVACY_VERSION?.trim() || (customText ? "" : ONBOARDING_PRIVACY_VERSION);
+  // The owner-approved project-use notice is available without deployment setup.
+  // Custom notices still need a revision, and the agency can explicitly pause collection.
+  return { approved: process.env.ONBOARDING_PRIVACY_APPROVED !== "false" && Boolean(text && version), text, contact, retention, version };
 }
 export const getPrivacySettings = query({
   args: {},
