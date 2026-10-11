@@ -14,6 +14,7 @@ The owner confirmed these ten service areas and describes a $1,000 default one-t
 
 ## 2. Social media and campaign management
 
+- **Confirmed owner clarification (2026-10-11):** Social business-page setup is offered on agreed channels. The goal is establishing a digital presence; lead generation and lead volumes are not guaranteed, and the agency does not take responsibility for how many leads a client receives.
 - **Business need and confirmed service:** Help clients maintain and manage social media campaigns and a consistent presence.
 - **Potential scoped deliverables:** Strategy/planning, content calendar, agreed content creation, posting and scheduling, organic campaign management, monitoring, reporting, and optimization. Define networks, formats, quantities, approvals, and whether community management or paid advertising is included.
 - **Define the engagement:** Separate one-time account/campaign setup from any ongoing management and state its monthly coverage and charge. The client may need to provide account access, brand material, product information, legal approvals, and a contact for timely content approval.
@@ -22,6 +23,7 @@ The owner confirmed these ten service areas and describes a $1,000 default one-t
 
 ## 3. Chatbots and customer interaction automation
 
+- **Confirmed owner clarification (2026-10-11):** The homepage journey includes chatbots connected to social media for customer handling and support automation. Exact channels, permissions, and capabilities still need feasibility review; this does not promise every social network or fully autonomous support.
 - **Business need and confirmed service:** Help answer suitable customer questions or route interactions through chatbot-related services and management.
 - **Potential scoped deliverables:** Use-case design; supported-channel setup; approved knowledge sources; question/action boundaries; store or business-data integrations; human handoff; testing and review; ongoing updates and maintenance.
 - **Define the engagement:** Separate initial design/setup from ongoing operation and state its monthly coverage and charge. The client may need to provide policies, FAQs, approved knowledge, channel accounts, escalation contacts, data access, and review of responses.
@@ -46,6 +48,7 @@ The owner confirmed these ten service areas and describes a $1,000 default one-t
 
 ## 6. ERP and CRM integrations
 
+- **Confirmed owner clarification (2026-10-11):** The fifth homepage process card groups maintenance and performance with ERP/CRM connections and supported shipping and invoice-generation workflows. Exact third-party tools and integration scope remain project-specific; ongoing maintenance retains its separate monthly charge.
 - **Business need and confirmed service:** Connect business information between ERP, CRM, store, and other systems to reduce disconnected or repetitive work.
 - **Potential scoped deliverables:** Connector selection/configuration, agreed custom integration, field mapping, data preparation, sync rules, error handling, monitoring, testing, and maintenance.
 - **Define the engagement:** Separate one-time integration from ongoing monitoring/support and its monthly charge. The client may need to provide exact systems and versions, API credentials through a secure channel, documentation, data owners, sample records, and access to technical contacts.

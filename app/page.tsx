@@ -18,8 +18,8 @@ export default function Home() {
       <main id="main">
         <HeroSection />
         <ServicesSection />
-        <AboutSection />
         <ProcessSection />
+        <AboutSection />
         <PricingSection />
         <FaqSection />
         <ContactSection />

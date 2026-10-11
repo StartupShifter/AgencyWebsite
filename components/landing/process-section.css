@@ -1,0 +1,62 @@
+.process-intro { max-width: 360px; }
+.process-scrollHint { display: flex; align-items: center; gap: 10px; margin-top: 20px; font-size: 12px; }
+.process-scrollHint svg { width: 15px; height: 15px; }
+
+/* Sticky siblings share a containing block, so the deck releases together. */
+.process-stack { --stack-top: 104px; --stack-peek: 24px; isolation: isolate; display: flex; flex-direction: column; gap: 32px; list-style: none; }
+.process-stack::after { content: ""; flex: 0 0 20svh; }
+.process-step { position: sticky; top: calc(var(--stack-top) + var(--step-index) * var(--stack-peek)); z-index: var(--step-index); margin-inline: calc((4 - var(--step-index)) * 8px); }
+.process-card { display: flex; flex-direction: column; min-height: clamp(440px, 59svh, 580px); padding: 32px 44px 36px; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 28px; background: var(--step-surface); color: var(--step-text); box-shadow: 0 -12px 36px -24px #102f2366; transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
+.process-research { --step-surface: var(--commerce-ink); --step-text: var(--commerce-white); }
+.process-build { --step-surface: var(--commerce-deep); --step-text: var(--commerce-white); }
+.process-social { --step-surface: var(--commerce-green); --step-text: var(--commerce-white); }
+.process-automation { --step-surface: var(--commerce-mint); --step-text: var(--commerce-ink); }
+.process-care { --step-surface: var(--commerce-soft); --step-text: var(--commerce-ink); }
+.process-cardTop { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.process-number { font-size: 15px; font-variant-numeric: tabular-nums; }
+.process-number span { opacity: 0.7; }
+.process-phase { font-size: 12px; }
+.process-cardHeading { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin-block: 32px 40px; }
+.process-cardHeading h3 { font-size: clamp(2.8rem, 5.8vw, 5rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.055em; }
+.process-cardHeading h3 span { display: block; }
+.process-cardHeading h3 span:last-child { opacity: 0.75; }
+.process-icon { display: grid; place-items: center; flex-shrink: 0; width: 124px; height: 124px; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); border-radius: 50%; }
+.process-icon svg { width: 58px; height: 58px; }
+.process-cardBottom { display: grid; grid-template-columns: 1.15fr 1fr; gap: 60px; margin-top: auto; padding-top: 24px; border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
+.process-description { max-width: 490px; font-size: 15px; line-height: 1.7; text-wrap: pretty; }
+.process-deliverables ul { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; font-size: 12px; line-height: 1.6; }
+.process-note { max-width: 430px; margin-top: 16px; font-size: 12px; line-height: 1.65; opacity: 0.85; }
+.process-onboarding { max-width: 680px; margin-top: 24px; font-size: 13px; line-height: 1.75; color: var(--muted-foreground); }
+
+@media (hover: hover) and (pointer: fine) {
+  .process-card:hover { transform: translateY(-6px); }
+}
+
+@media (max-width: 760px) {
+  .process-stack { --stack-top: 92px; --stack-peek: 18px; gap: 24px; }
+  .process-stack::after { flex-basis: 12svh; }
+  .process-step { margin-inline: calc((4 - var(--step-index)) * 3px); }
+  .process-card { min-height: 460px; padding: 24px; border-radius: 22px; }
+  .process-cardHeading { gap: 16px; margin-block: 30px; }
+  .process-cardHeading h3 { font-size: clamp(2.1rem, 7.7vw, 3.5rem); }
+  .process-icon { width: 60px; height: 60px; }
+  .process-icon svg { width: 30px; height: 30px; }
+  .process-cardBottom { grid-template-columns: 1fr; gap: 20px; padding-top: 20px; }
+  .process-description { font-size: 14px; }
+  .process-deliverables ul { gap: 6px 14px; }
+  .process-note { margin-top: 12px; }
+}
+
+@media (max-width: 380px) {
+  .process-card { padding: 22px 20px; }
+  .process-icon { display: none; }
+}
+
+/* Short viewports, zoom, and reduced motion keep every paragraph readable. */
+@media (max-height: 740px), (prefers-reduced-motion: reduce) {
+  .process-step { position: relative; top: auto; margin-inline: 0; }
+  .process-stack::after { display: none; }
+  .process-card { min-height: auto; transform: none; transition: none; }
+  .process-card:hover { transform: none; }
+  .process-scrollHint { display: none; }
+}
