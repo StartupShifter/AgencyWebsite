@@ -2,6 +2,7 @@ import { twLanding } from "@/lib/landing-styles";
 import { SiteHeader } from "@/components/landing/site-header";
 import { HeroSection } from "@/components/landing/hero-section";
 import { ServicesSection } from "@/components/landing/services-section";
+import { ProjectsSection } from "@/components/landing/projects-section";
 import { AboutSection } from "@/components/landing/about-section";
 import { ProcessSection } from "@/components/landing/process-section";
 import { PricingSection } from "@/components/landing/pricing-section";
@@ -18,6 +19,7 @@ export default function Home() {
       <main id="main">
         <HeroSection />
         <ServicesSection />
+        <ProjectsSection />
         <ProcessSection />
         <AboutSection />
         <PricingSection />

@@ -1,0 +1,18 @@
+/* Two identical groups make the project ribbon loop without a jump. */
+@keyframes project-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.project-marquee {
+  animation: project-marquee 48s linear infinite;
+  animation-play-state: paused;
+}
+
+.project-marquee[data-playing="true"] {
+  animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-marquee { animation: none; }
+}

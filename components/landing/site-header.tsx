@@ -1,6 +1,7 @@
 "use client";
 import { twLanding } from "@/lib/landing-styles";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   Menu,
   X,
@@ -86,7 +87,7 @@ const sections: NavSection[] = [
       { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "#process" },
       { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "#faq" },
       { icon: ClipboardList, title: "Project brief", description: "Tell us what you're building.", href: "#contact" },
-      { icon: FolderOpen, title: "Work & case studies", description: "Client examples, published with permission.", href: "/work" },
+      { icon: FolderOpen, title: "Projects & products", description: "Explore our websites and applications.", href: "/products" },
       { icon: LifeBuoy, title: "Support & care", description: "Help for projects after launch.", href: "/support" },
     ],
   },
@@ -119,7 +120,7 @@ function SectionContent({ section }: { section: NavSection }) {
         {section.items.map(({ icon: Icon, title, description, href }) => (
           <NavigationMenuLink
             key={title}
-            href={href}
+            href={href.startsWith("#") ? `/${href}` : href}
             closeOnClick
             className={twLanding("navbar-item")}
           >
@@ -137,7 +138,7 @@ function SectionContent({ section }: { section: NavSection }) {
         <div className={twLanding("navbar-panel-footer")}>
           <span>{section.footer.text}</span>
           <NavigationMenuLink
-            href={section.footer.href}
+            href={section.footer.href.startsWith("#") ? `/${section.footer.href}` : section.footer.href}
             closeOnClick
             className={twLanding("navbar-panel-footer-link")}
           >
@@ -159,7 +160,7 @@ function MobileNavLink({
 }) {
   const { icon: Icon, title, description, href } = entry;
   return (
-    <a href={href} onClick={onNavigate} className={twLanding("mobile-nav-item")}>
+    <Link href={href.startsWith("#") ? `/${href}` : href} onClick={onNavigate} className={twLanding("mobile-nav-item")}>
       <span className={twLanding("mobile-nav-item-icon")}>
         <Icon aria-hidden="true" />
       </span>
@@ -167,7 +168,7 @@ function MobileNavLink({
         <span className={twLanding("mobile-nav-item-title")}>{title}</span>
         <span className={twLanding("mobile-nav-item-desc")}>{description}</span>
       </span>
-    </a>
+    </Link>
   );
 }
 
@@ -186,12 +187,12 @@ export function SiteHeader() {
           scrolled ? "navbar-pill navbar-pill-scrolled" : "navbar-pill",
         )}
       >
-        <a href="#top" aria-label="Monster home" className={twLanding("navbar-brand")}>
+        <Link href="/" aria-label="Monster home" className={twLanding("navbar-brand")}>
           <span className={twLanding("brand-mark")}>
             <ArrowUpRight aria-hidden="true" strokeWidth={2.6} />
           </span>
           monster
-        </a>
+        </Link>
         <NavigationMenu
           align="center"
           className={twLanding("desktop-nav")}
@@ -210,7 +211,7 @@ export function SiteHeader() {
             ))}
             <NavigationMenuItem>
               <NavigationMenuLink
-                href={aboutLink.href}
+                href={`/${aboutLink.href}`}
                 className={twLanding("navbar-trigger")}
               >
                 {aboutLink.title}
@@ -219,9 +220,9 @@ export function SiteHeader() {
           </NavigationMenuList>
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
-          <a href="#contact" className={twLanding("navbar-cta")}>
+          <Link href="/#contact" className={twLanding("navbar-cta")}>
             Let’s talk <ArrowUpRight aria-hidden="true" />
-          </a>
+          </Link>
           <Button
             className={twLanding("mobile-menu-toggle")}
             variant="ghost"

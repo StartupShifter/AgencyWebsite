@@ -2,6 +2,14 @@
 
 Implementation notes, not additional company policy. Business copy remains governed by company-context.md and services.md.
 
+## Project showcase (2026-10-11)
+
+The owner requested an infinite project showcase immediately after “What we do,” with a “View All Products” link to `/products`. The implementation uses a large featured browser preview over a continuously moving ribbon, with previous, next, and pause controls. Motion pauses during hover/focus, outside the viewport, in hidden tabs, and for reduced-motion preferences. The Products page lists the same collection; featured previews link to their corresponding entries.
+
+The showcase follows the same section shell, gutters, spacing, and left-aligned heading layout as “What we do.” Its description and “View All Products” button sit on the right at desktop widths and stack below the heading on mobile. The ribbon stays inside the section's content width and fades into white at both edges. Plain white space, a single fine preview outline, and restrained shadows replace the original dotted backdrop, dashed rails, and double frames.
+
+`lib/projects.ts` is the shared catalog. Current entries and `public/projects/` SVGs are explicitly labeled **Concept previews**, not portfolio evidence. Replace them with approved completed-project names, descriptions, local screenshots, and optional live URLs before presenting them as proof of work. Set each verified entry's status to `Completed project`; the concept notices disappear when no concepts remain. No completed-project examples have been supplied for this request yet.
+
 ## Visual direction
 
 The latest supplied reference inspires a centered hero with a rounded emerald-to-mint background, white typography, translucent stepped forms, and three layered commerce illustrations. The hero fills the available viewport width with a 12px gap on each side at every breakpoint and no maximum width. The center shows a concept storefront with an original SVG tote; the supporting panels show catalog organization and an order workflow. These are service illustrations, not client work, a live store, or performance evidence. The header logo and CTA use the same emerald accent. Lower-page layouts and business terms are preserved.

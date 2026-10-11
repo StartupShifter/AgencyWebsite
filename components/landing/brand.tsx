@@ -1,10 +1,11 @@
 import { twLanding } from "@/lib/landing-styles";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "cn";
+import Link from "next/link";
 export function Brand({ className }: { className?: string }) {
   return (
-    <a
-      href="#top"
+    <Link
+      href="/"
       aria-label="Starter Shifter home"
       className={cn(twLanding("brand"), className)}
     >
@@ -14,6 +15,6 @@ export function Brand({ className }: { className?: string }) {
       <span>
         starter<span className={twLanding("brand-second")}>shifter</span>
       </span>
-    </a>
+    </Link>
   );
 }
