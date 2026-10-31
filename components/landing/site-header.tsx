@@ -181,7 +181,7 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return (
-    <header className={twLanding("section-shell site-header")}>
+    <header className={twLanding("site-header")}>
       <div
         className={twLanding(
           scrolled ? "navbar-pill navbar-pill-scrolled" : "navbar-pill",
@@ -220,14 +220,8 @@ export function SiteHeader() {
           </NavigationMenuList>
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
-          <Link href="/login" className="hidden min-[900px]:inline-flex items-center px-3 py-2 text-sm font-medium text-[var(--commerce-ink)]">
-            Log in
-          </Link>
           <Link href="/signup" className={twLanding("navbar-cta")}>
             Get started <ArrowUpRight aria-hidden="true" />
-          </Link>
-          <Link href="/#contact" className={twLanding("navbar-cta")}>
-            Let’s talk <ArrowUpRight aria-hidden="true" />
           </Link>
           <Button
             className={twLanding("mobile-menu-toggle")}
@@ -264,12 +258,6 @@ export function SiteHeader() {
             <div className={twLanding("mobile-nav-section")}>
               <div className={twLanding("mobile-nav-grid")}>
                 <MobileNavLink entry={aboutLink} onNavigate={() => setOpen(false)} />
-                <Link href="/login" onClick={() => setOpen(false)} className={twLanding("mobile-nav-item")}>
-                  Log in to your client workspace
-                </Link>
-                <Link href="/signup" onClick={() => setOpen(false)} className={twLanding("mobile-nav-item")}>
-                  Create an account
-                </Link>
               </div>
             </div>
           </nav>
