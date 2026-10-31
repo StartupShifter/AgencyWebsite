@@ -1,6 +1,6 @@
 "use client";
 import { twLanding } from "@/lib/landing-styles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -174,25 +174,60 @@ function MobileNavLink({
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const pillRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 0);
-    const frame = window.requestAnimationFrame(onScroll);
+    const pill = pillRef.current;
+    if (!pill) return;
+
+    const hero = document.querySelector<HTMLElement>(
+      'section[aria-labelledby="hero-heading"]',
+    );
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let heroEnd = 1;
+    let frame = 0;
+    let previousProgress = -1;
+
+    const update = () => {
+      frame = 0;
+      const progress = reducedMotion.matches || !hero
+        ? Number(window.scrollY > 0)
+        : Math.min(1, Math.max(0, window.scrollY / heroEnd));
+
+      if (progress !== previousProgress) {
+        pill.style.setProperty("--navbar-progress", String(progress));
+        previousProgress = progress;
+      }
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const measure = () => {
+      heroEnd = hero
+        ? Math.max(1, hero.getBoundingClientRect().bottom + window.scrollY)
+        : 1;
+      onScroll();
+    };
+    const observer = new ResizeObserver(measure);
+    if (hero) observer.observe(hero);
+    measure();
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pageshow", onScroll);
+    window.addEventListener("resize", measure);
+    window.addEventListener("pageshow", measure);
+    reducedMotion.addEventListener("change", onScroll);
     return () => {
       window.cancelAnimationFrame(frame);
+      observer.disconnect();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("pageshow", onScroll);
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("pageshow", measure);
+      reducedMotion.removeEventListener("change", onScroll);
     };
   }, []);
   return (
     <header className={twLanding("site-header")}>
-      <div
-        className={twLanding(
-          scrolled ? "navbar-pill navbar-pill-scrolled" : "navbar-pill",
-        )}
-      >
+      <div ref={pillRef} className={twLanding("navbar-pill")}>
         <Link href="/" aria-label="Monster home" className={twLanding("navbar-brand")}>
           <span className={twLanding("brand-mark")}>
             <ArrowUpRight aria-hidden="true" strokeWidth={2.6} />
