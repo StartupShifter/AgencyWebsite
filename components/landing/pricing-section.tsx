@@ -1,6 +1,8 @@
-import { ArrowUpRight, Box, Check, Sparkles } from "lucide-react";
+import { ArrowUpRight, Check, Globe2, Handshake } from "lucide-react";
 
+import { buttonVariants } from "@/components/ui/button";
 import { twLanding } from "@/lib/landing-styles";
+import { cn } from "@/lib/utils";
 import "./pricing-section.css";
 
 const plans = [
@@ -25,7 +27,7 @@ const plans = [
     boundary:
       "You manage posting, ads, and lead generation after handover. Ongoing maintenance is separate.",
     action: "Get Basic plan",
-    icon: Box,
+    icon: Globe2,
   },
   {
     id: "pro",
@@ -48,7 +50,7 @@ const plans = [
     boundary:
       "We manage the agreed growth and support work. Advertising spend is separate; lead volumes aren’t guaranteed.",
     action: "Get Pro plan",
-    icon: Sparkles,
+    icon: Handshake,
   },
 ];
 
@@ -60,25 +62,18 @@ export function PricingSection() {
       aria-labelledby="pricing-heading"
     >
       <header className="ss-pricing-heading">
-        <p className="ss-pricing-eyebrow">
-          <span aria-hidden="true" /> Pricing
-        </p>
-        <h2 id="pricing-heading">Built for growth at every stage</h2>
-        <p>
-          Bring your business online, or let us help you grow it. Choose the
-          support you need.
-        </p>
+        <p className="ss-pricing-label">Our plans</p>
+        <h2 id="pricing-heading" className={twLanding("section-heading")}>
+          Choose the support you need.
+        </h2>
       </header>
 
       <div className="ss-pricing-content">
-        <p className="ss-pricing-caption">
-          One-time setup. Ongoing support with Pro.
-        </p>
         <div className="ss-pricing-plans">
           {plans.map((plan) => (
             <article
               key={plan.id}
-              className={`ss-pricing-card ss-pricing-card--${plan.id}`}
+              className={cn("ss-pricing-card", `ss-pricing-card--${plan.id}`)}
               aria-labelledby={`pricing-${plan.id}`}
             >
               <div className="ss-pricing-card-top">
@@ -87,7 +82,7 @@ export function PricingSection() {
                 </span>
                 {plan.id === "pro" && (
                   <span className="ss-pricing-badge">
-                    <Sparkles aria-hidden="true" /> Ongoing growth
+                    Ongoing growth
                   </span>
                 )}
               </div>
@@ -110,9 +105,15 @@ export function PricingSection() {
                 </ul>
               </div>
               <p className="ss-pricing-boundary">{plan.boundary}</p>
-              <a href="#contact" className="ss-pricing-button">
+              <a
+                href="#contact"
+                className={cn(
+                  buttonVariants({ size: "marketing" }),
+                  "ss-pricing-button w-full",
+                )}
+              >
                 {plan.action}
-                <ArrowUpRight aria-hidden="true" />
+                <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
               </a>
             </article>
           ))}
