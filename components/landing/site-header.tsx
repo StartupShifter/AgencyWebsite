@@ -259,7 +259,7 @@ export function SiteHeader() {
           </NavigationMenuList>
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
-          <Link href="/signup" className={twLanding("navbar-cta")}>
+          <Link href="/login" className={twLanding("navbar-cta")}>
             Get started <ArrowUpRight aria-hidden="true" />
           </Link>
           <Button
