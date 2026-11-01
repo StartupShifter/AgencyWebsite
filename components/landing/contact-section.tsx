@@ -3,6 +3,7 @@ import { twLanding } from "@/lib/landing-styles";
 
 import { useState, type FormEvent, type SyntheticEvent } from "react";
 import { ArrowUpRight, Download, Mail } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import "./contact-section.css";
 
 const serviceOptions = [
   "Ecommerce & websites",
@@ -108,21 +110,20 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
   return (
     <section
       id="contact"
-      className={twLanding("contact-section section-shell")}
+      className="closingContact"
       aria-labelledby="contact-heading"
     >
-      <div className={twLanding("contact-panel")}>
-        <div className={twLanding("contact-copy")}>
-          <p className={twLanding("section-eyebrow")}>Let’s make your next move</p>
-          <h2 id="contact-heading" className={twLanding("contact-heading")}>
-            Your next chapter starts with a conversation.
+      <div className="closingContact-copy">
+          <p className="closingContact-intro"><ArrowUpRight aria-hidden="true" /> Your next chapter</p>
+          <h2 id="contact-heading" className="closingContact-heading">
+            Let’s make your<br /> next move.
           </h2>
-          <p className={twLanding("contact-description")}>
-            A new online store, a better customer experience, or fewer manual
-            tasks. Start with what your business needs.
+          <p className="closingContact-description">
+            A better online store, a stronger social presence, or connected workflows.
+            Start with what your business needs.
           </p>
         </div>
-        <div className={twLanding("contact-actions")}>
+        <div className="closingContact-actions">
           <Dialog
             onOpenChange={() => {
               setStatus("");
@@ -130,7 +131,7 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
             }}
           >
             <DialogTrigger
-              render={<Button size="marketing" variant="default" />}
+              render={<Button size="marketing" variant="hero" className="rounded-lg" />}
             >
               Plan your project
               <ArrowUpRight data-icon="inline-end" aria-hidden="true" />
@@ -280,11 +281,8 @@ export function ContactSection({ contactEmail }: { contactEmail?: string }) {
               </form>
             </DialogContent>
           </Dialog>
-          <p className={twLanding("contact-caption")}>
-            Your business. Your priorities. A scope built around both.
-          </p>
+          <Link className="closingContact-secondary" href="/#services">Explore our services</Link>
         </div>
-      </div>
     </section>
   );
 }

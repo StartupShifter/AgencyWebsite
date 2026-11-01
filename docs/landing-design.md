@@ -2,15 +2,17 @@
 
 Implementation notes, not additional company policy. Business copy remains governed by company-context.md and services.md.
 
-## Footer (2026-10-11)
+## Footer (2026-11-01)
 
-The owner's final direction is a simple footer focused on navigation and company information. It uses the application's DM Sans, charcoal, emerald accents, and a quiet off-white surface. HTML navigation covers Services, Company, and Information, alongside the brand, project CTA, copyright, and back-to-top link. It is shared across the homepage, Products, About, and policy information pages. Mobile stacks the navigation in two columns.
+The readable owner-supplied reference shows a rounded shader CTA panel above a plain dark footer, with centered copy, two actions, grouped navigation, a copyright divider, and a large faded brand name beneath it. The owner's latest refinement switches the footer to a white theme while retaining the reference composition. It uses the application's DM Sans, white surfaces, charcoal text, forest green, and mint. The CTA carries “Let’s make your next move,” the existing project-brief dialog, and a services link. Its center has a dark scrim for readable white text. The body of the footer uses the white background token, charcoal foreground, muted text, and the existing border token. The brand mark and link hover states are emerald. Navigation and metadata have no shader behind them.
 
-The footer has no illustrated scene, platform selectors, platform logos, screenshots, large closing headline, or decorative motion effects. Styles are component-prefixed in site-footer.css.
+The WebGL canvas is clipped to the inset `agencyFooter-contact` panel. Broad luminous green/mint liquid shapes and dark channels replace the earlier satin ridges. A short fade at the panel's bottom blends into the white footer surface. `footer-shader.tsx` reads the commerce color tokens and caps rendering at 30 frames per second with a maximum 1.25 pixel ratio. The owner requested removal of the play/pause button; the shader has no visible playback controls. Rendering still pauses offscreen and in hidden tabs, and reduced-motion preferences show a static frame. A CSS gradient covers loading, disabled JavaScript, unsupported WebGL, and context loss. `site-footer.css` owns the panel, white footer, navigation, and pale charcoal wordmark; `contact-section.css` owns the centered callout. The existing dialog retains its download/email behavior.
+
+Company, Services, Resources, and Information columns use the application's existing destinations. No newsletter form, social handles, free trial, or demo offer is invented from the reference. Copyright and back-to-top sit above the decorative brand name. Contact actions stack on small phones, and navigation adapts to two columns. `SiteFooter` includes the complete closing composition across the homepage and shared information pages; the homepage has no separate duplicate contact panel.
 
 The About page uses confirmed company facts. Privacy, Cookies, and Service terms destinations show their pending approval status and limited current information; they are not complete approved legal policies and are excluded from search indexing. No new contractual terms are invented. The current brief downloads locally without transmitting an enquiry. Replace the pending policy content after the owner supplies approved text, and revisit privacy information if the contact flow changes.
 
-Official social handles and a public contact email have not been supplied. SiteFooter accepts an optional socialLinks array. Only approved URLs should be passed; the default displays an honest coming-soon message instead of invented profile links.
+Official social handles and a public contact email have not been supplied. SiteFooter accepts an optional socialLinks array. Only approved URLs should be passed; social links are omitted by default.
 
 ## Project showcase (2026-10-11)
 

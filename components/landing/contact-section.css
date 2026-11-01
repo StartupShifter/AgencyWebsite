@@ -1,0 +1,34 @@
+.closingContact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  min-height: 440px;
+  padding: 60px 24px 66px;
+  color: var(--commerce-white);
+  text-align: center;
+}
+.closingContact-copy { display: flex; flex-direction: column; align-items: center; }
+.closingContact-intro { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 22px; padding: 7px 12px; border: 1px solid color-mix(in srgb, var(--commerce-white) 18%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--commerce-deep) 55%, transparent); font-size: 12px; line-height: 1.5; }
+.closingContact-intro svg { width: 13px; height: 13px; }
+.closingContact-heading { max-width: 660px; font-size: clamp(38px, 4.5vw, 66px); font-weight: 500; line-height: 1.07; letter-spacing: -.055em; }
+.closingContact-description { max-width: 490px; margin-top: 22px; font-size: 15px; line-height: 1.75; color: var(--commerce-white); text-wrap: pretty; }
+.closingContact-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+.closingContact-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 12px 22px; border: 1px solid color-mix(in srgb, var(--commerce-white) 25%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--commerce-deep) 65%, transparent); color: var(--commerce-white); font-size: 14px; font-weight: 500; line-height: 1.5; transition: background-color 160ms ease; }
+@media (hover: hover) and (pointer: fine) {
+  .closingContact-secondary:hover { background: var(--commerce-deep); }
+}
+@media (max-width: 700px) {
+  .closingContact { min-height: 440px; padding: 54px 0; gap: 26px; }
+  .closingContact-heading { font-size: clamp(32px, 8.6vw, 50px); }
+  .closingContact-description { max-width: 360px; font-size: 14px; margin-top: 20px; }
+  .closingContact-actions { gap: 10px; }
+}
+@media (max-width: 420px) {
+  .closingContact-actions { flex-direction: column; width: 100%; }
+  .closingContact-actions > button, .closingContact-secondary { width: 100%; max-width: 240px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .closingContact-secondary { transition: none; }
+}
