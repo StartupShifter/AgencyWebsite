@@ -12,7 +12,11 @@ const vertexSource = `
 `;
 
 const fragmentSource = `
-  precision mediump float;
+  #ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+  #else
+    precision mediump float;
+  #endif
   varying vec2 v_uv;
   uniform float u_time;
   uniform float u_aspect;
@@ -30,22 +34,27 @@ const fragmentSource = `
       sin(p.x * 3.5 - t * 0.5)
     );
     float flow = p.y + 0.21 * sin(p.x * 3.8 + t)
-      + 0.11 * cos(p.y * 4.2 + p.x * 2.4 - t);
+      + 0.11 * cos(p.y * 4.2 + p.x * 2.4 - t)
+      + 0.025 * sin(p.x * 9.0 - p.y * 4.0 + t * 0.6);
 
-    // Broad luminous liquid shapes with dark channels, as in the reference.
-    float ribbon = exp(-pow((flow - 0.64) * 4.2, 2.0));
+    // Tighter ribbons and a fine lit edge give the liquid more definition.
+    float distanceToRibbon = abs(flow - 0.64);
+    float glow = exp(-pow(distanceToRibbon * 5.6, 2.0));
+    float ribbon = 0.22 * glow
+      + 0.78 * (1.0 - smoothstep(0.09, 0.15, distanceToRibbon));
+    float edge = exp(-pow((flow - 0.53) * 48.0, 2.0));
     float field = 0.5 + 0.5 * sin(p.x * 1.5 + p.y * 2.0 + t);
     vec3 color = mix(u_deep * 0.1, u_green, smoothstep(0.0, 0.85, field));
     color = mix(color, u_mint, ribbon * 0.85);
-    color = mix(color, u_soft, pow(ribbon, 3.0) * 0.75);
-    float channel = smoothstep(0.015, 0.14, abs(flow - 0.25));
-    color *= mix(0.08, 1.0, channel);
-    float upperWash = smoothstep(0.6, 1.0, uv.y) * (1.0 - uv.x) * 0.75;
+    color = mix(color, u_soft, pow(ribbon, 7.0) * 0.7);
+    color = mix(color, u_soft, edge * 0.28);
+    float channel = smoothstep(0.025, 0.085, abs(flow - 0.25));
+    color *= mix(0.12, 1.0, channel);
+    float upperWash = smoothstep(0.6, 1.0, uv.y) * (1.0 - uv.x) * 0.4;
     color = mix(color, u_mint, upperWash);
 
-    vec2 grainUv = uv * vec2(u_aspect, 1.0);
-    float grain = fract(sin(dot(grainUv, vec2(127.1, 311.7))) * 43758.5453);
-    color += (grain - 0.5) * 0.012;
+    float grain = fract(sin(dot(gl_FragCoord.xy, vec2(127.1, 311.7))) * 43758.5453);
+    color += (grain - 0.5) * 0.008;
     gl_FragColor = vec4(color, 1.0);
   }
 `;
@@ -144,8 +153,8 @@ export function FooterShader() {
       if (!reducedMotion.matches) frame = requestAnimationFrame(tick);
     };
     const resize = () => {
-      // A bounded pixel ratio keeps this decorative canvas inexpensive on phones.
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.25);
+      // Preserve crisp ribbon edges on Retina screens while bounding GPU work.
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.max(1, Math.round(canvas.clientWidth * ratio));
       canvas.height = Math.max(1, Math.round(canvas.clientHeight * ratio));
       gl.viewport(0, 0, canvas.width, canvas.height);

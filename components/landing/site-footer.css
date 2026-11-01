@@ -54,9 +54,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse 48% 95% at 50% 46%, color-mix(in srgb, var(--commerce-deep) 85%, transparent), color-mix(in srgb, var(--commerce-deep) 25%, transparent) 80%, transparent),
-    linear-gradient(to top, var(--background), transparent 18%);
+  background: radial-gradient(ellipse 48% 95% at 50% 46%, color-mix(in srgb, var(--commerce-deep) 85%, transparent), color-mix(in srgb, var(--commerce-deep) 25%, transparent) 80%, transparent);
 }
 @media (hover: hover) and (pointer: fine) {
   .agencyFooter-navigation li a:hover, .agencyFooter-meta a:hover, .agencyFooter-social a:hover { color: var(--commerce-green); text-decoration: underline; }
