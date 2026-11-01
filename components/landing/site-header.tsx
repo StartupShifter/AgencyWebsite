@@ -17,9 +17,6 @@ import {
   PenTool,
   Presentation,
   BadgeDollarSign,
-  CalendarCheck,
-  Scale,
-  Handshake,
   Route,
   CircleQuestionMark,
   ClipboardList,
@@ -73,15 +70,6 @@ const sections: NavSection[] = [
     },
   },
   {
-    label: "Pricing",
-    items: [
-      { icon: BadgeDollarSign, title: "Basic plan", description: "$1,000 once to bring your business online.", href: "#pricing" },
-      { icon: CalendarCheck, title: "Pro plan", description: "$2,000 setup plus $500/month for ongoing support.", href: "#pricing" },
-      { icon: Scale, title: "Compare plans", description: "Digital setup or ongoing growth and care.", href: "#pricing" },
-      { icon: Handshake, title: "Onboarding terms", description: "Signed contract and 40% advance to begin.", href: "#process" },
-    ],
-  },
-  {
     label: "Resources",
     items: [
       { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "#process" },
@@ -93,12 +81,20 @@ const sections: NavSection[] = [
   },
 ];
 
-const aboutLink: NavEntry = {
-  icon: Users,
-  title: "About us",
-  description: "Who Starter Shifter is and how we work.",
-  href: "#about",
-};
+const directLinks: NavEntry[] = [
+  {
+    icon: Users,
+    title: "About",
+    description: "Who Starter Shifter is and how we work.",
+    href: "/about",
+  },
+  {
+    icon: BadgeDollarSign,
+    title: "Pricing",
+    description: "Compare Basic setup and Pro ongoing support.",
+    href: "/#pricing",
+  },
+];
 
 // A single column lists up to 4 entries; every additional group of 4
 // spreads the menu out by one more column (5-8 → 2, 9-12 → 3, and so on).
@@ -240,6 +236,16 @@ export function SiteHeader() {
           aria-label="Main navigation"
         >
           <NavigationMenuList>
+            {directLinks.map((entry) => (
+              <NavigationMenuItem key={entry.title}>
+                <NavigationMenuLink
+                  render={<Link href={entry.href} />}
+                  className={twLanding("navbar-trigger")}
+                >
+                  {entry.title}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
             {sections.map((section) => (
               <NavigationMenuItem key={section.label}>
                 <NavigationMenuTrigger className={twLanding("navbar-trigger")}>
@@ -250,14 +256,6 @@ export function SiteHeader() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
             ))}
-            <NavigationMenuItem>
-              <NavigationMenuLink
-                href={`/${aboutLink.href}`}
-                className={twLanding("navbar-trigger")}
-              >
-                {aboutLink.title}
-              </NavigationMenuLink>
-            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
@@ -282,6 +280,11 @@ export function SiteHeader() {
             className={twLanding("mobile-navigation")}
             aria-label="Mobile navigation"
           >
+            {directLinks.map((entry) => (
+              <div key={entry.title} className={twLanding("mobile-nav-section")}>
+                <MobileNavLink entry={entry} onNavigate={() => setOpen(false)} />
+              </div>
+            ))}
             {sections.map((section) => (
               <div key={section.label} className={twLanding("mobile-nav-section")}>
                 <p className={twLanding("mobile-nav-label")}>{section.label}</p>
@@ -296,11 +299,6 @@ export function SiteHeader() {
                 </div>
               </div>
             ))}
-            <div className={twLanding("mobile-nav-section")}>
-              <div className={twLanding("mobile-nav-grid")}>
-                <MobileNavLink entry={aboutLink} onNavigate={() => setOpen(false)} />
-              </div>
-            </div>
           </nav>
         )}
       </div>
