@@ -11,7 +11,7 @@ export function AuthShell({ children, mode }: { children: ReactNode; mode: "logi
     "Shape your next chapter",
   ];
   return (
-    <main className="auth-screen">
+    <main className="auth-screen" data-mode={mode}>
       <div className="auth-card">
         <aside className="auth-story" aria-labelledby="auth-story-heading">
           <Brand className="auth-brand" />
