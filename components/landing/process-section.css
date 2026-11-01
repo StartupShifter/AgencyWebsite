@@ -1,11 +1,16 @@
-.process-intro { max-width: 360px; }
+.process-section { isolation: isolate; }
+.process-topline { position: relative; z-index: 10; padding-block: 12px 20px; margin-bottom: 24px; background: var(--background); }
+.process-headingCopy { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.process-intro { flex: 0 1 360px; min-width: 0; max-width: 360px; overflow-wrap: anywhere; }
+.process-section[data-stacking="true"] .process-topline { position: sticky; top: calc(var(--process-top) + var(--process-exit, 0px)); }
 .process-scrollHint { display: flex; align-items: center; gap: 10px; margin-top: 20px; font-size: 12px; }
 .process-scrollHint svg { width: 15px; height: 15px; }
 
 /* Sticky siblings share a containing block, so the deck releases together. */
-.process-stack { --stack-top: 104px; --stack-peek: 24px; isolation: isolate; display: flex; flex-direction: column; gap: 32px; list-style: none; }
-.process-stack::after { content: ""; flex: 0 0 20svh; }
-.process-step { position: sticky; top: calc(var(--stack-top) + var(--step-index) * var(--stack-peek)); z-index: var(--step-index); margin-inline: calc((4 - var(--step-index)) * 8px); }
+.process-stack { isolation: isolate; display: flex; flex-direction: column; gap: 32px; list-style: none; }
+.process-section[data-stacking="true"] .process-stack::after { content: ""; flex: 0 0 20svh; }
+.process-step { position: relative; z-index: var(--step-index); margin-inline: calc((4 - var(--step-index)) * 8px); }
+.process-section[data-stacking="true"] .process-step { position: sticky; top: calc(var(--stack-top) + var(--step-index) * var(--stack-peek)); }
 .process-card { display: flex; flex-direction: column; min-height: clamp(440px, 59svh, 580px); padding: 32px 44px 36px; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); border-radius: 28px; background: var(--step-surface); color: var(--step-text); box-shadow: 0 -12px 36px -24px #102f2366; transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1); }
 .process-research { --step-surface: var(--commerce-ink); --step-text: var(--commerce-white); }
 .process-build { --step-surface: var(--commerce-deep); --step-text: var(--commerce-white); }
@@ -17,7 +22,7 @@
 .process-number span { opacity: 0.7; }
 .process-phase { font-size: 12px; }
 .process-cardHeading { display: flex; align-items: center; justify-content: space-between; gap: 32px; margin-block: 32px 40px; }
-.process-cardHeading h3 { font-size: clamp(2.8rem, 5.8vw, 5rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.055em; }
+.process-cardHeading h3 { min-width: 0; overflow-wrap: anywhere; font-size: clamp(2.8rem, 5.8vw, 5rem); font-weight: 500; line-height: 1.02; letter-spacing: -0.055em; }
 .process-cardHeading h3 span { display: block; }
 .process-cardHeading h3 span:last-child { opacity: 0.75; }
 .process-icon { display: grid; place-items: center; flex-shrink: 0; width: 124px; height: 124px; border: 1px solid color-mix(in srgb, currentColor 25%, transparent); border-radius: 50%; }
@@ -27,14 +32,18 @@
 .process-deliverables ul { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; font-size: 12px; line-height: 1.6; }
 .process-note { max-width: 430px; margin-top: 16px; font-size: 12px; line-height: 1.65; opacity: 0.85; }
 .process-onboarding { max-width: 680px; margin-top: 24px; font-size: 13px; line-height: 1.75; color: var(--muted-foreground); }
+/* Preserve the measured heading height when stacking cannot fit. */
+.process-section:not([data-stacking="true"]) .process-scrollHint { visibility: hidden; }
 
 @media (hover: hover) and (pointer: fine) {
   .process-card:hover { transform: translateY(-6px); }
 }
 
 @media (max-width: 760px) {
-  .process-stack { --stack-top: 92px; --stack-peek: 18px; gap: 24px; }
-  .process-stack::after { flex-basis: 12svh; }
+  .process-topline { gap: 16px; margin-bottom: 24px; }
+  .process-intro { flex-basis: auto; max-width: 440px; }
+  .process-stack { gap: 24px; }
+  .process-section[data-stacking="true"] .process-stack::after { flex-basis: 12svh; }
   .process-step { margin-inline: calc((4 - var(--step-index)) * 3px); }
   .process-card { min-height: 460px; padding: 24px; border-radius: 22px; }
   .process-cardHeading { gap: 16px; margin-block: 30px; }
