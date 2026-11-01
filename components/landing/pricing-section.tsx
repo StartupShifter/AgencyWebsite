@@ -82,7 +82,7 @@ export function PricingSection() {
                 </span>
                 {plan.id === "pro" && (
                   <span className="ss-pricing-badge">
-                    Ongoing growth
+                    Recommended
                   </span>
                 )}
               </div>
@@ -108,7 +108,10 @@ export function PricingSection() {
               <a
                 href="#contact"
                 className={cn(
-                  buttonVariants({ size: "marketing" }),
+                  buttonVariants({
+                    variant: plan.id === "pro" ? "emerald" : "default",
+                    size: "marketing",
+                  }),
                   "ss-pricing-button w-full",
                 )}
               >

@@ -70,6 +70,8 @@ The owner requested a restrained update that preserves the two-plan structure an
 
 Plan prices, inclusions, and responsibility boundaries remain unchanged; Pro explicitly inherits Basic. Payment-type copy remains in place because no annual offer was confirmed. [Linear](https://linear.app/pricing) and [Routes Design](https://www.routes.design/pricing) informed the restrained pricing hierarchy and separation of price from scope; their offers and commercial terms are not adopted.
 
+The owner's next refinement restores shaded mint gradient borders on both pricing buttons. A masked pseudo-element keeps the shader on the edge while retaining the shared button fills and focus styles. Pro receives an emerald outline and soft outer halo, a faint mint surface, a filled “Recommended” badge, and an emerald button with a brighter lime/mint edge. The recommendation is editorial emphasis, not a claim about customer popularity. The layout, prices, and scope remain unchanged.
+
 ## Earlier image provenance (retained asset)
 
 Generated with the built-in imagegen tool. The source remains at /Users/lakshay/.codex/generated_images/01a12647-266b-7790-8514-11aab2542310/exec-32f43485-4c89-4795-9989-efc9d06d4311.png. The project consumes only the workspace WebP file above.
