@@ -109,7 +109,7 @@ export function PricingSection() {
                 href="#contact"
                 className={cn(
                   buttonVariants({
-                    variant: plan.id === "pro" ? "emerald" : "default",
+                    variant: plan.id === "pro" ? "lime" : "default",
                     size: "marketing",
                   }),
                   "ss-pricing-button w-full",
