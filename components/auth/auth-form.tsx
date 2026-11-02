@@ -1,17 +1,17 @@
 "use client";
 
-import { useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Eye, EyeOff, Mail } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Mail } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Field, FieldGroup, FieldLabel, FieldDescription, FieldSeparator } from "@/components/ui/field";
+import { Field, FieldGroup, FieldLabel, FieldError, FieldSeparator } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 type Provider = "google" | "facebook";
 
@@ -27,6 +27,8 @@ export function AuthForm({ googleEnabled, facebookEnabled, redirectTo, initialEr
   redirectTo: string;
   initialError?: string;
 }) {
+  const [emailOpen, setEmailOpen] = useState(false);
+  const emailTriggerRef = useRef<HTMLButtonElement>(null);
   const [pending, setPending] = useState<Provider | null>(null);
   const [error, setError] = useState(initialError ?? "");
   const errorRef = useRef<HTMLDivElement>(null);
@@ -51,52 +53,61 @@ export function AuthForm({ googleEnabled, facebookEnabled, redirectTo, initialEr
   }
 
   return (
-    <div className="auth-form">
+    <div className="auth-form" data-method={emailOpen ? "email" : "social"}>
       <header className="auth-form-heading">
         <h1>Join us.</h1>
         <p>New here or returning? Continue to your client workspace.</p>
       </header>
-      <div className="auth-social" role="group" aria-label="Continue with a social account" aria-busy={pending !== null}>
-        <div className="auth-providers">
-          {([{ provider: "google", label: "Google", enabled: googleEnabled }, { provider: "facebook", label: "Facebook", enabled: facebookEnabled }] as const).map(({ provider, label, enabled }) => (
-            <Button key={provider} type="button" variant="outline" size="marketing" className="auth-provider" disabled={pending !== null || !enabled} onClick={() => signInSocial(provider)} aria-describedby={!enabled ? "social-help" : undefined}>
-              {pending === provider ? <Spinner data-icon="inline-start" /> : <ProviderIcon provider={provider} />}
-              {pending === provider ? "Connecting…" : `Continue with ${label}`}
+      {emailOpen ? (
+        <EmailAuthForm redirectTo={redirectTo} onBack={() => {
+          setEmailOpen(false);
+          requestAnimationFrame(() => emailTriggerRef.current?.focus({ preventScroll: true }));
+        }} />
+      ) : (
+        <>
+          <div className="auth-social" role="group" aria-label="Continue with a social account" aria-busy={pending !== null}>
+            <div className="auth-providers">
+              {([{ provider: "google", label: "Google", enabled: googleEnabled }, { provider: "facebook", label: "Facebook", enabled: facebookEnabled }] as const).map(({ provider, label, enabled }) => (
+                <Button key={provider} type="button" variant="outline" size="marketing" className="auth-provider" disabled={pending !== null || !enabled} onClick={() => signInSocial(provider)} aria-describedby={!enabled ? "social-help" : undefined}>
+                  {pending === provider ? <Spinner data-icon="inline-start" /> : <ProviderIcon provider={provider} />}
+                  {pending === provider ? "Connecting…" : `Continue with ${label}`}
+                </Button>
+              ))}
+            </div>
+            {!googleEnabled || !facebookEnabled ? <p id="social-help" className="auth-social-help">{!googleEnabled && !facebookEnabled ? "Google and Facebook sign-in are coming soon. You can use email for now." : `${!googleEnabled ? "Google" : "Facebook"} sign-in is coming soon.`}</p> : null}
+            {error ? <Alert variant="destructive" role="alert" ref={errorRef} tabIndex={-1}><AlertDescription>{error}</AlertDescription></Alert> : null}
+          </div>
+          <div className="auth-email-option">
+            <FieldSeparator>or</FieldSeparator>
+            <Button ref={emailTriggerRef} type="button" variant="ghost" size="marketing" className="auth-email-trigger" disabled={pending !== null} onClick={() => { setError(""); setEmailOpen(true); }}>
+              <Mail data-icon="inline-start" aria-hidden="true" /> Continue with email
             </Button>
-          ))}
-        </div>
-        {!googleEnabled || !facebookEnabled ? <p id="social-help" className="auth-social-help">{!googleEnabled && !facebookEnabled ? "Google and Facebook sign-in are coming soon. You can use email for now." : `${!googleEnabled ? "Google" : "Facebook"} sign-in is coming soon.`}</p> : null}
-        {error ? <Alert variant="destructive" role="alert" ref={errorRef} tabIndex={-1}><AlertDescription>{error}</AlertDescription></Alert> : null}
-      </div>
-      <div className="auth-email-option">
-        <FieldSeparator>or</FieldSeparator>
-        <Dialog>
-          <DialogTrigger render={<Button variant="ghost" size="marketing" className="auth-email-trigger" disabled={pending !== null} />}>
-            <Mail data-icon="inline-start" aria-hidden="true" /> Continue with email
-          </DialogTrigger>
-          <DialogContent className="auth-email-dialog">
-            <EmailAuthForm redirectTo={redirectTo} />
-          </DialogContent>
-        </Dialog>
-      </div>
-      <p className="auth-workspace-note">Share your business brief and follow your project in one place.</p>
-      <p className="auth-privacy-note">Read how we use your account and project details in our <Link href="/policies/onboarding-privacy">privacy information</Link>.</p>
+          </div>
+          <p className="auth-workspace-note">Share your business brief and follow your project in one place.</p>
+          <p className="auth-privacy-note">Read how we use your account and project details in our <Link href="/policies/onboarding-privacy">privacy information</Link>.</p>
+        </>
+      )}
     </div>
   );
 }
 
-function EmailAuthForm({ redirectTo }: { redirectTo: string }) {
+function EmailAuthForm({ redirectTo, onBack }: { redirectTo: string; onBack: () => void }) {
   const router = useRouter();
   const [signup, setSignup] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
+  const [rememberMe, setRememberMe] = useState(true);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [password, setPassword] = useState("");
+  const emailRef = useRef<HTMLInputElement>(null);
   const errorRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { emailRef.current?.focus({ preventScroll: true }); }, []);
 
   function showError(message: string) {
     setError(message);
-    requestAnimationFrame(() => errorRef.current?.focus());
+    requestAnimationFrame(() => errorRef.current?.focus({ preventScroll: true }));
   }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -104,16 +115,16 @@ function EmailAuthForm({ redirectTo }: { redirectTo: string }) {
     if (pending) return;
     const data = new FormData(event.currentTarget);
     const email = String(data.get("email") ?? "").trim();
-    const name = String(data.get("name") ?? "").trim();
-    if (signup && !name) { showError("Please enter your name."); return; }
+    const accountName = name.trim();
+    if (signup && !accountName) { showError("Please enter your name."); return; }
     setError("");
     setPending(true);
     try {
       const result = signup
-        ? await authClient.signUp.email({ email, password, name })
-        : await authClient.signIn.email({ email, password, rememberMe: data.get("remember") === "on" });
+        ? await authClient.signUp.email({ email, password, name: accountName })
+        : await authClient.signIn.email({ email, password, rememberMe });
       if (result.error) {
-        showError(result.error.status === 429 ? "Too many attempts. Please wait a moment and try again." : signup ? (result.error.message ?? "We couldn’t create your account. Please try again.") : "We couldn’t sign you in. Check your email and password.");
+        showError(result.error.status === 429 ? "Too many attempts. Please wait a moment and try again." : signup ? "We couldn’t create your account. Try signing in or use another email." : "We couldn’t sign you in. Check your email and password.");
         return;
       }
       router.replace(redirectTo);
@@ -122,42 +133,51 @@ function EmailAuthForm({ redirectTo }: { redirectTo: string }) {
     finally { setPending(false); }
   }
 
-  function switchMode() {
-    setSignup((current) => !current);
-    setError("");
-    setPassword("");
-    setPasswordVisible(false);
-  }
-
   return (
-    <>
-      <DialogHeader>
-        <DialogTitle>{signup ? "Create an account with email" : "Sign in with email"}</DialogTitle>
-        <DialogDescription>{signup ? "Tell us your name and choose a password." : "Use your email and password to continue."}</DialogDescription>
-      </DialogHeader>
-      <form className="auth-email-form" onSubmit={submit} aria-busy={pending}>
+    <section className="auth-email-view" aria-label="Email account access">
+      <div className="auth-email-navigation">
+        <Button type="button" variant="ghost" size="icon-lg" className="auth-method-back" onClick={onBack} disabled={pending} aria-label="Back to all sign-in options"><ArrowLeft aria-hidden="true" /></Button>
+        <ToggleGroup className="auth-email-mode" size="sm" aria-label="Email account access" value={[signup ? "signup" : "login"]} disabled={pending} onValueChange={(values) => {
+          if (!values.length) return;
+          setSignup(values[0] === "signup");
+          setError("");
+          setPasswordVisible(false);
+        }}>
+          <ToggleGroupItem value="login">Sign in</ToggleGroupItem>
+          <ToggleGroupItem value="signup">Create account</ToggleGroupItem>
+        </ToggleGroup>
+      </div>
+      <form className="auth-email-form" onSubmit={submit} aria-label={signup ? "Create an account with email" : "Sign in with email"} aria-busy={pending}>
         <FieldGroup>
-          {error ? <Alert className="auth-email-error" variant="destructive" role="alert" ref={errorRef} tabIndex={-1}><AlertDescription>{error}</AlertDescription></Alert> : null}
-          {signup ? <Field data-disabled={pending}><FieldLabel htmlFor="auth-name">Your name</FieldLabel><Input id="auth-name" name="name" autoComplete="name" placeholder="Alex Morgan" required maxLength={100} disabled={pending} /></Field> : null}
-          <Field data-disabled={pending}><FieldLabel htmlFor="auth-email">Email address</FieldLabel><Input id="auth-email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} placeholder="you@business.com" required disabled={pending} /></Field>
+          <Field data-disabled={pending}>
+            <FieldLabel htmlFor="auth-email">Email address</FieldLabel>
+            <Input ref={emailRef} variant="soft" id="auth-email" name="email" type="email" autoComplete="email" autoCapitalize="none" spellCheck={false} placeholder="you@business.com" required disabled={pending} />
+          </Field>
           <Field data-disabled={pending}>
             <FieldLabel htmlFor="auth-password">Password</FieldLabel>
-            <InputGroup>
-              <InputGroupInput id="auth-password" name="password" type={passwordVisible ? "text" : "password"} autoComplete={signup ? "new-password" : "current-password"} placeholder={signup ? "Create a strong password" : "Enter your password"} required minLength={signup ? 12 : undefined} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} disabled={pending} aria-describedby={signup ? "password-help" : undefined} />
+            <InputGroup variant="soft">
+              <InputGroupInput id="auth-password" name="password" type={passwordVisible ? "text" : "password"} autoComplete={signup ? "new-password" : "current-password"} placeholder={signup ? "Create a strong password" : "Enter your password"} required minLength={signup ? 12 : undefined} maxLength={128} value={password} onChange={(event) => setPassword(event.target.value)} disabled={pending} aria-describedby={signup ? "auth-form-status" : undefined} />
               <InputGroupAddon align="inline-end">
                 <InputGroupButton size="icon-sm" onClick={() => setPasswordVisible((visible) => !visible)} aria-label={passwordVisible ? "Hide password" : "Show password"} aria-pressed={passwordVisible} disabled={pending}>{passwordVisible ? <EyeOff /> : <Eye />}</InputGroupButton>
               </InputGroupAddon>
             </InputGroup>
-            {signup ? <FieldDescription id="password-help">Use at least 12 characters.</FieldDescription> : null}
           </Field>
-          {!signup ? <label className="auth-remember"><input name="remember" type="checkbox" defaultChecked disabled={pending} /> Keep me signed in</label> : null}
-          <Button type="submit" variant="emerald" size="marketing" className="auth-submit" disabled={pending}>{pending ? <Spinner data-icon="inline-start" /> : null}{pending ? (signup ? "Creating your account…" : "Signing in…") : (signup ? "Create account" : "Sign in")}{!pending ? <ArrowRight data-icon="inline-end" aria-hidden="true" /> : null}</Button>
+          <div className="auth-account-slot">
+            {signup ? <Field data-disabled={pending}>
+              <FieldLabel htmlFor="auth-name">Your name</FieldLabel>
+              <Input variant="soft" id="auth-name" name="name" autoComplete="name" placeholder="Alex Morgan" required maxLength={100} value={name} onChange={(event) => setName(event.target.value)} disabled={pending} />
+            </Field> : <label className="auth-remember"><input name="remember" type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} disabled={pending} /> Keep me signed in</label>}
+          </div>
         </FieldGroup>
+        <div id="auth-form-status" className="auth-form-status">
+          {error ? <FieldError ref={errorRef} tabIndex={-1}>{error}</FieldError> : signup ? <p>Use at least 12 characters for your password.</p> : null}
+        </div>
+        <Button type="submit" variant="emerald" size="marketing" className="auth-submit" disabled={pending}>
+          {pending ? <Spinner data-icon="inline-start" /> : null}
+          {pending ? (signup ? "Creating your account…" : "Signing in…") : (signup ? "Create account" : "Sign in")}
+          {!pending ? <ArrowRight data-icon="inline-end" aria-hidden="true" /> : null}
+        </Button>
       </form>
-      <div className="auth-switch">
-        <span>{signup ? "Already have an account?" : "New to Starter Shifter?"}</span>
-        <Button type="button" variant="link" onClick={switchMode} disabled={pending}>{signup ? "Sign in" : "Create an account"}</Button>
-      </div>
-    </>
+    </section>
   );
 }

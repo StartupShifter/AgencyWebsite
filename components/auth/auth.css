@@ -67,19 +67,26 @@ body:has(.auth-screen) {
 .auth-footer a { display: inline-flex; min-height: 44px; align-items: center; }
 .auth-footer a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-.auth-email-dialog { width: calc(100% - 32px); max-width: 400px; padding: 24px; }
-.auth-email-dialog [data-slot="dialog-header"] { padding-right: 20px; }
-.auth-email-form [data-slot="field-group"] { gap: 16px; }
-.auth-email-form [data-slot="input"], .auth-email-form [data-slot="input-group"] { height: 44px; }
+.auth-form[data-method="email"] .auth-form-heading { margin-bottom: 20px; }
+.auth-form[data-method="email"] .auth-form-heading p { display: none; }
+.auth-email-view { --auth-field-height: 70px; display: flex; flex-direction: column; gap: 16px; }
+.auth-email-navigation { display: flex; align-items: center; gap: 8px; }
+.auth-method-back { width: 44px; height: 44px; flex-shrink: 0; }
+.auth-email-mode { width: 100%; flex: 1; }
+.auth-email-mode [data-slot="toggle-group-item"] { min-height: 44px; min-width: 0; flex: 1; }
+.auth-email-form [data-slot="field-group"] { gap: 12px; }
+.auth-email-form [data-slot="field"] { gap: 4px; justify-content: flex-end; }
+.auth-email-form [data-slot="field-group"] > [data-slot="field"],
+.auth-account-slot { height: var(--auth-field-height); }
+.auth-account-slot > [data-slot="field"] { height: 100%; }
+.auth-email-form [data-slot="input"], .auth-email-form [data-slot="input-group"] { height: 44px; flex-shrink: 0; }
 .auth-email-form [data-slot="input-group-control"] { height: 100%; }
 .auth-email-form [data-slot="input"], .auth-email-form [data-slot="input-group-control"] { font-size: 16px; }
 .auth-email-form [data-slot="field-label"] { font-size: 12px; }
-.auth-email-form [data-slot="field-description"] { font-size: 11px; }
-.auth-remember { display: flex; min-height: 28px; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
+.auth-form-status { display: flex; height: 48px; align-items: center; font-size: 12px; line-height: 1.5; color: var(--muted-foreground); }
+.auth-remember { display: flex; height: 100%; align-items: center; gap: 8px; font-size: 12px; color: var(--muted-foreground); }
 .auth-remember input { width: 16px; height: 16px; accent-color: var(--commerce-green); }
 .auth-submit { width: 100%; }
-.auth-switch { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0 4px; font-size: 12px; color: var(--muted-foreground); }
-.auth-switch button { min-height: 44px; }
 
 @media (max-width: 1000px) {
   .auth-story { padding-inline: 28px; }
@@ -121,9 +128,11 @@ body:has(.auth-screen) {
   .auth-workspace-note { margin-top: 12px; }
   .auth-privacy-note { margin-top: 8px; }
   .auth-email-option { margin-top: 12px; gap: 4px; }
-  .auth-email-dialog { padding: 16px; gap: 12px; }
-  .auth-email-form [data-slot="field-group"] { gap: 10px; }
-  .auth-email-form [data-slot="field"] { gap: 4px; }
+  .auth-form-content:has(.auth-email-view) { padding-block: 0; }
+  .auth-form[data-method="email"] .auth-form-heading { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .auth-email-view { --auth-field-height: 66px; gap: 8px; }
+  .auth-email-form [data-slot="field-group"] { gap: 8px; }
+  .auth-email-form .auth-submit { height: 44px; }
   .auth-form:has([role="alert"]) .auth-workspace-note,
   .auth-form:has([role="alert"]) .auth-form-heading p { display: none; }
 }
@@ -141,11 +150,10 @@ body:has(.auth-screen) {
   .auth-email-option { grid-column: 1; margin: 0; }
   .auth-workspace-note { display: none; }
   .auth-privacy-note { grid-column: 1; margin: 0; text-align: left; }
-  .auth-email-dialog { max-width: 600px; }
-  .auth-email-form [data-slot="field-group"] { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; }
-  .auth-email-error { grid-column: 1 / -1; }
+  .auth-form[data-method="email"] { display: block; }
+  .auth-email-form [data-slot="field-group"] { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .auth-screen [data-slot="button"], .auth-email-dialog [data-slot="button"] { transition: none; }
+  .auth-screen [data-slot="button"], .auth-email-mode [data-slot="toggle-group-item"] { transition: none; }
 }
