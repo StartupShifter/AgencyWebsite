@@ -16,8 +16,8 @@ const navigation = [
     title: "Company",
     links: [
       ["About us", "/about"],
-      ["How we work", "/#process"],
-      ["Projects & concepts", "/products"],
+      ["How we work", "/how-we-work"],
+      ["Projects & products", "/products"],
       ["Plans & pricing", "/#pricing"],
     ],
   },
@@ -35,8 +35,10 @@ const navigation = [
     title: "Resources",
     links: [
       ["Client login", "/login"],
-      ["FAQs", "/#faq"],
-      ["Project brief", "#contact"],
+      ["How we work", "/how-we-work"],
+      ["FAQs", "/faq"],
+      ["Project brief", "/project-brief"],
+      ["Support & care", "/support"],
     ],
   },
   {

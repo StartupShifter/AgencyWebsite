@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
-import { ArrowDown, ChartNoAxesCombined, Globe, MessagesSquare, Network, ScanSearch } from "lucide-react";
+import Link from "next/link";
+import { ArrowDown, ArrowUpRight, ChartNoAxesCombined, Globe, MessagesSquare, Network, ScanSearch } from "lucide-react";
 import { twLanding } from "@/lib/landing-styles";
 import "./process-section.css";
 
@@ -142,6 +143,9 @@ export function ProcessSection() {
             your project needs, then build around that scope.
           </p>
           <p className="process-scrollHint">Scroll through the process <ArrowDown aria-hidden="true" /></p>
+          <Link href="/how-we-work" className={twLanding("action-link")}>
+            Read the full delivery guide <ArrowUpRight aria-hidden="true" />
+          </Link>
         </div>
       </div>
       <ol className="process-stack">

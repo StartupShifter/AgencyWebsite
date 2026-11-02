@@ -1,4 +1,5 @@
 import { ArrowUpRight, Check, Globe2, Handshake } from "lucide-react";
+import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { twLanding } from "@/lib/landing-styles";
@@ -128,6 +129,13 @@ export function PricingSection() {
           access, and approvals. Hosting, domains, software, licenses, usage
           fees, ad spend, and payment or shipping charges are separate.
         </p>
+        <Link
+          href="/support"
+          className="mx-auto mt-4 flex w-fit min-h-11 items-center gap-2 text-sm font-medium underline-offset-4 hover:underline"
+        >
+          See what ongoing support covers{" "}
+          <ArrowUpRight aria-hidden="true" className="size-4" />
+        </Link>
       </div>
     </section>
   );

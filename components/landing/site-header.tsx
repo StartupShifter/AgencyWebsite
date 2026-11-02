@@ -72,9 +72,9 @@ const sections: NavSection[] = [
   {
     label: "Resources",
     items: [
-      { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "#process" },
-      { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "#faq" },
-      { icon: ClipboardList, title: "Project brief", description: "Tell us what you're building.", href: "#contact" },
+      { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "/how-we-work" },
+      { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "/faq" },
+      { icon: ClipboardList, title: "Project brief", description: "Tell us what you're building.", href: "/project-brief" },
       { icon: FolderOpen, title: "Projects & products", description: "Explore our websites and applications.", href: "/products" },
       { icon: LifeBuoy, title: "Support & care", description: "Help for projects after launch.", href: "/support" },
     ],
@@ -224,11 +224,11 @@ export function SiteHeader() {
   return (
     <header className={twLanding("site-header")}>
       <div ref={pillRef} className={twLanding("navbar-pill")}>
-        <Link href="/" aria-label="Monster home" className={twLanding("navbar-brand")}>
+        <Link href="/" aria-label="Starter Shifter home" className={twLanding("navbar-brand")}>
           <span className={twLanding("brand-mark")}>
             <ArrowUpRight aria-hidden="true" strokeWidth={2.6} />
           </span>
-          monster
+          starter&nbsp;shifter
         </Link>
         <NavigationMenu
           align="center"
