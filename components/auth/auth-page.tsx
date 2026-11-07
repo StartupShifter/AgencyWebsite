@@ -4,6 +4,7 @@ import { connection } from "next/server";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@/convex/_generated/api";
 import { getCurrentUser } from "@/lib/auth-server";
+import { isConvexConfigured } from "@/lib/convex-config";
 import { safeAuthRedirect } from "@/lib/auth-redirect";
 import { AuthShell } from "./auth-shell";
 import { AuthForm } from "./auth-form";
@@ -12,7 +13,13 @@ export type AuthSearchParams = Promise<{ error?: string; next?: string }>;
 
 async function AuthPageContent({ searchParams }: { searchParams: AuthSearchParams }) {
   await connection();
-  const [user, options, params] = await Promise.all([getCurrentUser(), fetchQuery(api.auth.getLoginOptions, {}), searchParams]);
+  const [user, options, params] = await Promise.all([
+    getCurrentUser(),
+    isConvexConfigured
+      ? fetchQuery(api.auth.getLoginOptions, {})
+      : Promise.resolve({ googleEnabled: false, facebookEnabled: false }),
+    searchParams,
+  ]);
   const redirectTo = safeAuthRedirect(params.next);
   if (user) redirect(redirectTo);
   return <AuthShell><AuthForm {...options} redirectTo={redirectTo} initialError={params.error ? "Social sign-in was unsuccessful. Try again or continue with email." : undefined} /></AuthShell>;
