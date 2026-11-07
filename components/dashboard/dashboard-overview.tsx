@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import {
   ArrowDownToLine,
   ArrowRight,
@@ -33,7 +34,7 @@ export function ProgressRing({ percent }: { percent: number }) {
       viewBox="0 0 76 76"
       className="size-[82px] shrink-0"
       role="img"
-      aria-label={`${percent}% of brief complete`}
+      aria-label={`${percent}% of questions complete`}
     >
       <circle
         cx="38"
@@ -70,6 +71,7 @@ export function ProgressRing({ percent }: { percent: number }) {
 }
 
 export function DashboardOverview({
+  phasePanel,
   model,
   data,
   name,
@@ -79,6 +81,7 @@ export function DashboardOverview({
   onExport,
   onFollowups,
 }: {
+  phasePanel: ReactNode;
   model: DashboardModel;
   data: WorkspaceData;
   name: string;
@@ -118,12 +121,12 @@ export function DashboardOverview({
   });
   const missingPrerequisite = prerequisites.find((item) => !item.verified);
   const nextTitle = !submitted
-    ? "A great project starts with your story."
+    ? "One small phase at a time."
     : model.workspaceReady
       ? "Ready for your next chapter."
       : "Let’s get your project ready.";
   const nextDescription = !submitted
-    ? "Tell us a little more about your business. Your progress is saved as you go."
+    ? "Answer up to five questions, then return here. You can pause between every phase."
     : model.workspaceReady
       ? "Your brief and prerequisites are verified. Your agency can now arrange the agreed next steps."
       : missingPrerequisite?.detail ||
@@ -149,7 +152,7 @@ export function DashboardOverview({
               href={onboardingHref}
               className="inline-flex items-center gap-2 rounded-full bg-[var(--commerce-green)] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-[var(--commerce-deep)] xl:hidden"
             >
-              {data.draft ? "Continue my brief" : "Start my brief"}
+              {data.draft ? "Continue next phase" : "Start first phase"}
               <ArrowUpRight size={14} />
             </Link>
           )}
@@ -164,6 +167,7 @@ export function DashboardOverview({
           </Button>
         </div>
       </div>
+      {phasePanel}
       <div className="mb-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-[1.45fr_1fr_1fr_1fr]">
         <button
           onClick={() => onNavigate("brief")}
@@ -179,14 +183,10 @@ export function DashboardOverview({
           <div className="mt-5 flex items-start justify-between gap-3">
             <div>
               <p className="text-[32px] font-medium leading-none tracking-[-1.2px]">
-                {progress.completed}
-                <span className="text-lg font-normal text-[var(--workspace-muted)]">
-                  {" "}
-                  / {progress.total}
-                </span>
+                {model.completedPhases}
               </p>
               <p className="mt-2 text-[11px] text-[var(--workspace-muted)]">
-                Questions complete
+                Phases complete
               </p>
               <span className="mt-3 inline-flex rounded-full bg-white/60 px-2.5 py-1 text-[10px] font-medium">
                 {submitted
@@ -294,7 +294,7 @@ export function DashboardOverview({
                 </p>
               </div>
               <span className="rounded-full bg-[var(--workspace-soft)] px-2.5 py-1 text-[10px] text-[var(--workspace-muted)]">
-                {progress.percent}% complete
+                {progress.percent}% of questions complete
               </span>
             </div>
             <div
@@ -420,7 +420,7 @@ export function DashboardOverview({
                 href={onboardingHref}
                 className="relative z-10 inline-flex items-center gap-3 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-[var(--commerce-deep)] transition-colors hover:bg-[var(--commerce-soft)]"
               >
-                {data.draft ? "Continue my brief" : "Start my brief"}
+                {data.draft ? model.nextPhase?.id === "final" && model.nextPhase.complete ? "Review and send" : "Continue next phase" : "Start first phase"}
                 <ArrowRight size={15} />
               </Link>
             ) : (

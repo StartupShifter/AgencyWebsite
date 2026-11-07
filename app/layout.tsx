@@ -3,6 +3,7 @@ import { DM_Sans, Geist_Mono } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { getToken } from "@/lib/auth-server";
+import { isConvexConfigured } from "@/lib/convex-config";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -22,6 +23,9 @@ export const metadata: Metadata = {
 };
 
 async function AuthProvider({ children }: { children: ReactNode }) {
+  // Public pages must still render when a deployment does not have Convex
+  // configured. The authenticated routes report their own configuration error.
+  if (!isConvexConfigured) return <>{children}</>;
   const initialToken = await getToken();
   return <ConvexClientProvider initialToken={initialToken}>{children}</ConvexClientProvider>;
 }

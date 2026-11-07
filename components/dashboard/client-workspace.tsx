@@ -1,5 +1,8 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+import { getPhaseHref } from "@/lib/onboarding/phases";
+import { OnboardingPhases } from "./onboarding-phases";
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, Flag } from "lucide-react";
@@ -35,6 +38,7 @@ export function ClientWorkspace({
   name: string;
   preview?: boolean;
 }) {
+  const completedId = useSearchParams().get("completedPhase");
   const [view, setView] = useState<WorkspaceView>("overview");
   const [selectedTopic, setSelectedTopic] = useState("P01");
   const [briefFilter, setBriefFilter] = useState<"all" | "follow-ups">("all");
@@ -42,7 +46,8 @@ export function ClientWorkspace({
   const [updatesOpen, setUpdatesOpen] = useState(false);
   const model = getDashboardModel(data);
   const displayName = name || answerText(model.answers, "P01.1");
-  const onboardingHref = preview ? "/onboarding/preview" : "/onboarding";
+  const onboardingBase = preview ? "/onboarding/preview" : "/onboarding";
+  const onboardingHref = model.nextPhase ? model.nextPhase.id === "final" && model.nextPhase.complete ? `${onboardingBase}?question=review` : getPhaseHref(onboardingBase, model.nextPhase) : onboardingBase;
   function navigate(next: WorkspaceView) {
     setView(next);
     setQuery("");
@@ -98,6 +103,7 @@ export function ClientWorkspace({
     >
       {view === "overview" && (
         <DashboardOverview
+          phasePanel={<OnboardingPhases model={model} baseHref={onboardingBase} completedId={completedId} />}
           model={model}
           data={data}
           name={displayName}

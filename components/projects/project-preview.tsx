@@ -3,12 +3,12 @@ import type { Project } from "@/lib/projects";
 
 export function ProjectPreview({ project, featured = false }: { project: Project; featured?: boolean }) {
   return (
-    <div className="overflow-hidden rounded-lg bg-background ring-1 ring-foreground/10">
-      <div aria-hidden="true" className="flex h-7 items-center gap-1.5 bg-muted/50 px-3 sm:h-8">
-        <span className="size-1.5 rounded-full bg-muted-foreground/35" />
-        <span className="size-1.5 rounded-full bg-muted-foreground/35" />
-        <span className="size-1.5 rounded-full bg-muted-foreground/35" />
-        <span className="ml-2 truncate text-[10px] text-muted-foreground">{project.title}</span>
+    <div className="overflow-hidden rounded-[4px] border border-foreground/10 bg-background">
+      <div aria-hidden="true" className="flex h-6 items-center gap-1 border-b border-foreground/5 bg-background px-2.5 sm:h-7">
+        <span className="size-1 rounded-full bg-muted-foreground/30" />
+        <span className="size-1 rounded-full bg-muted-foreground/30" />
+        <span className="size-1 rounded-full bg-muted-foreground/30" />
+        <span className="ml-2 truncate text-[9px] text-muted-foreground">{project.title}</span>
       </div>
       <div className="relative aspect-[16/10] bg-muted">
         <Image

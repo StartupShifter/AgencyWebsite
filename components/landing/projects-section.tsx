@@ -1,33 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Pause, Play } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectPreview } from "@/components/projects/project-preview";
 import { projects } from "@/lib/projects";
 import { twLanding } from "@/lib/landing-styles";
 import "./projects-section.css";
 
-function subscribeToMotion(onChange: () => void) {
-  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-  query.addEventListener("change", onChange);
-  return () => query.removeEventListener("change", onChange);
-}
+// Extra cycles let cards return around the back, outside the visible stack.
+const showcaseProjects = [...projects, ...projects, ...projects];
 
 export function ProjectsSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const activeLinkRef = useRef<HTMLAnchorElement>(null);
+  const gestureRef = useRef<{ x: number; y: number } | null>(null);
+  const swipedRef = useRef(false);
   const [selected, setSelected] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
+  const [instant, setInstant] = useState(false);
   const [visible, setVisible] = useState(false);
-  const reducedMotion = useSyncExternalStore(subscribeToMotion,
-    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-    () => true,
-  );
-  const playing = !paused && !hovered && !focused && !reducedMotion && visible;
-  const project = projects[selected];
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -47,25 +39,30 @@ export function ProjectsSection() {
   }, []);
 
   useEffect(() => {
-    if (!playing || projects.length < 2) return;
-    const timer = window.setInterval(() => setSelected((current) => (current + 1) % projects.length), 7000);
-    return () => window.clearInterval(timer);
-  }, [playing]);
+    const focused = document.activeElement;
+    if (focused?.matches(".project-slide") && sectionRef.current?.contains(focused)) {
+      activeLinkRef.current?.focus({ preventScroll: true });
+    }
+  }, [selected]);
 
-  function selectProject(direction: number) {
-    setSelected((current) => (current + direction + projects.length) % projects.length);
-    setPaused(true);
+  useEffect(() => {
+    if (!visible || projects.length < 2) return;
+    const timer = window.setInterval(() => {
+      setInstant(false);
+      setSelected((current) => (current + 1) % showcaseProjects.length);
+    }, 3000);
+    return () => window.clearInterval(timer);
+  }, [visible]);
+
+  function selectProject(direction: number, immediate = false) {
+    setInstant(immediate);
+    setSelected((current) => (current + direction + showcaseProjects.length) % showcaseProjects.length);
   }
 
-  if (!project) return null;
+  if (!projects.length) return null;
 
   return (
-    <section
-      ref={sectionRef}
-      id="projects"
-      aria-labelledby="projects-heading"
-      className={twLanding("section-shell section-space")}
-    >
+    <section ref={sectionRef} id="projects" aria-labelledby="projects-heading" className={twLanding("section-shell section-space")}>
       <div className={twLanding("section-topline")}>
         <div>
           <p className={twLanding("section-kicker")}>Projects & products</p>
@@ -85,48 +82,74 @@ export function ProjectsSection() {
       </div>
 
       <div
-        className="relative isolate flex min-h-[240px] items-center justify-center overflow-hidden py-7 sm:min-h-[440px] sm:py-10"
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="Project showcase"
+        className="project-showcase"
+        data-instant={instant}
+        onKeyDown={(event) => {
+          if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+            selectProject(event.key === "ArrowLeft" ? -1 : 1, true);
+          }
+        }}
       >
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-1/2 -z-10 -translate-y-1/2">
-          <div className="project-marquee flex w-max" data-playing={playing}>
-            {[0, 1].map((copy) => (
-              <div key={copy} className="flex shrink-0 items-center gap-5 pr-5 sm:gap-7 sm:pr-7">
-                {projects.map((item) => (
-                  <div key={item.id} className="w-[220px] shrink-0 rounded-lg bg-background opacity-70 shadow-[0_4px_18px_-8px_rgba(32,34,28,0.15)] sm:w-[290px]">
-                    <ProjectPreview project={item} />
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-0 z-10 w-12 bg-linear-to-r from-background via-background/80 to-transparent sm:w-24" />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 z-10 w-12 bg-linear-to-l from-background via-background/80 to-transparent sm:w-24" />
-        <Link
-          href={`/products#${project.id}`}
-          aria-label={`Explore ${project.title}`}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          className="relative z-20 block w-[calc(100%-32px)] max-w-[600px] rounded-lg bg-background shadow-[0_16px_40px_-14px_rgba(32,34,28,0.22)] transition-shadow duration-200 hover:shadow-[0_18px_44px_-14px_rgba(32,34,28,0.28)] motion-reduce:transition-none min-[761px]:w-[58%]"
+        <div
+          className="project-stage"
+          onDragStart={(event) => event.preventDefault()}
+          onPointerDown={(event) => {
+            gestureRef.current = { x: event.clientX, y: event.clientY };
+            swipedRef.current = false;
+          }}
+          onPointerCancel={() => { gestureRef.current = null; }}
+          onPointerUp={(event) => {
+            const start = gestureRef.current;
+            gestureRef.current = null;
+            if (!start) return;
+            const distanceX = event.clientX - start.x;
+            const distanceY = event.clientY - start.y;
+            if (Math.abs(distanceX) > 45 && Math.abs(distanceX) > Math.abs(distanceY) * 1.5) {
+              swipedRef.current = true;
+              selectProject(distanceX < 0 ? 1 : -1);
+            }
+          }}
+          onClickCapture={(event) => {
+            if (swipedRef.current) {
+              event.preventDefault();
+              event.stopPropagation();
+              swipedRef.current = false;
+            }
+          }}
         >
-          <ProjectPreview project={project} featured />
-        </Link>
-      </div>
-
-        <div className="mt-6 flex flex-col items-start justify-between gap-5 min-[761px]:flex-row min-[761px]:items-center">
-          <div aria-live={playing ? "off" : "polite"} aria-atomic="true">
-            <p className="text-base font-medium tracking-tight">{project.title}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{project.category} · {project.status}</p>
-          </div>
-          <div className="flex items-center gap-2" role="group" aria-label="Project showcase controls">
-            <Button variant="outline" size="icon-lg" className="size-11 rounded-full" aria-label="Previous project" onClick={() => selectProject(-1)}><ArrowLeft aria-hidden="true" /></Button>
-            <span className="min-w-12 text-center text-xs tabular-nums text-muted-foreground">{selected + 1} / {projects.length}</span>
-            <Button variant="outline" size="icon-lg" className="size-11 rounded-full" aria-label="Next project" onClick={() => selectProject(1)}><ArrowRight aria-hidden="true" /></Button>
-            {!reducedMotion && <Button variant="ghost" size="icon-lg" className="size-11 rounded-full" aria-label={paused ? "Play project animation" : "Pause project animation"} aria-pressed={paused} onClick={() => setPaused((current) => !current)}>{paused ? <Play aria-hidden="true" /> : <Pause aria-hidden="true" />}</Button>}
-          </div>
+          {showcaseProjects.map((item, index) => {
+            const count = showcaseProjects.length;
+            const offset = (index - selected + count + Math.floor(count / 2)) % count - Math.floor(count / 2);
+            const active = offset === 0;
+            return (
+              <Link
+                key={`${item.id}-${index}`}
+                ref={active ? activeLinkRef : null}
+                href={`/products#${item.id}`}
+                className="project-slide"
+                data-offset={offset}
+                data-distance={Math.abs(offset)}
+                aria-label={`Explore ${item.title}`}
+                aria-hidden={!active}
+                tabIndex={active ? 0 : -1}
+                onClick={(event) => {
+                  if (!active) {
+                    event.preventDefault();
+                    selectProject(offset);
+                  }
+                }}
+              >
+                <ProjectPreview project={item} featured />
+              </Link>
+            );
+          })}
         </div>
+
+      </div>
     </section>
   );
 }

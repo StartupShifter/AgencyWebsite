@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useQuery } from "convex/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { api } from "@/convex/_generated/api";
@@ -10,9 +11,9 @@ import { PreviewSessionProvider } from "./preview-session";
 
 export function PreviewDashboard() {
   return (
-    <PreviewSessionProvider>
+    <Suspense fallback={<DashboardLoading preview />}><PreviewSessionProvider>
       <SavedPreviewDashboard />
-    </PreviewSessionProvider>
+    </PreviewSessionProvider></Suspense>
   );
 }
 

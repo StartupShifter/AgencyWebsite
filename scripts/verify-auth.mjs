@@ -38,13 +38,16 @@ async function request(path, body, authenticated = true) {
 }
 
 try {
-  for (const path of ["/login", "/signup"]) {
-    const response = await request(path, undefined, false);
-    assert.equal(response.status, 200);
-    const html = await response.text();
-    assert.ok(html.includes("Google") && html.includes("Facebook"));
-  }
-  console.log("PASS login and signup render with both social options");
+  const joinPage = await request("/login", undefined, false);
+  assert.equal(joinPage.status, 200);
+  const joinHtml = await joinPage.text();
+  assert.ok(joinHtml.includes("Join us.") && joinHtml.includes("Continue with Google") && joinHtml.includes("Continue with Facebook"));
+  assert.ok(joinHtml.indexOf("Continue with Google") < joinHtml.indexOf("Continue with email"));
+  const legacySignup = await request("/signup?next=%2Fdashboard&error=social", undefined, false);
+  const signupHtml = (await legacySignup.text()).replaceAll("&amp;", "&");
+  const signupTarget = "/login?next=%2Fdashboard&error=social";
+  assert.ok(legacySignup.headers.get("location") === signupTarget || signupHtml.includes(`NEXT_REDIRECT;replace;${signupTarget};`));
+  console.log("PASS unified Join us page prioritizes social options and legacy signup preserves its destination");
   assert.equal(await (await request("/api/auth/get-session", undefined, false)).json(), null);
   const anonymous = new ConvexHttpClient(convexUrl);
   assert.equal(await anonymous.query(makeFunctionReference("auth:getCurrentUser"), {}), null);

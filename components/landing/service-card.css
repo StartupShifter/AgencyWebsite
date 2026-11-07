@@ -1,56 +1,123 @@
-/* Scoped monochrome SVG interactions; section layout remains in Tailwind. */
+/* Keep the original sparse line artwork; interaction adds the extra detail. */
 .service-motion-card {
   --art-open: 0;
-  --art-ease: cubic-bezier(.23, 1, .32, 1);
+  --art-detail-delay: 0ms;
+  --art-ease: cubic-bezier(.42, 0, .18, 1);
 }
 .service-motion-demo {
   opacity: .65;
+  -webkit-tap-highlight-color: transparent;
   transition: opacity 220ms ease;
 }
-.service-motion-lines {
+.service-isometric {
   fill: none;
   stroke: currentColor;
   stroke-width: 1;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.service-motion-plane { fill: var(--background); }
-.service-motion-detail { opacity: .5; }
-.service-motion-webRear, .service-motion-webMiddle, .service-motion-webFront,
-.service-motion-socialRear, .service-motion-socialMiddle, .service-motion-socialFront,
-.service-motion-aiSource, .service-motion-aiTop, .service-motion-aiBottom, .service-motion-aiHub {
-  transition: transform 450ms var(--art-ease);
+.iso-surface { fill: var(--background); }
+.iso-edge { fill: color-mix(in srgb, var(--foreground) 3%, var(--background)); opacity: .65; }
+.iso-detail { opacity: .5; }
+.iso-lift {
+  transform: translate(calc(var(--art-open) * var(--lift-x, 0px)), calc(var(--art-open) * var(--lift-y, 0px)));
+  transition: transform 550ms var(--art-ease);
 }
-.service-motion-webRear { transform: translateY(calc(var(--art-open) * 7px)); }
-.service-motion-webMiddle { transform: translateY(calc(var(--art-open) * -2px)); }
-.service-motion-webFront { transform: translateY(calc(var(--art-open) * -12px)); }
-.service-motion-socialRear { transform: translate(calc(var(--art-open) * -10px), calc(var(--art-open) * -4px)); }
-.service-motion-socialMiddle { transform: translateY(calc(var(--art-open) * -3px)); }
-.service-motion-socialFront { transform: translate(calc(var(--art-open) * 10px), calc(var(--art-open) * 3px)); }
-.service-motion-aiHub { transform: translateY(calc(var(--art-open) * -6px)); }
-.service-motion-aiTop { transform: translateY(calc(var(--art-open) * -3px)); }
-.service-motion-aiBottom { transform: translateY(calc(var(--art-open) * 3px)); }
-.service-motion-socialOrbit, .service-motion-aiSignal, .service-motion-nodeTick {
+.iso-web-rear { --lift-y: 7px; }
+.iso-web-middle { --lift-y: -2px; transition-delay: 30ms; }
+.iso-web-front { --lift-y: -14px; transition-delay: 60ms; }
+.iso-social-rear { --lift-x: -11px; --lift-y: -4px; }
+.iso-social-middle { --lift-y: -3px; transition-delay: 30ms; }
+.iso-social-front { --lift-x: 11px; --lift-y: 3px; transition-delay: 60ms; }
+.iso-ai-flow {
+  transform: translateY(calc(var(--art-open) * -3px));
+  transition: transform 550ms var(--art-ease);
+}
+.iso-ai-symbol { opacity: .7; }
+.iso-ai-chip { fill: var(--background); transition: fill 250ms ease; }
+.iso-ai-label { fill: currentColor; stroke: none; font-size: 16px; font-weight: 550; letter-spacing: -.5px; }
+.iso-ai-output-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - clamp(0, var(--art-open), 1));
+  transition: stroke-dashoffset 300ms var(--art-ease);
+  transition-delay: calc(clamp(0, var(--art-open), 1) * 1000ms);
+}
+.iso-packet-task { --signal-delay: .6s; }
+.iso-packet-handoff { --signal-delay: .75s; }
+.iso-web-cursor {
+  opacity: clamp(0, var(--art-open), 1);
+  transform: translate(calc(var(--art-open) * -25px), calc(var(--art-open) * 9px));
+  transition: transform 700ms var(--art-ease), opacity 180ms ease;
+}
+.iso-web-check {
+  opacity: clamp(0, var(--art-open), 1);
+  stroke-dasharray: 22;
+  stroke-dashoffset: calc(22 - var(--art-open) * 22);
+  transition: opacity 180ms ease, stroke-dashoffset 350ms var(--art-ease);
+  transition-delay: var(--art-detail-delay);
+}
+.iso-social-art {
+  transform-origin: 59px 73px;
+  transform: rotate(calc(var(--art-open) * 12deg));
+  transition: transform 700ms var(--art-ease);
+}
+.iso-social-heart {
+  fill: transparent;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 220ms ease;
+}
+.iso-social-feedback {
+  opacity: calc(var(--art-open) * .5);
+  transform: translateY(calc(var(--art-open) * -3px));
+  transition: opacity 250ms ease, transform 550ms var(--art-ease);
+}
+.iso-packet {
   opacity: 0;
-  transition: opacity 250ms ease;
+  stroke-width: 2.5;
+  stroke-dasharray: 8 92;
+  stroke-dashoffset: 8;
 }
-.service-motion-socialOrbit, .service-motion-aiSignal { opacity: calc(var(--art-open) * .5); }
-.service-motion-socialHeart { transition: fill 200ms ease; }
-.service-motion-card[data-expanded="true"] { --art-open: 1.3; }
+.service-motion-card[data-in-view="true"] .iso-packet { animation: service-signal 2.8s var(--art-ease) both; }
+.service-motion-card[data-service="ai"][data-in-view="true"] .iso-packet { animation-duration: .9s; animation-delay: var(--signal-delay, 0s); }
+.service-motion-card[data-expanded="true"] { --art-open: 1.25; --art-detail-delay: 320ms; }
 .service-motion-card[data-expanded="true"] .service-motion-demo { opacity: .9; }
-.service-motion-card[data-expanded="true"] .service-motion-socialHeart { fill: currentColor; }
-.service-motion-card[data-expanded="true"] .service-motion-nodeTick { opacity: 1; }
-.service-motion-card[data-expanded="true"] .service-motion-nodeIdle { opacity: 0; }
-.service-motion-card:has(.service-motion-demo:focus-visible) * { transition: none; }
+.service-motion-card[data-expanded="true"] .iso-social-heart { fill: currentColor; animation: service-heart 550ms var(--art-ease); }
+.service-motion-card[data-expanded="true"] .iso-ai-chip { fill: color-mix(in srgb, currentColor 4%, var(--background)); }
+.service-motion-card[data-in-view="true"][data-expanded="true"] .iso-packet { animation-name: service-signal-active; }
 @media (hover: hover) and (pointer: fine) {
-  .service-motion-card:hover { --art-open: 1; }
+  .service-motion-card:hover { --art-open: 1; --art-detail-delay: 320ms; }
   .service-motion-card:hover .service-motion-demo { opacity: .9; }
-  .service-motion-card[data-expanded="true"]:hover { --art-open: 1.3; }
+  .service-motion-card:hover .iso-social-heart { fill: currentColor; animation: service-heart 550ms var(--art-ease); }
+  .service-motion-card:hover .iso-ai-chip { fill: color-mix(in srgb, currentColor 4%, var(--background)); }
+  .service-motion-card[data-in-view="true"]:hover .iso-packet { animation-name: service-signal-active; }
+  .service-motion-card[data-expanded="true"]:hover { --art-open: 1.25; }
+}
+/* Keyboard activation changes the same details immediately. */
+.service-motion-card:has(.service-motion-demo:focus-visible) * { transition: none; animation: none; }
+.service-motion-card:has(.service-motion-demo:focus-visible) .iso-packet { animation: none; }
+@keyframes service-signal {
+  0%, 10% { stroke-dashoffset: 8; opacity: 0; }
+  25%, 75% { opacity: .85; }
+  100% { stroke-dashoffset: -100; opacity: 0; }
+}
+@keyframes service-signal-active {
+  0%, 10% { stroke-dashoffset: 8; opacity: 0; }
+  25%, 75% { opacity: .85; }
+  100% { stroke-dashoffset: -100; opacity: 0; }
+}
+@keyframes service-heart {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.18); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .service-motion-card * { transition: none; }
-  /* Keep the SVG's fixed projection transforms, only remove animated offsets. */
-  .service-motion-card, .service-motion-card:hover,
-  .service-motion-card[data-expanded="true"],
-  .service-motion-card[data-expanded="true"]:hover { --art-open: 0; }
+  .service-motion-card *,
+  .service-motion-card[data-expanded] .iso-social-heart,
+  .service-motion-card[data-in-view] .iso-packet,
+  .service-motion-card[data-in-view][data-expanded] .iso-packet { transition: none; animation: none; }
+  .service-motion-card .iso-lift,
+  .service-motion-card .iso-ai-flow,
+  .service-motion-card .iso-web-cursor,
+  .service-motion-card .iso-social-art,
+  .service-motion-card .iso-social-feedback { transform: none; }
 }

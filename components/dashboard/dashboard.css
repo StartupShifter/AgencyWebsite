@@ -189,3 +189,32 @@
     transform: none;
   }
 }
+
+/* Onboarding is a series of small sessions, with the workspace between them. */
+.workspace-phases{margin-bottom:28px}
+.workspace-phase-card{--card-spacing:24px;background:var(--background);color:var(--workspace-ink);border-radius:20px}
+.workspace-phase-card [data-slot=card-description]{font-size:13px;line-height:1.7;color:var(--workspace-muted)}
+.workspace-phase-success{margin-bottom:16px;padding:18px;background:var(--workspace-tint);border-color:var(--workspace-line);border-radius:16px;color:var(--workspace-ink)}
+.workspace-phase-success [data-slot=alert-description]{font-size:13px;color:var(--workspace-muted);line-height:1.7}
+.workspace-phase-next{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:22px;border-radius:16px;background:var(--workspace-soft)}
+.workspace-phase-next>div{min-width:0}.workspace-phase-next p:first-child{font-size:12px;color:var(--workspace-muted)}
+.workspace-phase-next h3{font-size:25px;font-weight:500;letter-spacing:-.04em;line-height:1.2;margin:8px 0 10px}
+.workspace-phase-next span{font-size:12px;color:var(--workspace-muted)}
+.workspace-phase-topics{font-size:12px;line-height:1.7;color:var(--workspace-muted);margin-top:12px;max-width:600px}
+.workspace-phase-cta{display:inline-flex;align-items:center;justify-content:center;gap:12px;padding:14px 22px;min-height:48px;border-radius:999px;background:var(--commerce-deep);color:var(--commerce-white);font-size:13px;font-weight:500;white-space:nowrap;flex-shrink:0}
+.workspace-phase-cta:hover{background:var(--commerce-green)}
+.workspace-phase-pause{display:flex;align-items:flex-start;gap:8px;margin-top:16px;font-size:12px;line-height:1.7;color:var(--workspace-muted)}.workspace-phase-pause svg{margin-top:2px;flex-shrink:0}
+.workspace-phase-roadmap{margin-top:18px;border-top:1px solid var(--workspace-line);padding-top:4px}
+.workspace-phase-roadmap>summary{font-size:13px;font-weight:500;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;min-height:48px;list-style:none}
+.workspace-phase-roadmap summary::-webkit-details-marker{display:none}.workspace-phase-roadmap details[open]>summary>svg,.workspace-phase-roadmap[open]>summary>svg{transform:rotate(180deg)}
+.workspace-phase-roadmap>ol{list-style:none;display:flex;flex-direction:column;gap:8px;padding-top:8px}
+.workspace-phase-roadmap>ol>li>details{border:1px solid var(--workspace-line);border-radius:12px;overflow:hidden}
+.workspace-phase-roadmap>ol>li>details>summary{display:flex;align-items:center;gap:12px;padding:12px;min-height:62px;font-size:13px;font-weight:500;list-style:none;cursor:pointer}
+.workspace-phase-roadmap small{display:block;font-size:11px;font-weight:400;color:var(--workspace-muted);margin-top:4px}.workspace-phase-roadmap summary>svg{margin-left:auto;flex-shrink:0}
+.workspace-phase-number{display:grid;place-items:center;width:28px;height:28px;flex-shrink:0;border-radius:50%;background:var(--workspace-tint);color:var(--commerce-deep);font-size:12px}
+.workspace-phase-roadmap details>div{padding:8px 20px 18px;border-top:1px solid var(--workspace-line)}
+.workspace-phase-roadmap details>div ol{list-style:decimal;padding-left:20px;font-size:13px;color:var(--workspace-muted)}
+.workspace-phase-roadmap details>div li{padding:6px 0}.workspace-phase-roadmap details>div li a{display:inline-flex;align-items:center;min-height:44px;line-height:1.6;text-decoration:underline;text-underline-offset:3px}
+.workspace-phase-edit{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--commerce-deep);font-size:12px;font-weight:500;margin-top:6px}
+.workspace-phases a:focus-visible,.workspace-phases summary:focus-visible{outline:2px solid var(--commerce-green);outline-offset:4px}
+@media(max-width:640px){.workspace-phase-card{--card-spacing:18px}.workspace-phase-next{align-items:stretch;flex-direction:column;gap:18px;padding:18px}.workspace-phase-next h3{font-size:24px}.workspace-phase-cta{align-self:flex-start}.workspace-phase-next .workspace-phase-topics{font-size:11px}}

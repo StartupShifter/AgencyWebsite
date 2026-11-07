@@ -1,6 +1,6 @@
 "use client";
 import { twLanding } from "@/lib/landing-styles";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
   Menu,
@@ -17,9 +17,6 @@ import {
   PenTool,
   Presentation,
   BadgeDollarSign,
-  CalendarCheck,
-  Scale,
-  Handshake,
   Route,
   CircleQuestionMark,
   ClipboardList,
@@ -73,32 +70,31 @@ const sections: NavSection[] = [
     },
   },
   {
-    label: "Pricing",
-    items: [
-      { icon: BadgeDollarSign, title: "Basic plan", description: "$1,000 once to bring your business online.", href: "#pricing" },
-      { icon: CalendarCheck, title: "Pro plan", description: "$2,000 setup plus $500/month for ongoing support.", href: "#pricing" },
-      { icon: Scale, title: "Compare plans", description: "Digital setup or ongoing growth and care.", href: "#pricing" },
-      { icon: Handshake, title: "Onboarding terms", description: "Signed contract and 40% advance to begin.", href: "#process" },
-    ],
-  },
-  {
     label: "Resources",
     items: [
-      { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "#process" },
-      { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "#faq" },
-      { icon: ClipboardList, title: "Project brief", description: "Tell us what you're building.", href: "#contact" },
+      { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "/how-we-work" },
+      { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "/faq" },
+      { icon: ClipboardList, title: "Project brief", description: "Tell us what you're building.", href: "/project-brief" },
       { icon: FolderOpen, title: "Projects & products", description: "Explore our websites and applications.", href: "/products" },
       { icon: LifeBuoy, title: "Support & care", description: "Help for projects after launch.", href: "/support" },
     ],
   },
 ];
 
-const aboutLink: NavEntry = {
-  icon: Users,
-  title: "About us",
-  description: "Who Starter Shifter is and how we work.",
-  href: "#about",
-};
+const directLinks: NavEntry[] = [
+  {
+    icon: Users,
+    title: "About",
+    description: "Who Starter Shifter is and how we work.",
+    href: "/about",
+  },
+  {
+    icon: BadgeDollarSign,
+    title: "Pricing",
+    description: "Compare Basic setup and Pro ongoing support.",
+    href: "/#pricing",
+  },
+];
 
 // A single column lists up to 4 entries; every additional group of 4
 // spreads the menu out by one more column (5-8 → 2, 9-12 → 3, and so on).
@@ -174,24 +170,65 @@ function MobileNavLink({
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const pillRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    const pill = pillRef.current;
+    if (!pill) return;
+
+    const hero = document.querySelector<HTMLElement>(
+      'section[aria-labelledby="hero-heading"]',
+    );
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let heroEnd = 1;
+    let frame = 0;
+    let previousProgress = -1;
+
+    const update = () => {
+      frame = 0;
+      const progress = reducedMotion.matches || !hero
+        ? Number(window.scrollY > 0)
+        : Math.min(1, Math.max(0, window.scrollY / heroEnd));
+
+      if (progress !== previousProgress) {
+        pill.style.setProperty("--navbar-progress", String(progress));
+        previousProgress = progress;
+      }
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const measure = () => {
+      heroEnd = hero
+        ? Math.max(1, hero.getBoundingClientRect().bottom + window.scrollY)
+        : 1;
+      onScroll();
+    };
+    const observer = new ResizeObserver(measure);
+    if (hero) observer.observe(hero);
+    measure();
+
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", measure);
+    window.addEventListener("pageshow", measure);
+    reducedMotion.addEventListener("change", onScroll);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      observer.disconnect();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("pageshow", measure);
+      reducedMotion.removeEventListener("change", onScroll);
+    };
   }, []);
   return (
-    <header className={twLanding("section-shell site-header")}>
-      <div
-        className={twLanding(
-          scrolled ? "navbar-pill navbar-pill-scrolled" : "navbar-pill",
-        )}
-      >
-        <Link href="/" aria-label="Monster home" className={twLanding("navbar-brand")}>
+    <header className={twLanding("site-header")}>
+      <div ref={pillRef} className={twLanding("navbar-pill")}>
+        <Link href="/" aria-label="Starter Shifter home" className={twLanding("navbar-brand")}>
           <span className={twLanding("brand-mark")}>
             <ArrowUpRight aria-hidden="true" strokeWidth={2.6} />
           </span>
-          monster
+          starter&nbsp;shifter
         </Link>
         <NavigationMenu
           align="center"
@@ -199,6 +236,16 @@ export function SiteHeader() {
           aria-label="Main navigation"
         >
           <NavigationMenuList>
+            {directLinks.map((entry) => (
+              <NavigationMenuItem key={entry.title}>
+                <NavigationMenuLink
+                  render={<Link href={entry.href} />}
+                  className={twLanding("navbar-trigger")}
+                >
+                  {entry.title}
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            ))}
             {sections.map((section) => (
               <NavigationMenuItem key={section.label}>
                 <NavigationMenuTrigger className={twLanding("navbar-trigger")}>
@@ -209,25 +256,11 @@ export function SiteHeader() {
                 </NavigationMenuContent>
               </NavigationMenuItem>
             ))}
-            <NavigationMenuItem>
-              <NavigationMenuLink
-                href={`/${aboutLink.href}`}
-                className={twLanding("navbar-trigger")}
-              >
-                {aboutLink.title}
-              </NavigationMenuLink>
-            </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
-          <Link href="/login" className="hidden min-[900px]:inline-flex items-center px-3 py-2 text-sm font-medium text-[var(--commerce-ink)]">
-            Log in
-          </Link>
-          <Link href="/signup" className={twLanding("navbar-cta")}>
+          <Link href="/login" className={twLanding("navbar-cta")}>
             Get started <ArrowUpRight aria-hidden="true" />
-          </Link>
-          <Link href="/#contact" className={twLanding("navbar-cta")}>
-            Let’s talk <ArrowUpRight aria-hidden="true" />
           </Link>
           <Button
             className={twLanding("mobile-menu-toggle")}
@@ -247,6 +280,11 @@ export function SiteHeader() {
             className={twLanding("mobile-navigation")}
             aria-label="Mobile navigation"
           >
+            {directLinks.map((entry) => (
+              <div key={entry.title} className={twLanding("mobile-nav-section")}>
+                <MobileNavLink entry={entry} onNavigate={() => setOpen(false)} />
+              </div>
+            ))}
             {sections.map((section) => (
               <div key={section.label} className={twLanding("mobile-nav-section")}>
                 <p className={twLanding("mobile-nav-label")}>{section.label}</p>
@@ -261,17 +299,6 @@ export function SiteHeader() {
                 </div>
               </div>
             ))}
-            <div className={twLanding("mobile-nav-section")}>
-              <div className={twLanding("mobile-nav-grid")}>
-                <MobileNavLink entry={aboutLink} onNavigate={() => setOpen(false)} />
-                <Link href="/login" onClick={() => setOpen(false)} className={twLanding("mobile-nav-item")}>
-                  Log in to your client workspace
-                </Link>
-                <Link href="/signup" onClick={() => setOpen(false)} className={twLanding("mobile-nav-item")}>
-                  Create an account
-                </Link>
-              </div>
-            </div>
           </nav>
         )}
       </div>

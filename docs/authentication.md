@@ -10,6 +10,16 @@ For a new local deployment without a Convex account, use `CONVEX_AGENT_MODE=anon
 
 Set `SITE_URL` on the Convex deployment to the exact Next.js origin (local default `http://localhost:3000`) and `BETTER_AUTH_SECRET` to a securely generated value of at least 32 characters. Use `bunx convex env set NAME VALUE`, taking care to avoid putting real secrets in committed files or logs. `.env.example` lists all required values. Development and production each need their own configuration.
 
+## Vercel deployments
+
+Preview deployments do not inherit variables that are scoped only to Production. Add these to the Vercel project for **Production and Preview** before expecting sign-in to work:
+
+- `NEXT_PUBLIC_CONVEX_URL` — the hosted deployment's `.convex.cloud` URL
+- `NEXT_PUBLIC_CONVEX_SITE_URL` — the same deployment's `.convex.site` URL
+- `NEXT_PUBLIC_SITE_URL` — the public site origin
+
+Also set `SITE_URL`, `BETTER_AUTH_SECRET`, and any social provider credentials on the hosted Convex deployment. The public pages build without these values, but authentication stays disabled: protected routes redirect to `/login`, and `/api/auth/*` returns a `503` configuration response.
+
 ## Sign-in methods
 
 - Email/password: available now. Passwords require at least 12 characters. Signup creates a session and continues to `/onboarding`.
@@ -29,7 +39,7 @@ Register the same site origin and callbacks in the providers' consoles. Facebook
 
 `lib/auth-client.ts` supplies the browser client. `lib/auth-server.ts` supplies the Next.js proxy handlers, session token, live `getCurrentUser()`, and `requireUser(returnTo)`. Protected pages should call `requireUser()` and backend functions must independently call `authComponent.getAuthUser(ctx)` to verify ownership. Redirect targets are limited to client workspace routes.
 
-The root provider connects Better Auth sessions to Convex's authenticated React queries. `/login` and `/signup` share `components/auth/auth-form.tsx` and `auth-shell.tsx`, using the landing application's brand, fonts, colors, and UI primitives. `SignOutButton` is reusable in the client workspace.
+The root provider connects Better Auth sessions to Convex's authenticated React queries. `/login` is the single “Join us” page for new and returning clients, with Google and Facebook first. `/signup` redirects to it, preserving safe workspace destinations and social-error recovery. Email sign-in and account creation open inline in the same panel. Both modes reserve equal-height field and message areas, keeping email, password, and submit positions stable when switching. Entered details are preserved between modes. On desktop, the shell gives equal width to authentication and the original emerald/mint gradient panel with its three journey cards. `SignOutButton` is reusable in the client workspace.
 
 Sessions and credentials are stored by the Better Auth Convex component, never in onboarding answers. Do not request or save account passwords, payment secrets, or OAuth credentials in questionnaire responses.
 

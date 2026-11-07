@@ -1,4 +1,6 @@
 import { twLanding } from "@/lib/landing-styles";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -63,6 +65,9 @@ export function FaqSection() {
           Every business starts somewhere different. Here’s what to know before
           we start together.
         </p>
+        <Link href="/faq" className={`${twLanding("action-link")} mt-2`}>
+          Browse all FAQs <ArrowUpRight aria-hidden="true" />
+        </Link>
       </div>
       <Accordion className={twLanding("faq-accordion")} defaultValue={["services"]}>
         {questions.map((item) => (

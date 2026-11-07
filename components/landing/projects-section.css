@@ -1,18 +1,68 @@
-/* Two identical groups make the project ribbon loop without a jump. */
-@keyframes project-marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+.project-showcase {
+  --project-step: clamp(140px, 23vw, 270px);
 }
 
-.project-marquee {
-  animation: project-marquee 48s linear infinite;
-  animation-play-state: paused;
+.project-stage {
+  position: relative;
+  isolation: isolate;
+  height: clamp(270px, 41vw, 490px);
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
 }
 
-.project-marquee[data-playing="true"] {
-  animation-play-state: running;
+/* Distant cards reset outside the visible stack; foreground cards move together. */
+.project-slide {
+  --position: 0;
+  --depth: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(56%, 640px);
+  border-radius: 4px;
+  background: var(--background);
+  box-shadow: 0 20px 38px -25px color-mix(in srgb, var(--foreground) 35%, transparent);
+  transform: translate(-50%, -50%)
+    translateX(calc(var(--position) * var(--project-step)))
+    translateY(calc(var(--depth) * 8px))
+    scale(calc(1 - var(--depth) * .16));
+  transition: transform 650ms cubic-bezier(.22, 1, .36, 1), opacity 450ms ease;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.project-slide[data-offset="-2"] { --position: -2; }
+.project-slide[data-offset="-1"] { --position: -1; }
+.project-slide[data-offset="1"] { --position: 1; }
+.project-slide[data-offset="2"] { --position: 2; }
+.project-slide[data-offset="-3"] { --position: -3; }
+.project-slide[data-offset="3"] { --position: 3; }
+
+.project-slide[data-distance="0"],
+.project-slide[data-distance="1"],
+.project-slide[data-distance="2"] {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.project-slide[data-distance="0"] { z-index: 3; opacity: 1; }
+.project-slide[data-distance="1"] { --depth: 1; z-index: 2; opacity: 1; }
+.project-slide[data-distance="2"] { --depth: 2; z-index: 1; opacity: 1; }
+.project-slide[data-distance="3"] { --depth: 3; visibility: visible; }
+
+.project-slide:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 6px;
+}
+
+.project-showcase[data-instant="true"] .project-slide { transition: none; }
+
+@media (max-width: 760px) {
+  .project-showcase { --project-step: 36vw; }
+  .project-stage { height: clamp(245px, 64vw, 420px); }
+  .project-slide { width: 78%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .project-marquee { animation: none; }
+  .project-slide { transition: none; }
 }
