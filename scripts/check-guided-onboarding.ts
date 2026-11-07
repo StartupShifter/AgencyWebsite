@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { getGuidedProgress, getGuidedSteps, getResumeStep } from "../lib/onboarding/guided-flow";
+import { getJourney } from "../lib/onboarding/journey";
 import { getPages, validatePage, validateSubmission } from "../lib/onboarding/questionnaire";
 import type { Answers, Page } from "../lib/onboarding/types";
 
@@ -13,6 +14,15 @@ assert.equal(emptySteps[review + 1].id, "P16.2");
 assert.equal(emptySteps.at(-1)?.id, "P16.3");
 assert.equal(getGuidedProgress(emptySteps, {}, true).completed, 0, "Untouched optional questions do not count as complete");
 assert.equal(getGuidedProgress(emptySteps, {}, true).total, emptySteps.length - 1, "Review is a navigation step, not a question");
+
+const emptyJourney = getJourney(getPages(), emptySteps, {}, true, "P01");
+assert.deepEqual(emptyJourney.chapters.map(chapter => chapter.title), ["Your business", "The big picture", "Make it yours", "Ready, set, go"], "A route without modules omits the project-details chapter");
+assert.equal(emptyJourney.chapterIndex, 0);
+assert.equal(emptyJourney.currentChapter.id, "business");
+assert.equal(emptyJourney.chapters.reduce((total, chapter) => total + chapter.total, 0), getGuidedProgress(emptySteps, {}, true).total, "Chapters account for every routed question once and exclude the review step");
+assert.ok(emptyJourney.chapters.every(chapter => chapter.completed === 0 && chapter.percent === 0), "Untouched questions cannot make a chapter appear complete");
+assert.equal(getJourney(getPages(), emptySteps, {}, true, "P16").currentChapter.id, "ready", "Review and confirmations stay in the final chapter");
+assert.equal(getJourney(getPages(), emptySteps, {}, true, "M99").chapterIndex, 0, "A stale current topic has a safe first-chapter fallback");
 
 const contactName = emptySteps.find(step => step.id === "P01.1")!;
 assert.deepEqual(validatePage({ ...contactName.page, questions: [contactName.question!] }, { "P01.1": answered("Sample contact") }), {}, "Continue validates the active question without blocking on later questions in the same topic");
@@ -31,11 +41,19 @@ assert.equal(getResumeStep(stepsFor(invalidEmail), "P01", invalidEmail, true), "
 
 const help: Answers = { "P01.1": answered("Sample"), "P03.1": { state: "help", value: "" }, "P01.4": { state: "deferred", value: "" } };
 assert.equal(getGuidedProgress(stepsFor(help), help, true).completed, 3, "Valid help requests and explicit skips count as completed questions");
+const helpJourney = getJourney(getPages(help), stepsFor(help), help, true, "P03");
+assert.equal(helpJourney.currentChapter.completed, 3, "Chapter progress counts permitted follow-up states as well as answers");
+assert.equal(getJourney(getPages(invalidEmail), stepsFor(invalidEmail), invalidEmail, true, "P01").currentChapter.completed, 2, "Invalid saved answers do not advance chapter completion");
 const badAck: Answers = { "P16.2": answered(false), "P16.3": answered(true) };
 assert.equal(getGuidedProgress(stepsFor(badAck), badAck, false).completed, 0, "Unchecked accuracy and unavailable privacy do not count as completion");
 
 const route: Answers = { "P08.1": answered(["Website/store/application"]), "M02.3": answered(["Content"]) };
 const routeSteps = stepsFor(route);
+const routeJourney = getJourney(getPages(route), routeSteps, route, true, "M02");
+assert.equal(routeJourney.chapters.length, 5, "Relevant modules add one chapter, rather than a chapter per module");
+assert.equal(routeJourney.currentChapter.id, "project-details");
+assert.deepEqual(routeJourney.currentChapter.pages.map(page => page.id), getPages(route).filter(page => page.kind === "module").map(page => page.id));
+assert.equal(routeJourney.chapters.reduce((total, chapter) => total + chapter.total, 0), getGuidedProgress(routeSteps, route, true).total, "An adaptive route keeps chapter totals aligned with actual visible questions");
 assert.ok(routeSteps.some(step => step.id.startsWith("M22.")), "Active replacement details add migration questions");
 const changedRoute: Answers = { ...route, "P08.1": answered(["Research/design"]) };
 const changedSteps = stepsFor(changedRoute);

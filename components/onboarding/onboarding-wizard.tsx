@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSessionId } from "convex-helpers/react/sessions";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { PreviewSessionProvider } from "./preview-session";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Save, Sparkles, ListChecks } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Save, Sparkles, ListChecks, CheckCheck, Coffee } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { OnboardingMascot } from "./onboarding-mascot";
+import { JourneyArtwork } from "./journey-artwork";
+import { getOnboardingPhases, getPhaseErrors, isStepComplete } from "@/lib/onboarding/phases";
+import { getJourney } from "@/lib/onboarding/journey";
 import { OnboardingWelcome } from "./onboarding-welcome";
-import { getGuidedSteps, getGuidedProgress, getResumeStep } from "@/lib/onboarding/guided-flow";
+import { getGuidedSteps, getResumeStep } from "@/lib/onboarding/guided-flow";
 import { QuestionField } from "./question-field";
 import { PortalShell } from "./portal-shell";
 import { PrivacyNotice, type PrivacySettings } from "./privacy-notice";
@@ -27,6 +29,7 @@ const previewPrivacy: PrivacySettings = { approved: false, text: "", contact: ""
 const demoUser: User = { id: "preview", name: "", email: "", emailVerified: false };
 
 export function OnboardingWizard({ user, development = false }: { user: User; development?: boolean }) {
+  const requestedQuestion = useSearchParams().get("question");
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
   const mine = useQuery(api.onboarding.getMine, isAuthenticated ? {} : "skip");
@@ -35,17 +38,18 @@ export function OnboardingWizard({ user, development = false }: { user: User; de
   if (mine === undefined || !privacy || isLoading) return <PortalShell><div className="ob-loading" role="status">Loading your saved progress…</div></PortalShell>;
   if (!mine) return <PortalShell><div className="ob-loading">Your session has ended. <Link href="/login">Sign in again</Link>.</div></PortalShell>;
   if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome privacy={privacy} name={user.name} development={development} /></PortalShell>;
-  return <WizardSession key={`${user.id}:${privacy.version}`} user={user} initial={mine} privacy={privacy} />;
+  return <WizardSession key={`${user.id}:${privacy.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} user={user} initial={mine} privacy={privacy} />;
 }
 
 export function OnboardingPreview() {
-  return <PreviewSessionProvider><StoredOnboardingPreview /></PreviewSessionProvider>;
+  return <Suspense fallback={<PortalShell preview><div className="ob-loading" role="status">Loading your phase…</div></PortalShell>}><PreviewSessionProvider><StoredOnboardingPreview /></PreviewSessionProvider></Suspense>;
 }
 function StoredOnboardingPreview() {
+  const requestedQuestion = useSearchParams().get("question");
   const [sessionId] = useSessionId();
   const draft = useQuery(api.onboardingPreview.getDraft, sessionId ? { sessionId } : "skip");
   if (!sessionId || draft === undefined) return <PortalShell preview><div className="ob-loading" role="status">Loading your saved progress…</div></PortalShell>;
-  return <WizardSession key={sessionId} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false }} privacy={previewPrivacy} />;
+  return <WizardSession key={`${sessionId}:${requestedQuestion}`} requestedQuestion={requestedQuestion} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false }} privacy={previewPrivacy} />;
 }
 function getBusinessName(answers?: Answers): string | undefined {
   const answer = answers?.["P01.2"];
@@ -62,7 +66,7 @@ function initialAnswers(user: User, mine: Mine, privacy: PrivacySettings): Answe
   if (user.email) result["P01.3"] = { state: "answered", value: user.email };
   return result;
 }
-function WizardSession({ user, initial, privacy, preview = false, previewSessionId }: { user: User; initial: Mine; privacy: PrivacySettings; preview?: boolean; previewSessionId?: SessionId }) {
+function WizardSession({ user, initial, privacy, preview = false, previewSessionId, requestedQuestion }: { requestedQuestion?: string | null; user: User; initial: Mine; privacy: PrivacySettings; preview?: boolean; previewSessionId?: SessionId }) {
   const router = useRouter();
   const saveDraft = useMutation(api.onboarding.saveDraft);
   const submit = useMutation(api.onboarding.submit);
@@ -73,6 +77,8 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   const [pageId, setPageId] = useState(initial.draft?.currentPage ?? "P01");
   const [stepId, setStepId] = useState(() => {
     const seeded = initialAnswers(user, initial, privacy);
+    const activeSteps = getGuidedSteps(getPages(seeded, initial.draft?.extraModules ?? []), seeded);
+    if (requestedQuestion && activeSteps.some(item => item.id === requestedQuestion)) return requestedQuestion;
     if (preview && initial.draft?.status === "submitted") return "review";
     return getResumeStep(getGuidedSteps(getPages(seeded, initial.draft?.extraModules ?? []), seeded), initial.draft?.currentPage ?? "P01", seeded, privacy.approved || preview, initial.draft?.currentQuestion);
   });
@@ -100,9 +106,15 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   const page = step.page;
   const question = step.question;
   const currentId = page.id;
-  const progress = getGuidedProgress(steps, answers, privacy.approved || preview);
-  const topicQuestions = steps.filter(item => item.page.id === currentId && item.question);
-  const questionIndex = topicQuestions.findIndex(item => item.id === step.id);
+  const { currentChapter } = getJourney(pages, steps, answers, privacy.approved || preview, currentId);
+  const phases = getOnboardingPhases(answers, extras, privacy.approved || preview);
+  const phaseIndex = Math.max(0, phases.findIndex(item => item.steps.some(candidate => candidate.id === step.id)));
+  const phase = phases[phaseIndex];
+  const phaseQuestions = phase.steps.filter(item => item.question);
+  const phaseStepIndex = phase.steps.findIndex(item => item.id === step.id);
+  const questionIndex = phaseQuestions.findIndex(item => item.id === step.id);
+  const endsPhase = phaseStepIndex === phase.steps.length - 1;
+  const scene = currentChapter.id === "business" ? 0 : currentChapter.id === "big-picture" ? 1 : currentChapter.id === "make-it-yours" ? 2 : currentChapter.id === "project-details" ? 3 : 4;
   const isLast = currentStepIndex === steps.length - 1;
   const hasAnswer = question && !isAnswerEmpty(answers[question.id]);
   const activeError = question && errors[question.id];
@@ -204,11 +216,31 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     dirty.current = true;
     setSaveState("Unsaved changes");
     setAnswers(nextAnswers);
-    const next = steps[currentStepIndex + 1];
+    // Recompute after an answer: it may add service questions or change visibility.
+    const nextPhases = getOnboardingPhases(nextAnswers, extras, privacy.approved || preview);
+    const nextPhase = nextPhases.find(item => item.steps.some(candidate => candidate.id === step.id))!;
+    const next = nextPhase.steps[nextPhase.steps.findIndex(item => item.id === step.id) + 1];
     if (next) {
       setBusy(true);
       try { await persist({ answers: nextAnswers, extras, currentId: next.page.id, currentQuestion: next.id }); moveTo(next.id); }
       catch (e) { setFailure(e instanceof Error ? e.message : "Unable to save."); }
+      finally { setBusy(false); }
+      return;
+    }
+    const phaseErrors = getPhaseErrors(nextPhase, nextAnswers, privacy.approved || preview);
+    if (Object.keys(phaseErrors).length) {
+      const first = nextPhase.steps.find(item => phaseErrors[item.id]);
+      if (first) moveTo(first.id);
+      setErrors(phaseErrors); return;
+    }
+    if (nextPhase.id !== "final") {
+      const following = nextPhases[nextPhases.findIndex(item => item.id === nextPhase.id) + 1];
+      const target = following?.steps.find(item => item.id === following.nextQuestion) ?? nextPhase.steps[0];
+      setBusy(true);
+      try {
+        await persist({ answers: nextAnswers, extras, currentId: target.page.id, currentQuestion: target.id });
+        router.push(`${preview ? "/dashboard/preview" : "/dashboard"}?completedPhase=${encodeURIComponent(nextPhase.id)}`);
+      } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save this phase."); }
       finally { setBusy(false); }
       return;
     }
@@ -255,27 +287,33 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
       {preview && <div className="ob-preview-banner">Preview mode. Use example business details. Your progress is saved for your next visit.</div>}
       {initial.draft?.version && initial.draft.version !== ONBOARDING_VERSION && <div className="ob-preview-banner">The questionnaire has been updated. Your existing answers are retained; review the current questions before submission.</div>}
       <div className="ob-journey-top">
-        <div className="ob-journey-title">Your project brief<span className="ob-save-state" role="status">{saveState}</span></div>
-        <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={15} />Save and exit</button>
+        <div className="ob-journey-title">Let’s build your project brief<span className="ob-save-state" role="status">{saveState === "All changes saved" ? <CheckCheck size={14} aria-hidden="true" /> : <Save size={14} aria-hidden="true" />}{saveState}</span></div>
+        <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={16} aria-hidden="true" />Save and exit</button>
       </div>
-      <div className="ob-journey-progress">
-        <progress className="ob-progress" value={progress.completed} max={progress.total} aria-label="Project brief completion" aria-valuetext={`${progress.completed} of ${progress.total} questions complete`} />
-        <span>{progress.percent}%</span>
-      </div>
-      <div className="ob-journey-meta"><span>{progress.completed} of {progress.total} questions complete</span><span>Tailored to your selections</span></div>
-      <div className="ob-topic-bar">
-        <span>{page.title}<span className="ob-topic-count">{question ? `${questionIndex + 1} / ${topicQuestions.length}` : "Review"}</span></span>
-        <details className="ob-topic-menu"><summary><ListChecks size={16} />All topics<ChevronDown size={14} /></summary>
-          <nav className="ob-topic-list" aria-label="Questionnaire topics">{pages.map(p => {
-            const complete = steps.filter(item => item.page.id === p.id && item.question).every(item => !isAnswerEmpty(answers[item.id]) && !Object.keys(validatePage({ ...p, questions: [item.question!] }, answers, { privacyReady: privacy.approved || preview })).length);
-            return <button key={p.id} type="button" disabled={busy} aria-current={p.id === currentId ? "step" : undefined} onClick={e => { e.currentTarget.closest("details")?.removeAttribute("open"); const target = steps.find(item => item.page.id === p.id); if (target) void navigate(target.id); }}><span className={`ob-topic-check ${complete ? "is-complete" : ""}`}>{complete ? <Check size={12} /> : null}</span>{p.title}</button>;
-          })}</nav>
-        </details>
-      </div>
+      <div className="ob-journey-layout">
+        <aside className="ob-chapter-panel" aria-label="Your brief at a glance">
+          <div className="ob-chapter-story">
+            <span className="ob-story-label"><Sparkles size={14} aria-hidden="true" />A little context. A great start.</span>
+            <h2>{currentChapter.note}</h2>
+            <JourneyArtwork scene={scene} mood={mood} />
+            <p>{currentChapter.description}</p>
+          </div>
+          <div className="ob-phase-summary">
+            <p>This phase · {phase.total} questions</p>
+            <h3>{phase.title}</h3>
+            <ol aria-label="Questions in this phase">{phaseQuestions.map((item, index) => <li key={item.id}><button type="button" disabled={busy} aria-current={item.id === step.id ? "step" : undefined} onClick={() => void navigate(item.id)}><span className="ob-chapter-marker" data-complete={isStepComplete(item, answers, privacy.approved || preview)}>{isStepComplete(item, answers, privacy.approved || preview) ? <Check size={13} aria-hidden="true" /> : index + 1}</span><span className="ob-phase-question-title">{item.question!.label}</span>{item.id === step.id && <small>You’re here</small>}</button></li>)}</ol>
+          </div>
+          <p className="ob-pause-note"><Coffee size={16} aria-hidden="true" />After this phase, we’ll take you back to your dashboard.</p>
+        </aside>
+        <div className="ob-question-area">
+          <div className="ob-topic-bar">
+            <span>Phase {phaseIndex + 1} · {phase.title}</span>
+            <button type="button" className="ob-phase-dashboard" disabled={busy} onClick={() => void saveExit()}><ListChecks size={16} aria-hidden="true" />Dashboard</button>
+          </div>
+          <div className="ob-topic-progress"><progress className="ob-progress" value={phase.completed} max={phase.total} aria-label={`Progress in ${phase.title}`} aria-valuetext={`${phase.completed} of ${phase.total} questions complete in this phase`} /><span>{question ? `Question ${questionIndex + 1} of ${phase.total} in this phase` : "Your answers, all together"}</span></div>
       <section className="ob-guided-stage" aria-labelledby="ob-guided-heading">
         <div className="ob-guide" key={step.id}>
-          <div className="ob-guide-character"><OnboardingMascot mood={mood} /></div>
-          <div className="ob-speech"><span className="ob-speech-intro">{question ? "Let’s take the next step" : "Ready for a quick look?"}</span><h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{question?.label ?? "Here’s your project brief. How does it look?"}</h1></div>
+          <div className="ob-speech"><span className="ob-speech-intro">{step.id === "review" ? "A moment to make it yours" : currentChapter.title}</span><h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{question?.label ?? "Here’s your project brief. How does it look?"}</h1></div>
         </div>
         <form onSubmit={e => { e.preventDefault(); void continueQuestion(); }} noValidate>
           <div className="ob-guided-answer" key={step.id}>
@@ -291,16 +329,20 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
                 <p className="ob-route-note">{selectedModules.length} project-specific topics selected. Your progress adapts as you choose.</p>
               </>}
             </fieldset>
-            <p className="ob-guide-feedback" role="status"><Sparkles size={15} />{encouragement}</p>
+            {(hasAnswer || activeError || !question) && <p className="ob-guide-feedback" role="status"><Sparkles size={15} aria-hidden="true" />{encouragement}</p>}
+            {endsPhase && !isLast && <p className="ob-chapter-finish"><Check size={15} aria-hidden="true" />Last question in this phase. Next stop: your dashboard.</p>}
             {returnToReview && step.id !== "review" && <button type="button" className="ob-return-review" disabled={busy} onClick={() => { setReturnToReview(false); void navigate("review"); }}>Back to my review<ArrowRight size={14} /></button>}
             {failure && <div className="ob-error-box" role="alert"><p>{failure}</p>{saveState.includes("not saved") && <Button type="button" variant="outline" disabled={busy} onClick={() => void persist().catch(e => setFailure(e.message))}>Retry saving</Button>}</div>}
           </div>
           <div className="ob-guided-actions">
-            <Button type="button" variant="ghost" size="marketing" disabled={currentStepIndex === 0 || busy} onClick={() => void navigate(steps[currentStepIndex - 1].id)}><ArrowLeft />Back</Button>
-            <Button type="submit" variant="emerald" size="marketing" disabled={busy}>{busy ? "Saving…" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? "Skip for now" : "Continue"}<ArrowRight /></Button>
+            <Button type="button" variant="ghost" size="marketing" disabled={busy} onClick={() => phaseStepIndex > 0 ? void navigate(phase.steps[phaseStepIndex - 1].id) : void saveExit()}><ArrowLeft data-icon="inline-start" />{phaseStepIndex > 0 ? "Back" : "Dashboard"}</Button>
+            <Button type="submit" variant="default" size="marketing" disabled={busy}>{busy ? "Saving…" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? endsPhase ? "Skip and finish phase" : "Skip for now" : endsPhase ? "Finish phase" : "Continue"}<ArrowRight data-icon="inline-end" /></Button>
           </div>
         </form>
       </section>
+        <p className="ob-question-footnote">Just this phase for now. Your dashboard is waiting when you finish.</p>
+        </div>
+      </div>
     </main>
   </PortalShell>;
 }
@@ -318,5 +360,5 @@ export function formatAnswer(answer?: Answers[string]): string {
 export function ReviewSummary({ pages, answers, onEdit, editHref = "/onboarding" }: { pages: Page[]; answers: Answers; onEdit?: (id: string) => void; editHref?: string }) {
   const groups = [ { title: "Business and contact", ids: ["P01", "P02", "P03", "P04", "P05"] }, { title: "Goals and current process", ids: ["P06", "P07", "P09"] }, { title: "Selected work and requirements", ids: ["P08", "P10", "P11", "P12", ...pages.filter(p => p.kind === "module").map(p => p.id)] }, { title: "Responsibilities and engagement", ids: ["P13", "P14", "P15"] } ];
   const openItems = getOpenItems(answers, pages.filter(page => page.kind === "module").map(page => page.id));
-  return <div className="ob-review">{groups.map(group => <details key={group.title} open={group.title === "Business and contact"}><summary>{group.title}<ChevronDown size={16} /></summary>{pages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>Edit</button> : <Link href={editHref}>Edit brief</Link>}</div><dl>{p.questions.filter(q => isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`Edit answer: ${q.label}`} onClick={() => onEdit(q.id)}>Edit</button>}</dt><dd>{formatAnswer(answers[q.id])}</dd></div>)}</dl></section>)}</details>)}<details><summary>Open questions and follow-ups<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">No follow-up flags recorded. Optional unanswered details can be supplied later.</p>}</details></div>;
+  return <div className="ob-review">{groups.map(group => <details key={group.title}><summary><span>{group.title}<small>{pages.filter(p => group.ids.includes(p.id)).length} topics to review</small></span><ChevronDown size={16} aria-hidden="true" /></summary>{pages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>Edit</button> : <Link href={editHref}>Edit brief</Link>}</div><dl>{p.questions.filter(q => isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`Edit answer: ${q.label}`} onClick={() => onEdit(q.id)}>Edit</button>}</dt><dd>{formatAnswer(answers[q.id])}</dd></div>)}</dl></section>)}</details>)}<details><summary>Open questions and follow-ups<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">No follow-up flags recorded. Optional unanswered details can be supplied later.</p>}</details></div>;
 }

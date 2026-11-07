@@ -1,5 +1,6 @@
 import type { FunctionReturnType } from "convex/server";
 import type { api } from "@/convex/_generated/api";
+import { getOnboardingPhases } from "./phases";
 import { getGuidedProgress, getGuidedSteps } from "./guided-flow";
 import {
   formatAnswer,
@@ -63,6 +64,9 @@ export function getDashboardModel(data: WorkspaceData) {
       percent: Math.round((completed / Math.max(1, questions.length)) * 100),
     };
   });
+  const phases = getOnboardingPhases(answers, draft?.extraModules ?? [], true);
+  const nextPhase = phases.find(phase => !phase.complete) ?? phases.find(phase => phase.id === "final");
+  const completedPhases = phases.filter(phase => phase.complete && (phase.id !== "final" || draft?.status === "submitted")).length;
   const openItems = getOpenItems(answers, draft?.extraModules ?? []);
   const prerequisites = [
     {
@@ -159,6 +163,9 @@ export function getDashboardModel(data: WorkspaceData) {
       : []),
   ].sort((a, b) => b.time - a.time);
   return {
+    phases,
+    nextPhase,
+    completedPhases,
     answers,
     pages,
     topics,
