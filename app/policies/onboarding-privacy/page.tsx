@@ -4,6 +4,7 @@ import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { api } from "@/convex/_generated/api";
 import { InformationPage } from "@/components/landing/information-page";
+import { InformationSkeleton } from "@/components/skeletons/information-skeleton";
 import { onboardingPrivacyCopy } from "@/lib/onboarding/privacy-copy";
 
 export const metadata: Metadata = { title: "Your onboarding information — Starter Shifter", robots: { index: false, follow: false } };
@@ -19,4 +20,4 @@ async function CurrentNotice() {
     <section><h2>Share business context, safely</h2><p>{onboardingPrivacyCopy.safeSharing} Remove private details from any examples you share. If your project needs account access later, our team will arrange it with you separately.</p></section>
   </InformationPage>;
 }
-export default function OnboardingPrivacyPage() { return <Suspense fallback={<p>Loading your onboarding information…</p>}><CurrentNotice /></Suspense>; }
+export default function OnboardingPrivacyPage() { return <Suspense fallback={<InformationSkeleton />}><CurrentNotice /></Suspense>; }

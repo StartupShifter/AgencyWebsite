@@ -18,6 +18,7 @@ import { getGuidedSteps, getResumeStep } from "@/lib/onboarding/guided-flow";
 import { QuestionField } from "./question-field";
 import { PortalShell } from "./portal-shell";
 import { PrivacyNotice, type PrivacySettings } from "./privacy-notice";
+import { OnboardingSkeleton } from "@/components/skeletons/onboarding-skeleton";
 import { getPages, getSelectedModules, validatePage, validateSubmission, isQuestionVisible, isQuestionRequired, getOpenItems, isAnswerEmpty, getAllowedAnswerStates, ONBOARDING_VERSION } from "@/lib/onboarding/questionnaire";
 import { MODULE_PAGES } from "@/lib/onboarding/module-pages";
 import type { Answers, Page, ValidationErrors } from "@/lib/onboarding/types";
@@ -35,20 +36,20 @@ export function OnboardingWizard({ user, development = false }: { user: User; de
   const mine = useQuery(api.onboarding.getMine, isAuthenticated ? {} : "skip");
   const privacy = useQuery(api.onboarding.getPrivacySettings, {});
   useEffect(() => { if (!isLoading && !isAuthenticated) router.replace("/login"); }, [isLoading, isAuthenticated, router]);
-  if (mine === undefined || !privacy || isLoading) return <PortalShell><div className="ob-loading" role="status">Loading your saved progress…</div></PortalShell>;
+  if (mine === undefined || !privacy || isLoading) return <OnboardingSkeleton />;
   if (!mine) return <PortalShell><div className="ob-loading">Your session has ended. <Link href="/login">Sign in again</Link>.</div></PortalShell>;
   if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome privacy={privacy} name={user.name} development={development} /></PortalShell>;
   return <WizardSession key={`${user.id}:${privacy.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} user={user} initial={mine} privacy={privacy} />;
 }
 
 export function OnboardingPreview() {
-  return <Suspense fallback={<PortalShell preview><div className="ob-loading" role="status">Loading your phase…</div></PortalShell>}><PreviewSessionProvider><StoredOnboardingPreview /></PreviewSessionProvider></Suspense>;
+  return <Suspense fallback={<OnboardingSkeleton preview />}><PreviewSessionProvider><StoredOnboardingPreview /></PreviewSessionProvider></Suspense>;
 }
 function StoredOnboardingPreview() {
   const requestedQuestion = useSearchParams().get("question");
   const [sessionId] = useSessionId();
   const draft = useQuery(api.onboardingPreview.getDraft, sessionId ? { sessionId } : "skip");
-  if (!sessionId || draft === undefined) return <PortalShell preview><div className="ob-loading" role="status">Loading your saved progress…</div></PortalShell>;
+  if (!sessionId || draft === undefined) return <OnboardingSkeleton preview />;
   return <WizardSession key={`${sessionId}:${requestedQuestion}`} requestedQuestion={requestedQuestion} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false }} privacy={previewPrivacy} />;
 }
 function getBusinessName(answers?: Answers): string | undefined {

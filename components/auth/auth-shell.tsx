@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Brand } from "@/components/landing/brand";
+import { CopyrightYear } from "@/components/landing/copyright-year";
 import "./auth.css";
 
 const steps = ["Create your account", "Tell us about your business", "Shape your next chapter"];
@@ -32,7 +33,7 @@ export function AuthShell({ children }: { children: ReactNode }) {
         </header>
         <div className="auth-form-content">{children}</div>
         <footer className="auth-footer">
-          <span>© {new Date().getFullYear()} Starter Shifter</span>
+          <span suppressHydrationWarning>© <CopyrightYear /> Starter Shifter</span>
           <nav aria-label="Account policies"><Link href="/policies/privacy">Privacy</Link><Link href="/policies/terms">Terms</Link></nav>
         </footer>
       </section>
