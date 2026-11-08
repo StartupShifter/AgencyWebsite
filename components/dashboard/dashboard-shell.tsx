@@ -27,6 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { viewNames, type WorkspaceView } from "@/lib/onboarding/dashboard";
+import { WorkspaceSkeletonContent } from "@/components/skeletons/workspace-skeleton";
 
 import "./dashboard.css";
 
@@ -370,13 +371,7 @@ export function DashboardLoading({ preview = false }: { preview?: boolean }) {
       preview={preview}
       loading
     >
-      <div role="status" className="py-20 text-center">
-        <div className="mx-auto mb-4 size-10 animate-pulse rounded-full bg-[var(--commerce-green)] motion-reduce:animate-none" />
-        <h1 className="text-xl font-medium">Loading your workspace…</h1>
-        <p className="mt-2 text-sm text-[var(--workspace-muted)]">
-          Getting your saved details and progress.
-        </p>
-      </div>
+      <WorkspaceSkeletonContent />
     </DashboardShell>
   );
 }

@@ -8,6 +8,7 @@ import { isConvexConfigured } from "@/lib/convex-config";
 import { safeAuthRedirect } from "@/lib/auth-redirect";
 import { AuthShell } from "./auth-shell";
 import { AuthForm } from "./auth-form";
+import { AuthSkeleton } from "@/components/skeletons/auth-skeleton";
 
 export type AuthSearchParams = Promise<{ error?: string; next?: string }>;
 
@@ -26,5 +27,5 @@ async function AuthPageContent({ searchParams }: { searchParams: AuthSearchParam
 }
 
 export function AuthPage(props: { searchParams: AuthSearchParams }) {
-  return <Suspense fallback={<div className="flex min-h-svh items-center justify-center text-sm text-muted-foreground" role="status">Loading sign-in options…</div>}><AuthPageContent {...props} /></Suspense>;
+  return <Suspense fallback={<AuthSkeleton />}><AuthPageContent {...props} /></Suspense>;
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Sans, Geist_Mono } from "next/font/google";
 import { Suspense, type ReactNode } from "react";
 import { ConvexClientProvider } from "@/components/convex-client-provider";
+import { RootSkeleton } from "@/components/skeletons/root-skeleton";
 import { getToken } from "@/lib/auth-server";
 import { isConvexConfigured } from "@/lib/convex-config";
 import "./globals.css";
@@ -37,7 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${dmSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={<div className="flex min-h-svh items-center justify-center text-sm text-muted-foreground" role="status">Loading your workspace…</div>}>
+        <Suspense fallback={<RootSkeleton />}>
           <AuthProvider>{children}</AuthProvider>
         </Suspense>
       </body>
