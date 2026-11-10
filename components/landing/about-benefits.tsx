@@ -131,7 +131,7 @@ export function AboutBenefits() {
       <BenefitCard type="automation" title="Support with a human touch" description="AI for the routine. Your team when it matters."><SupportVisual /></BenefitCard>
     </div>
     <div className="aboutBenefits-column">
-      <a href="#contact" className="aboutBenefits-card aboutBenefits-cta">
+      <a href="/dashboard" className="aboutBenefits-card aboutBenefits-cta">
         <ArrowUpRight className="aboutBenefits-ctaArrow" aria-hidden="true" />
         <div className="aboutBenefits-ctaCopy"><h3>Let’s make your<br />next move digital.</h3><span>Talk about your project <ArrowUpRight aria-hidden="true" /></span></div>
       </a>
