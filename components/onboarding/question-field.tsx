@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDown } from "lucide-react";
 import { ChoiceIcon } from "./choice-icon";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -41,6 +42,7 @@ export function QuestionField({ question: q, answer, error, onChange, guided = f
       if (!q.maxSelections || next.length <= q.maxSelections) onChange({ ...answer, state: "answered", value: next, ...(answer?.priority && !next.includes(answer.priority) ? { priority: next[0] ?? "" } : {}) });
     }
   };
+  const answerActions = <div className="ob-answer-actions">{allowedStates.filter(s => s !== "answered").map(s => <button type="button" key={s} aria-pressed={state === s} className={`ob-chip ${state === s ? "ob-chip-selected" : ""}`} onClick={() => setState(state === s ? "answered" : s)}>{stateLabels[s]}</button>)}{state !== "answered" && <button className="ob-chip" type="button" onClick={() => setState("answered")}>Answer now</button>}</div>;
   return <fieldset id={`question-${q.id}`} tabIndex={-1} className="ob-question" aria-invalid={Boolean(error)} aria-describedby={inputProps["aria-describedby"]}>
     <legend className={`ob-question-label ${guided ? "ob-question-label-guided" : ""}`}><span>{q.label}</span><span className="ob-required">{q.required ? "Required" : "Optional"}</span></legend>
     {guided && <div className="ob-answer-hint"><span>{q.required ? "Required" : "Optional"}</span>{q.options?.length ? <span>{q.type === "assets" ? "Set each item’s status" : q.type === "select" ? "Choose one" : q.maxSelections ? `Choose up to ${q.maxSelections}` : "Choose all that apply"}</span> : null}</div>}
@@ -64,7 +66,11 @@ export function QuestionField({ question: q, answer, error, onChange, guided = f
       {q.presets?.length ? <div className="ob-presets" aria-label="Quick answers">{q.presets.map(preset => <button key={preset} type="button" className={`ob-chip ${value === preset ? "ob-chip-selected" : ""}`} onClick={() => update(preset)}>{preset}</button>)}</div> : null}
       {q.priority && selected.length > 0 ? <label className="ob-subfield"><span>Your first priority</span><select className="ob-input" value={answer?.priority ?? ""} onChange={e => onChange({ ...answer!, priority: e.target.value })}><option value="">Choose your main priority</option>{selected.map(s => <option key={s}>{s}</option>)}</select></label> : null}
     </>}
-    {allowedStates.length > 1 && <div className="ob-answer-actions">{allowedStates.filter(s => s !== "answered").map(s => <button type="button" key={s} aria-pressed={state === s} className={`ob-chip ${state === s ? "ob-chip-selected" : ""}`} onClick={() => setState(state === s ? "answered" : s)}>{stateLabels[s]}</button>)}{state !== "answered" && <button className="ob-chip" type="button" onClick={() => setState("answered")}>Answer now</button>}</div>}
+    {allowedStates.length > 1 && (guided ? <details className="ob-answer-options">
+      <summary>{state === "answered" ? "Not sure? See other ways to answer" : `${stateLabels[state]} · Change answer`}<ChevronDown size={14} aria-hidden="true" /></summary>
+      {answerActions}
+    </details> : answerActions)}
+
     {!q.acknowledgement && <details className="ob-detail" open={detailsOpen} onToggle={e => setDetailsOpen(e.currentTarget.open)}><summary>{state === "deferred" || state === "help" ? "Add a contact, owner, or follow-up note" : "Add a short note or link (optional)"}</summary><Textarea className="ob-input" rows={2} value={answer?.detail ?? ""} aria-label={`Additional note for ${q.label}`} maxLength={6000} placeholder="A document link, clarification, colleague’s name, or availability" onChange={e => onChange({ ...answer, state, value, detail: e.target.value })} /></details>}
     {error && <p className="ob-error" id={`${q.id}-error`} role="alert">{error}</p>}
   </fieldset>;

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { PrivacySettings } from "./privacy-notice";
 
-export function OnboardingWelcome({ privacy, name, preview = false, development = false, busy = false, error, onStart }: { privacy: PrivacySettings; name?: string; preview?: boolean; development?: boolean; busy?: boolean; error?: string; onStart?: () => Promise<void> }) {
+export function OnboardingWelcome({ privacy, name, phaseCount, preview = false, development = false, busy = false, error, onStart }: { privacy: PrivacySettings; name?: string; phaseCount: number; preview?: boolean; development?: boolean; busy?: boolean; error?: string; onStart?: () => Promise<void> }) {
   const [accepted, setAccepted] = useState(false);
   const consentId = useId();
   const ready = privacy.approved || preview;
@@ -18,8 +18,8 @@ export function OnboardingWelcome({ privacy, name, preview = false, development 
     <div className="ob-start-body">
     <p className="ob-start-greeting">{name ? `Welcome, ${name.trim().split(/\s+/)[0]}.` : "Welcome to Starter Shifter."}</p>
     <h1 id="ob-start-heading">Let’s get to know your business.</h1>
-    <p className="ob-start-description">Tell us about your business, what’s working, and what you’d love to change. Each phase has up to five questions, then you’re back at your dashboard.</p>
-    <ul className="ob-welcome-promises"><li><PencilLine aria-hidden="true" /><span>Small phases. Up to five questions each.</span></li><li><Route aria-hidden="true" /><span>Questions shaped around your project</span></li><li><Coffee aria-hidden="true" /><span>Save, take a break, come back anytime</span></li></ul>
+    <p className="ob-start-description">Tell us about your business, one question at a time. We’ll guide you through {phaseCount} short phases, with up to five questions each.</p>
+    <ul className="ob-welcome-promises"><li><PencilLine aria-hidden="true" /><span>See your progress as you go.</span></li><li><Route aria-hidden="true" /><span>Continue smoothly from one phase to the next</span></li><li><Coffee aria-hidden="true" /><span>Save, take a break, come back anytime</span></li></ul>
     <form onSubmit={event => { event.preventDefault(); if (ready && accepted && !busy) void onStart?.(); }}>
       <div className="ob-start-consent">
         <Checkbox id={consentId} checked={accepted} onCheckedChange={setAccepted} disabled={busy} />

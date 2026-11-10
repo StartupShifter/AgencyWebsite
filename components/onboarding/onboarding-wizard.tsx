@@ -7,12 +7,13 @@ import { useSessionId } from "convex-helpers/react/sessions";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { PreviewSessionProvider } from "./preview-session";
 import { useConvexAuth, useMutation, useQuery } from "convex/react";
-import { ArrowLeft, ArrowRight, Check, ChevronDown, Save, Sparkles, ListChecks, CheckCheck, Coffee } from "lucide-react";
+import { ArrowLeft, ArrowRight, ChevronDown, Save, Sparkles, CheckCheck } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
-import { JourneyArtwork } from "./journey-artwork";
-import { getOnboardingPhases, getPhaseErrors, isStepComplete } from "@/lib/onboarding/phases";
-import { getJourney } from "@/lib/onboarding/journey";
+import { OnboardingMascot } from "./onboarding-mascot";
+import { OnboardingProgress, QuestionStatusMark } from "./onboarding-progress";
+import { getPhaseQuestionProgress, getQuestionStatus, QUESTION_STATUS_LABELS } from "@/lib/onboarding/progress-state";
+import { getOnboardingPhases, getPhaseErrors } from "@/lib/onboarding/phases";
 import { OnboardingWelcome } from "./onboarding-welcome";
 import { getGuidedSteps, getResumeStep } from "@/lib/onboarding/guided-flow";
 import { QuestionField } from "./question-field";
@@ -38,7 +39,7 @@ export function OnboardingWizard({ user, development = false }: { user: User; de
   useEffect(() => { if (!isLoading && !isAuthenticated) router.replace("/login"); }, [isLoading, isAuthenticated, router]);
   if (mine === undefined || !privacy || isLoading) return <OnboardingSkeleton />;
   if (!mine) return <PortalShell><div className="ob-loading">Your session has ended. <Link href="/login">Sign in again</Link>.</div></PortalShell>;
-  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome privacy={privacy} name={user.name} development={development} /></PortalShell>;
+  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome phaseCount={getOnboardingPhases(mine.draft?.answers, mine.draft?.extraModules).length} privacy={privacy} name={user.name} development={development} /></PortalShell>;
   return <WizardSession key={`${user.id}:${privacy.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} user={user} initial={mine} privacy={privacy} />;
 }
 
@@ -84,6 +85,9 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     return getResumeStep(getGuidedSteps(getPages(seeded, initial.draft?.extraModules ?? []), seeded), initial.draft?.currentPage ?? "P01", seeded, privacy.approved || preview, initial.draft?.currentQuestion);
   });
   const [returnToReview, setReturnToReview] = useState(false);
+  const [completedPhase, setCompletedPhase] = useState("");
+  const [reviewPhase, setReviewPhase] = useState(false);
+  const [editingPhaseReview, setEditingPhaseReview] = useState(false);
   const [started, setStarted] = useState(() => {
     const consent = initial.draft?.answers["P16.3"];
     return consent?.state === "answered" && consent.value === true && (preview || initial.draft?.privacyVersion === privacy.version);
@@ -107,15 +111,15 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   const page = step.page;
   const question = step.question;
   const currentId = page.id;
-  const { currentChapter } = getJourney(pages, steps, answers, privacy.approved || preview, currentId);
   const phases = getOnboardingPhases(answers, extras, privacy.approved || preview);
   const phaseIndex = Math.max(0, phases.findIndex(item => item.steps.some(candidate => candidate.id === step.id)));
   const phase = phases[phaseIndex];
   const phaseQuestions = phase.steps.filter(item => item.question);
+  const phaseProgress = getPhaseQuestionProgress(phase, answers, privacy.approved || preview);
+  const questionStatus = getQuestionStatus(step, answers, privacy.approved || preview);
   const phaseStepIndex = phase.steps.findIndex(item => item.id === step.id);
   const questionIndex = phaseQuestions.findIndex(item => item.id === step.id);
   const endsPhase = phaseStepIndex === phase.steps.length - 1;
-  const scene = currentChapter.id === "business" ? 0 : currentChapter.id === "big-picture" ? 1 : currentChapter.id === "make-it-yours" ? 2 : currentChapter.id === "project-details" ? 3 : 4;
   const isLast = currentStepIndex === steps.length - 1;
   const hasAnswer = question && !isAnswerEmpty(answers[question.id]);
   const activeError = question && errors[question.id];
@@ -156,7 +160,8 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   useEffect(() => {
     if (!started) return;
     headingRef.current?.focus({ preventScroll: true });
-  }, [step.id, started]);
+    if (reviewPhase) window.scrollTo({ top: 0, behavior: "instant" });
+  }, [step.id, started, reviewPhase]);
 
   useEffect(() => {
     const first = Object.keys(errors)[0];
@@ -180,15 +185,15 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   function moveTo(id: string) {
     const next = steps.find(item => item.id === id);
     if (!next) return;
-    setPageId(next.page.id); setStepId(id); setErrors({}); setFailure(""); setFilter("");
+    setPageId(next.page.id); setStepId(id); setErrors({}); setFailure(""); setFilter(""); setCompletedPhase(""); setReviewPhase(false); setEditingPhaseReview(false);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
-  async function navigate(nextId: string) {
+  async function navigate(nextId: string, fromPhaseReview = false) {
     if (busy) return;
     const next = steps.find(item => item.id === nextId);
     if (!next) return;
     setBusy(true);
-    try { await persist({ ...latest.current, currentId: next.page.id, currentQuestion: next.id }); moveTo(nextId); }
+    try { await persist({ ...latest.current, currentId: next.page.id, currentQuestion: next.id }); moveTo(nextId); setEditingPhaseReview(fromPhaseReview); }
     catch (e) { setFailure(e instanceof Error ? e.message : "Unable to save."); }
     finally { setBusy(false); }
   }
@@ -220,6 +225,21 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     // Recompute after an answer: it may add service questions or change visibility.
     const nextPhases = getOnboardingPhases(nextAnswers, extras, privacy.approved || preview);
     const nextPhase = nextPhases.find(item => item.steps.some(candidate => candidate.id === step.id))!;
+    if (editingPhaseReview) {
+      const phaseErrors = getPhaseErrors(nextPhase, nextAnswers, privacy.approved || preview);
+      if (Object.keys(phaseErrors).length) {
+        const first = nextPhase.steps.find(item => phaseErrors[item.id]);
+        if (first) moveTo(first.id);
+        setErrors(phaseErrors); return;
+      }
+      setBusy(true);
+      try {
+        await persist({ answers: nextAnswers, extras, currentId, currentQuestion: step.id });
+        setReviewPhase(true); setEditingPhaseReview(false);
+      } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save this answer."); }
+      finally { setBusy(false); }
+      return;
+    }
     const next = nextPhase.steps[nextPhase.steps.findIndex(item => item.id === step.id) + 1];
     if (next) {
       setBusy(true);
@@ -235,14 +255,14 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
       setErrors(phaseErrors); return;
     }
     if (nextPhase.id !== "final") {
-      const following = nextPhases[nextPhases.findIndex(item => item.id === nextPhase.id) + 1];
-      const target = following?.steps.find(item => item.id === following.nextQuestion) ?? nextPhase.steps[0];
-      setBusy(true);
-      try {
-        await persist({ answers: nextAnswers, extras, currentId: target.page.id, currentQuestion: target.id });
-        router.push(`${preview ? "/dashboard/preview" : "/dashboard"}?completedPhase=${encodeURIComponent(nextPhase.id)}`);
-      } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save this phase."); }
-      finally { setBusy(false); }
+      if (getPhaseQuestionProgress(nextPhase, nextAnswers, privacy.approved || preview).later.length) {
+        setBusy(true);
+        try {
+          await persist({ answers: nextAnswers, extras, currentId, currentQuestion: step.id });
+          setReviewPhase(true);
+        } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save this phase."); }
+        finally { setBusy(false); }
+      } else await finishPhase(nextAnswers);
       return;
     }
     const allErrors = validateSubmission(nextAnswers, extras, { privacyReady: privacy.approved || preview });
@@ -261,14 +281,29 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     catch (e) { setFailure(e instanceof Error ? e.message : "Unable to submit."); }
     finally { setBusy(false); }
   }
+  async function finishPhase(nextAnswers = answers) {
+    if (busy) return;
+    const nextPhases = getOnboardingPhases(nextAnswers, extras, privacy.approved || preview);
+    const index = nextPhases.findIndex(item => item.id === phase.id);
+    const following = nextPhases[index + 1];
+    if (!following) return;
+    const target = following.steps.find(item => item.id === following.nextQuestion)!;
+    setBusy(true);
+    try {
+      await persist({ answers: nextAnswers, extras, currentId: target.page.id, currentQuestion: target.id });
+      moveTo(target.id);
+      setCompletedPhase(phase.title);
+    } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save this phase."); }
+    finally { setBusy(false); }
+  }
   async function saveExit() {
     setBusy(true);
     try { await persist(); router.push(preview ? "/dashboard/preview" : "/dashboard"); } catch (e) { setFailure(e instanceof Error ? e.message : "Unable to save."); } finally { setBusy(false); }
   }
   function toggleModule(id: string) { dirty.current = true; setSaveState("Unsaved changes"); setExtras(old => old.includes(id) ? old.filter(s => s !== id) : [...old, id]); }
 
-  if (!started) return <PortalShell preview={preview} businessName={getBusinessName(answers)} userName={user.name}>
-    <OnboardingWelcome privacy={privacy} name={user.name} preview={preview} busy={busy} error={failure} onStart={async () => {
+  if (!started) return <PortalShell focused preview={preview} businessName={getBusinessName(answers)} userName={user.name}>
+    <OnboardingWelcome phaseCount={phases.length} privacy={privacy} name={user.name} preview={preview} busy={busy} error={failure} onStart={async () => {
       if (busy) return;
       setBusy(true); setFailure("");
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -283,38 +318,33 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
       finally { setBusy(false); }
     }} />
   </PortalShell>;
-  return <PortalShell preview={preview} beforeLeave={persist} businessName={getBusinessName(answers)} userName={user.name}>
-    <main className="ob-guided">
+  return <PortalShell focused preview={preview} beforeLeave={persist} businessName={getBusinessName(answers)} userName={user.name}>
+    <main className="ob-guided ob-focused">
       {preview && <div className="ob-preview-banner">Preview mode. Use example business details. Your progress is saved for your next visit.</div>}
       {initial.draft?.version && initial.draft.version !== ONBOARDING_VERSION && <div className="ob-preview-banner">The questionnaire has been updated. Your existing answers are retained; review the current questions before submission.</div>}
       <div className="ob-journey-top">
-        <div className="ob-journey-title">Let’s build your project brief<span className="ob-save-state" role="status">{saveState === "All changes saved" ? <CheckCheck size={14} aria-hidden="true" /> : <Save size={14} aria-hidden="true" />}{saveState}</span></div>
+        <div className="ob-journey-title">One question at a time</div>
         <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={16} aria-hidden="true" />Save and exit</button>
       </div>
-      <div className="ob-journey-layout">
-        <aside className="ob-chapter-panel" aria-label="Your brief at a glance">
-          <div className="ob-chapter-story">
-            <span className="ob-story-label"><Sparkles size={14} aria-hidden="true" />A little context. A great start.</span>
-            <h2>{currentChapter.note}</h2>
-            <JourneyArtwork scene={scene} mood={mood} />
-            <p>{currentChapter.description}</p>
-          </div>
-          <div className="ob-phase-summary">
-            <p>This phase · {phase.total} questions</p>
-            <h3>{phase.title}</h3>
-            <ol aria-label="Questions in this phase">{phaseQuestions.map((item, index) => <li key={item.id}><button type="button" disabled={busy} aria-current={item.id === step.id ? "step" : undefined} onClick={() => void navigate(item.id)}><span className="ob-chapter-marker" data-complete={isStepComplete(item, answers, privacy.approved || preview)}>{isStepComplete(item, answers, privacy.approved || preview) ? <Check size={13} aria-hidden="true" /> : index + 1}</span><span className="ob-phase-question-title">{item.question!.label}</span>{item.id === step.id && <small>You’re here</small>}</button></li>)}</ol>
-          </div>
-          <p className="ob-pause-note"><Coffee size={16} aria-hidden="true" />After this phase, we’ll take you back to your dashboard.</p>
-        </aside>
-        <div className="ob-question-area">
-          <div className="ob-topic-bar">
-            <span>Phase {phaseIndex + 1} · {phase.title}</span>
-            <button type="button" className="ob-phase-dashboard" disabled={busy} onClick={() => void saveExit()}><ListChecks size={16} aria-hidden="true" />Dashboard</button>
-          </div>
-          <div className="ob-topic-progress"><progress className="ob-progress" value={phase.completed} max={phase.total} aria-label={`Progress in ${phase.title}`} aria-valuetext={`${phase.completed} of ${phase.total} questions complete in this phase`} /><span>{question ? `Question ${questionIndex + 1} of ${phase.total} in this phase` : "Your answers, all together"}</span></div>
-      <section className="ob-guided-stage" aria-labelledby="ob-guided-heading">
+      <div className="ob-question-layout">
+      <OnboardingProgress phases={phases} activeIndex={phaseIndex} currentQuestion={reviewPhase ? "" : step.id} answers={answers} privacyReady={privacy.approved || preview} busy={busy} onNavigate={id => void navigate(id)} />
+      <div className="ob-question-area">
+        <div className="ob-topic-bar">
+          <span><span className="ob-phase-kicker">Phase {phaseIndex + 1} of {phases.length}</span>{phase.title}</span>
+          <span className="ob-question-position">{reviewPhase ? "Phase review" : question ? `Question ${questionIndex + 1} of ${phase.total}` : "Review your answers"}</span>
+        </div>
+        {!reviewPhase && <div className="ob-question-status" data-status={questionStatus}><QuestionStatusMark status={questionStatus} />{QUESTION_STATUS_LABELS[questionStatus]}{questionStatus === "later" && " · You can answer this before you finish."}</div>}
+        {completedPhase && <p className="ob-phase-saved" role="status"><CheckCheck size={16} aria-hidden="true" />{completedPhase} saved. Let’s keep going.</p>}
+      {reviewPhase ? <section className="ob-phase-recap" aria-labelledby="ob-guided-heading">
+        <span className="ob-phase-kicker">Before the next phase</span>
+        <h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{phaseProgress.later.length ? "A few details for later" : "This phase is ready"}</h1>
+        <p>You’ve answered {phaseProgress.answered} of {phaseProgress.total} questions in this phase. {phaseProgress.later.length ? "You can fill in these details now, or keep them flagged for your final review." : "Your changes are saved. Continue whenever you’re ready."}</p>
+        <ul>{phaseProgress.later.map(item => <li key={item.id}><QuestionStatusMark status="later" /><span>{item.question!.label}<small>{formatAnswer(answers[item.id])}</small></span><button type="button" disabled={busy} onClick={() => void navigate(item.id, true)}>Answer now<ArrowRight size={14} aria-hidden="true" /></button></li>)}</ul>
+        {failure && <p className="ob-error" role="alert">{failure}</p>}
+        <div className="ob-guided-actions"><Button type="button" variant="ghost" disabled={busy} onClick={() => setReviewPhase(false)}><ArrowLeft data-icon="inline-start" />Back</Button><Button type="button" disabled={busy} onClick={() => void finishPhase()}>{busy ? "Saving…" : phaseProgress.later.length ? `Continue with ${phaseProgress.later.length} for later` : "Continue to next phase"}<ArrowRight data-icon="inline-end" /></Button></div>
+      </section> : <section className="ob-guided-stage" aria-labelledby="ob-guided-heading">
         <div className="ob-guide" key={step.id}>
-          <div className="ob-speech"><span className="ob-speech-intro">{step.id === "review" ? "A moment to make it yours" : currentChapter.title}</span><h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{question?.label ?? "Here’s your project brief. How does it look?"}</h1></div>
+          <OnboardingMascot mood={mood} /><div className="ob-speech"><h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{question?.label ?? "Here’s your project brief. How does it look?"}</h1></div>
         </div>
         <form onSubmit={e => { e.preventDefault(); void continueQuestion(); }} noValidate>
           <div className="ob-guided-answer" key={step.id}>
@@ -331,18 +361,17 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
               </>}
             </fieldset>
             {(hasAnswer || activeError || !question) && <p className="ob-guide-feedback" role="status"><Sparkles size={15} aria-hidden="true" />{encouragement}</p>}
-            {endsPhase && !isLast && <p className="ob-chapter-finish"><Check size={15} aria-hidden="true" />Last question in this phase. Next stop: your dashboard.</p>}
             {returnToReview && step.id !== "review" && <button type="button" className="ob-return-review" disabled={busy} onClick={() => { setReturnToReview(false); void navigate("review"); }}>Back to my review<ArrowRight size={14} /></button>}
             {failure && <div className="ob-error-box" role="alert"><p>{failure}</p>{saveState.includes("not saved") && <Button type="button" variant="outline" disabled={busy} onClick={() => void persist().catch(e => setFailure(e.message))}>Retry saving</Button>}</div>}
           </div>
           <div className="ob-guided-actions">
-            <Button type="button" variant="ghost" size="marketing" disabled={busy} onClick={() => phaseStepIndex > 0 ? void navigate(phase.steps[phaseStepIndex - 1].id) : void saveExit()}><ArrowLeft data-icon="inline-start" />{phaseStepIndex > 0 ? "Back" : "Dashboard"}</Button>
-            <Button type="submit" variant="default" size="marketing" disabled={busy}>{busy ? "Saving…" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? endsPhase ? "Skip and finish phase" : "Skip for now" : endsPhase ? "Finish phase" : "Continue"}<ArrowRight data-icon="inline-end" /></Button>
+            <Button type="button" variant="ghost" size="marketing" disabled={busy || currentStepIndex === 0} onClick={() => void navigate(steps[currentStepIndex - 1].id)}><ArrowLeft data-icon="inline-start" />Back</Button>
+            <Button type="submit" variant="default" size="marketing" disabled={busy}>{busy ? "Saving…" : editingPhaseReview ? "Back to phase review" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? "Skip for now" : endsPhase ? "Continue to next phase" : "Continue"}<ArrowRight data-icon="inline-end" /></Button>
           </div>
         </form>
-      </section>
-        <p className="ob-question-footnote">Just this phase for now. Your dashboard is waiting when you finish.</p>
-        </div>
+      </section>}
+        <p className="ob-question-footnote"><span className="ob-save-state" role="status">{saveState === "All changes saved" ? <CheckCheck size={14} aria-hidden="true" /> : <Save size={14} aria-hidden="true" />}{saveState}</span>Pause anytime with Save and exit.</p>
+      </div>
       </div>
     </main>
   </PortalShell>;

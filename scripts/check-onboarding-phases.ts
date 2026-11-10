@@ -3,6 +3,7 @@ import { getGuidedSteps } from "../lib/onboarding/guided-flow";
 import { CORE_PHASES, getOnboardingPhases, getPhaseErrors, getPhaseHref, isStepComplete } from "../lib/onboarding/phases";
 import { getAllowedAnswerStates, getPages, MODULE_PAGES, SHARED_PAGES, validateSubmission } from "../lib/onboarding/questionnaire";
 import type { Answers } from "../lib/onboarding/types";
+import { getPhaseQuestionProgress, getQuestionStatus } from "../lib/onboarding/progress-state";
 
 const answered = (value: Answers[string]["value"]): Answers[string] => ({ state: "answered", value });
 const extras = MODULE_PAGES.map(page => page.id);
@@ -69,6 +70,39 @@ assert.ok(getOnboardingPhases(complete, extras).every(phase => phase.complete &&
 const finalWithoutPrivacy = getOnboardingPhases(complete, extras, false).at(-1)!;
 assert.equal(finalWithoutPrivacy.complete, false);
 assert.ok(getPhaseErrors(finalWithoutPrivacy, complete, false)["P16.3"], "Unavailable privacy acknowledgement cannot complete the final phase");
+
+// Answer status survives navigation independently of the current phase/question.
+const statusAnswers: Answers = {
+  "P01.1": answered("Example contact"),
+  "P01.2": { state: "help", value: "" },
+  "P01.3": answered("invalid email"),
+  "P01.4": { state: "deferred", value: "" },
+};
+let statusPhase = getOnboardingPhases(statusAnswers)[0];
+const statusFor = (id: string, answers = statusAnswers) => getQuestionStatus(statusPhase.steps.find(step => step.id === id)!, answers, true);
+assert.equal(statusFor("P01.1"), "answered");
+assert.equal(statusFor("P01.2"), "later", "A help request stays yellow rather than inflating answered progress");
+assert.equal(statusFor("P01.3"), "attention", "An invalid saved answer cannot receive a green check");
+assert.equal(statusFor("P01.4"), "later", "An explicit optional skip receives a yellow check");
+assert.equal(statusFor("P02.1"), "pending", "Untouched questions stay pending");
+assert.deepEqual(getPhaseQuestionProgress(statusPhase, statusAnswers, true), {
+  answered: 1, later: [statusPhase.steps[1], statusPhase.steps[3]], pending: 2, total: 5,
+});
+const restored: Answers = JSON.parse(JSON.stringify(statusAnswers));
+assert.deepEqual(getPhaseQuestionProgress(statusPhase, restored, true), getPhaseQuestionProgress(statusPhase, statusAnswers, true), "Reloading a saved draft restores identical status and follow-up counts");
+restored["P01.4"] = answered("+91 9876543210");
+assert.equal(statusFor("P01.4", restored), "answered", "Answering a deferred question changes yellow to green");
+restored["P01.4"] = answered("");
+assert.equal(statusFor("P01.4", restored), "pending", "Clearing a previously answered optional question restores pending status");
+statusAnswers["P02.3"] = answered(["Phone"]);
+assert.equal(statusFor("P01.4"), "attention", "A later contact choice invalidating a skip removes its yellow check");
+statusPhase = getOnboardingPhases({ "P01.4": { state: "not-applicable", value: "" } })[0];
+assert.equal(statusFor("P01.4", { "P01.4": { state: "not-applicable", value: "" } }), "answered", "A valid not-applicable answer is resolved rather than a follow-up");
+const finalPhase = getOnboardingPhases(complete).at(-1)!;
+assert.equal(getQuestionStatus(finalPhase.steps.find(step => step.id === "review")!, complete, true), "review");
+assert.equal(getQuestionStatus(finalPhase.steps.find(step => step.id === "P16.3")!, complete, false), "attention");
+const allStatusCounts = getOnboardingPhases(complete, extras).map(phase => getPhaseQuestionProgress(phase, complete, true));
+assert.equal(allStatusCounts.reduce((sum, phase) => sum + phase.answered + phase.later.length + phase.pending, 0), 127, "Status categories account for exactly the active question library, excluding review");
 
 const routed: Answers = { "P08.1": answered(["Website/store/application"]), "M02.3": answered(["Content"]) };
 assert.ok(getOnboardingPhases(routed).some(phase => phase.steps.some(step => step.id.startsWith("M22."))), "A migration answer inserts the additional project details");

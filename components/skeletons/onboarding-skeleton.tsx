@@ -17,7 +17,7 @@ function ChoiceRows() {
 
 export function OnboardingSkeletonContent() {
   return (
-    <LoadingRegion label="Loading your project brief" className="ob-guided">
+    <LoadingRegion label="Loading your project brief" className="ob-guided ob-focused">
       <div className="ob-journey-top">
         <div className="space-y-2">
           <SkeletonBlock className="h-5 w-56 max-w-full" />
@@ -26,18 +26,17 @@ export function OnboardingSkeletonContent() {
         <SkeletonBlock className="h-10 w-32 rounded-full" />
       </div>
 
-      <div className="ob-journey-layout">
-        <aside className="ob-chapter-panel">
-          <div className="ob-chapter-story">
-            <SkeletonBlock className="h-6 w-40 rounded-full bg-white/20" />
-            <SkeletonBlock className="mt-4 h-8 w-11/12 bg-white/25" />
-            <SkeletonBlock className="mt-3 h-8 w-3/4 bg-white/25" />
-            <SkeletonBlock className="mt-5 aspect-[4/3] w-full rounded-[20px] bg-white/15" />
-            <SkeletonBlock className="mt-5 h-3.5 w-full bg-white/15" />
-            <SkeletonBlock className="mt-2 h-3.5 w-4/5 bg-white/15" />
-          </div>
-        </aside>
-
+      <div className="ob-question-layout">
+      <aside className="ob-progress-rail" aria-hidden="true">
+        <SkeletonBlock className="h-4 w-36" />
+        <SkeletonBlock className="mt-4 h-2 w-full rounded-full" />
+        <SkeletonBlock className="mt-3 h-3 w-48 max-w-full" />
+        <div className="ob-rail-navigation">
+          {Array.from({ length: 7 }, (_, index) => <SkeletonBlock key={index} className="mb-2 h-12 w-full rounded-lg" />)}
+        </div>
+      </aside>
+      <div className="ob-question-area">
+        <SkeletonBlock className="h-4 w-44" />
         <section className="ob-guided-stage">
           <div className="ob-speech space-y-3">
             <SkeletonBlock className="h-3 w-28" />
@@ -61,13 +60,14 @@ export function OnboardingSkeletonContent() {
           </div>
         </section>
       </div>
+      </div>
     </LoadingRegion>
   );
 }
 
 export function OnboardingSkeleton({ preview = false }: { preview?: boolean }) {
   return (
-    <PortalShell preview={preview}>
+    <PortalShell focused preview={preview}>
       <OnboardingSkeletonContent />
     </PortalShell>
   );
