@@ -1,6 +1,12 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { answersValidator, engagementValidator } from "./onboardingValidators";
+import {
+  activityValidator,
+  documentValidator,
+  projectStageValidator,
+  projectValidator,
+} from "./workspaceValidators";
 
 export default defineSchema({
   onboarding: defineTable({
@@ -28,4 +34,23 @@ export default defineSchema({
     privacyVersion: v.string(),
   }).index("by_sessionId", ["sessionId"]),
   engagements: defineTable(engagementValidator).index("by_authUserId", ["authUserId"]),
+  projects: defineTable(projectValidator).index("by_authUserId", ["authUserId"]),
+  projectStages: defineTable(projectStageValidator)
+    .index("by_authUserId", ["authUserId"])
+    .index("by_authUserId_stageId", ["authUserId", "stageId"]),
+  projectActivity: defineTable(activityValidator)
+    .index("by_authUserId", ["authUserId"])
+    .index("by_authUserId_createdAt", ["authUserId", "createdAt"]),
+  documents: defineTable(documentValidator)
+    .index("by_authUserId", ["authUserId"])
+    .index("by_authUserId_uploadedAt", ["authUserId", "uploadedAt"])
+    .index("by_storageId", ["storageId"]),
+  uploadIntents: defineTable({
+    token: v.string(),
+    authUserId: v.string(),
+    createdAt: v.number(),
+    expiresAt: v.number(),
+  })
+    .index("by_token", ["token"])
+    .index("by_authUserId", ["authUserId"]),
 });

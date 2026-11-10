@@ -17,7 +17,10 @@ const privacyKeys = ["APPROVED", "TEXT", "CONTACT", "RETENTION", "VERSION"].map(
 const originals = new Map();
 const clients = [];
 const revision = `local-smoke-${randomBytes(6).toString("hex")}`;
-const references = Object.fromEntries(["getMine", "saveDraft", "submit", "getPrivacySettings", "recordEngagement"].map(name => [name, makeFunctionReference(`onboarding:${name}`)]));
+const references = Object.fromEntries([
+  "getMine", "saveDraft", "submit", "getPrivacySettings", "recordEngagement",
+  "documents:generateUploadUrl", "documents:saveUpload", "documents:listMine", "documents:removeMine",
+].map(name => [name, makeFunctionReference(name.includes(":") ? name : `onboarding:${name}`)]));
 const anonymous = new ConvexHttpClient(convexUrl);
 
 function cli(args, missingAllowed = false) {
@@ -201,6 +204,33 @@ try {
   record(first, { signedAgreementRef: verified.signedAgreementRef, identityVerificationRef: verified.identityVerificationRef });
   assert.equal((await read(first)).workspaceReady, false);
   console.log("PASS engagement updates are internal-only; verified agreement, advance, identity and dependencies control activation");
+
+  const workspace = await read(first);
+  assert.equal(workspace.stages.length, 6, "Every client receives the six persisted delivery stages.");
+  assert.equal(workspace.stages.find(stage => stage.stageId === "brief")?.status, "complete");
+  assert.equal(workspace.stages.find(stage => stage.stageId === "activation")?.status, "in-progress");
+  assert.ok(workspace.activityLog.some(item => item.title === "Brief submitted"), "Submission is written to the persisted activity timeline.");
+  assert.ok(workspace.activityLog.some(item => item.type === "engagement"), "Agency engagement updates are written to the timeline.");
+  console.log("PASS submission and engagement records create persisted project, stage, and activity rows");
+
+  const upload = await first.convex.mutation(references["documents:generateUploadUrl"], {});
+  assert.ok(upload.uploadUrl && upload.token, "The client receives a bound upload URL and token.");
+  const uploaded = await fetch(upload.uploadUrl, { method: "POST", headers: { "Content-Type": "text/plain" }, body: "Local fixture document" });
+  assert.equal(uploaded.status, 200, "The file upload to Convex storage failed.");
+  const { storageId } = await uploaded.json();
+  await first.convex.mutation(references["documents:saveUpload"], { token: upload.token, storageId, fileName: "fixture-notes.txt", category: "Documents", description: "Local fixture only" });
+  const documents = await first.convex.query(references["documents:listMine"], {});
+  assert.equal(documents.length, 1);
+  assert.equal(documents[0].fileName, "fixture-notes.txt");
+  assert.equal(documents[0].size, 22);
+  assert.ok(documents[0].url, "The document metadata includes a storage URL.");
+  assert.equal((await second.convex.query(references["documents:listMine"], {})).length, 0, "Clients cannot list another client's files.");
+  await assert.rejects(() => second.convex.mutation(references["documents:removeMine"], { documentId: documents[0].id }));
+  await assert.rejects(() => second.convex.mutation(references["documents:saveUpload"], { token: upload.token, storageId, fileName: "reused.txt", category: "Documents" }), "Upload intents are single-use.");
+  await first.convex.mutation(references["documents:removeMine"], { documentId: documents[0].id });
+  assert.equal((await first.convex.query(references["documents:listMine"], {})).length, 0);
+  assert.ok((await read(first)).activityLog.some(item => item.type === "document"), "Upload and removal are written to the timeline.");
+  console.log("PASS documents persist in Convex storage with owner-only metadata and single-use upload intents");
 } finally {
   const cleanupErrors = [];
   for (const client of clients) if (client.userId) {

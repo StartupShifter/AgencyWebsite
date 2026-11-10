@@ -91,7 +91,8 @@ export function DashboardOverview({
   onExport: () => void;
   onFollowups: () => void;
 }) {
-  const { progress, prerequisites, topics, submitted, openItems } = model;
+  const { progress, prerequisites, topics, submitted, openItems, project } =
+    model;
   const verified = prerequisites.filter((item) => item.verified).length;
   const selected = topics.filter((topic) => topic.kind === "module");
   const sections = [
@@ -120,17 +121,21 @@ export function DashboardOverview({
     };
   });
   const missingPrerequisite = prerequisites.find((item) => !item.verified);
-  const nextTitle = !submitted
-    ? "One small phase at a time."
-    : model.workspaceReady
-      ? "Ready for your next chapter."
-      : "Let’s get your project ready.";
-  const nextDescription = !submitted
-    ? "Answer up to five questions, then return here. You can pause between every phase."
-    : model.workspaceReady
-      ? "Your brief and prerequisites are verified. Your agency can now arrange the agreed next steps."
-      : missingPrerequisite?.detail ||
-        "Your agency will confirm the remaining prerequisites.";
+  const nextTitle =
+    project?.nextStepTitle ||
+    (!submitted
+      ? "One small phase at a time."
+      : model.workspaceReady
+        ? "Ready for your next chapter."
+        : "Let’s get your project ready.");
+  const nextDescription =
+    project?.nextStepDetail ||
+    (!submitted
+      ? "Answer up to five questions, then return here. You can pause between every phase."
+      : model.workspaceReady
+        ? "Your brief and prerequisites are verified. Your agency can now arrange the agreed next steps."
+        : missingPrerequisite?.detail ||
+          "Your agency will confirm the remaining prerequisites.");
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">

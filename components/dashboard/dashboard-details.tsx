@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -9,19 +9,34 @@ import {
   CircleCheck,
   CircleDashed,
   Clock3,
+  Download,
   ExternalLink,
   FileText,
   Flag,
   FolderOpen,
   Search,
   ShieldCheck,
+  Trash2,
+  Upload,
 } from "lucide-react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   ANSWER_STATE_LABELS,
   formatAnswer,
 } from "@/lib/onboarding/questionnaire";
+import {
+  DOCUMENT_CATEGORIES,
+  MAX_DOCUMENT_BYTES,
+  formatFileSize,
+} from "@/lib/onboarding/documents";
+import {
+  DELIVERY_STAGE_STATUS_LABELS,
+  type DeliveryStageStatus,
+} from "@/lib/onboarding/delivery";
 import type { DashboardModel, WorkspaceData } from "@/lib/onboarding/dashboard";
 import { panelClass, subtleButton } from "./dashboard-overview";
 
@@ -299,16 +314,21 @@ export function JourneyView({
   data: WorkspaceData;
   onboardingHref: string;
 }) {
-  const [selectedStage, setSelectedStage] = useState(0);
-  const stages = [
+  const persistedStages = model.deliveryStages;
+  const fallbackStages = [
     {
+      id: "brief",
       title: "Your project brief",
       status: model.submitted ? "Complete" : "In progress",
       description:
         "Share your business, goals, content, and requirements. Your answers help shape the project discussion.",
       done: model.submitted,
+      progress: model.submitted ? 100 : model.progress.percent,
+      note: "",
+      targetDate: null,
     },
     {
+      id: "activation",
       title: "Agreement & activation",
       status: model.workspaceReady
         ? "Verified"
@@ -318,38 +338,83 @@ export function JourneyView({
       description:
         "Your agency verifies the contact details, signed agreement, 40% advance, and project dependencies before activation.",
       done: model.workspaceReady,
+      progress: model.workspaceReady ? 100 : 0,
+      note: "",
+      targetDate: null,
     },
     {
+      id: "research",
       title: "Research & direction",
       status: "Upcoming",
       description:
         "Business, market, and competitor research establishes the direction. Timing and deliverables follow your agreed project scope.",
       done: false,
+      progress: 0,
+      note: "",
+      targetDate: null,
     },
     {
+      id: "design",
       title: "Design & feedback",
       status: "Upcoming",
       description:
         "Explore the agreed design work, review drafts, and share feedback. The number of variants and revisions follows your agreement.",
       done: false,
+      progress: 0,
+      note: "",
+      targetDate: null,
     },
     {
+      id: "build",
       title: "Build & connect",
       status: "Upcoming",
       description:
         "The agreed website, content, workflows, and supported connections take shape. Selected requirements are confirmed in the project scope.",
       done: false,
+      progress: 0,
+      note: "",
+      targetDate: null,
     },
     {
+      id: "handoff",
       title: "Review & handoff",
       status: "Upcoming",
       description:
         "Review the agreed deliverables and prepare for handoff. Launch requirements and ongoing support depend on your engagement.",
       done: false,
+      progress: 0,
+      note: "",
+      targetDate: null,
     },
   ];
-  const selected = stages[selectedStage];
-  const current = model.workspaceReady ? 2 : model.submitted ? 1 : 0;
+  const stages = persistedStages.length
+    ? persistedStages.map((stage) => ({
+        id: stage.stageId,
+        title: stage.title,
+        status:
+          DELIVERY_STAGE_STATUS_LABELS[
+            stage.status as DeliveryStageStatus
+          ] ?? stage.status,
+        description: stage.description,
+        done: stage.status === "complete",
+        progress: stage.progress,
+        note: stage.note,
+        targetDate: stage.targetDate,
+      }))
+    : fallbackStages;
+  const persistedCurrent = model.project
+    ? stages.findIndex((stage) => stage.id === model.project?.currentStage)
+    : -1;
+  const current =
+    persistedCurrent >= 0
+      ? persistedCurrent
+      : model.workspaceReady
+        ? 2
+        : model.submitted
+          ? 1
+          : 0;
+  const [selectedStage, setSelectedStage] = useState(current);
+  const selected = stages[selectedStage] ?? stages[0];
   const completed = stages.filter((stage) => stage.done).length;
   return (
     <>
@@ -362,20 +427,30 @@ export function JourneyView({
           <div>
             <p className="text-xs text-[var(--workspace-muted)]">Current checkpoint</p>
             <h2 className="mt-1.5 text-xl font-medium tracking-[-.4px]">
-              {model.workspaceReady
-                ? "Ready to arrange delivery"
-                : stages[current].title}
+              {stages[current]?.title ?? "Your project"}
             </h2>
+            {model.project?.summary && (
+              <p className="mt-2 max-w-xl text-xs leading-relaxed text-[var(--workspace-muted)]">
+                {model.project.summary}
+              </p>
+            )}
+            {model.project?.targetDate && (
+              <p className="mt-2 text-[11px] text-[var(--workspace-muted)]">
+                Target date: {model.project.targetDate}
+              </p>
+            )}
           </div>
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--workspace-tint)] px-3 py-2 text-xs text-[var(--workspace-muted)]">
             <RouteIcon />
-            {completed} preparation stages complete
+            {model.project
+              ? `${model.project.progressPercent}% delivery complete`
+              : `${completed} preparation stages complete`}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
           {stages.map((stage, index) => (
             <button
-              key={stage.title}
+              key={stage.id}
               onClick={() => setSelectedStage(index)}
               aria-pressed={selectedStage === index}
               className="workspace-stage-button relative rounded-2xl border border-[var(--workspace-line)] bg-[var(--workspace-surface)] p-4 text-left hover:bg-[var(--workspace-soft)]"
@@ -409,10 +484,33 @@ export function JourneyView({
           <p className="text-sm leading-relaxed text-[var(--workspace-muted)]">
             {selected.description}
           </p>
-          {selectedStage < 2 ? (
+          {selected.progress > 0 && (
+            <div className="mt-5">
+              <div className="mb-2 flex items-center justify-between text-[11px] text-[var(--workspace-muted)]">
+                <span>Stage progress</span>
+                <span>{selected.progress}%</span>
+              </div>
+              <Progress
+                value={selected.progress}
+                aria-label={`${selected.title} progress`}
+                className="[&_[data-slot=progress-track]]:h-1.5 [&_[data-slot=progress-track]]:bg-[var(--workspace-line)] [&_[data-slot=progress-indicator]]:bg-[var(--commerce-green)]"
+              />
+            </div>
+          )}
+          {selected.note && (
+            <p className="mt-4 rounded-xl bg-[var(--workspace-tint)] p-4 text-xs leading-relaxed text-[var(--workspace-muted)]">
+              {selected.note}
+            </p>
+          )}
+          {selected.targetDate && (
+            <p className="mt-3 text-[11px] text-[var(--workspace-muted)]">
+              Target date: {selected.targetDate}
+            </p>
+          )}
+          {selected.id === "brief" || selected.id === "activation" ? (
             <>
               <div className="mt-6 space-y-4">
-                {(selectedStage === 0
+                {(selected.id === "brief"
                   ? model.prerequisites.filter((item) => item.id === "brief")
                   : model.prerequisites.filter((item) => item.id !== "brief")
                 ).map((item) => (
@@ -440,7 +538,7 @@ export function JourneyView({
                   </div>
                 ))}
               </div>
-              {selectedStage === 0 && (
+              {selected.id === "brief" && (
                 <Link
                   href={onboardingHref}
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--workspace-ink)] px-4 py-2.5 text-xs text-white"
@@ -449,7 +547,7 @@ export function JourneyView({
                   <ArrowUpRight size={14} />
                 </Link>
               )}
-              {selectedStage === 1 && data.pending.length > 0 && (
+              {selected.id === "activation" && data.pending.length > 0 && (
                 <details className="mt-6 rounded-xl bg-[var(--workspace-soft)] p-4">
                   <summary className="cursor-pointer text-xs font-medium">
                     View all pending verification items ({data.pending.length})
@@ -462,7 +560,7 @@ export function JourneyView({
                 </details>
               )}
             </>
-          ) : (
+          ) : selected.note ? null : (
             <div className="mt-6 flex items-start gap-3 rounded-xl bg-[var(--workspace-soft)] p-4">
               <Clock3 size={17} className="mt-0.5 shrink-0 text-[var(--workspace-muted)]" />
               <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">
@@ -526,9 +624,13 @@ function RouteIcon() {
 export function ResourcesView({
   model,
   onboardingHref,
+  documents,
+  preview = false,
 }: {
   model: DashboardModel;
   onboardingHref: string;
+  documents: WorkspaceData["documents"];
+  preview?: boolean;
 }) {
   const urls = [
     ...new Set(
@@ -660,7 +762,223 @@ export function ResourcesView({
           </div>
         </section>
       </div>
+      <section className={`${panelClass} mt-5`}>
+        <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="text-base font-medium">Project files</h2>
+            <p className="mt-2 max-w-2xl text-xs leading-relaxed text-[var(--workspace-muted)]">
+              Upload logos, copy, photos, or reference documents. Each file is
+              stored with your workspace and is visible to your agency.
+            </p>
+          </div>
+          <span className="rounded-full bg-[var(--workspace-soft)] px-3 py-1.5 text-[10px] text-[var(--workspace-muted)]">
+            {documents.length} {documents.length === 1 ? "file" : "files"}
+          </span>
+        </div>
+        {preview ? (
+          <p className="rounded-xl bg-[var(--workspace-soft)] p-5 text-xs leading-relaxed text-[var(--workspace-muted)]">
+            Document sharing becomes available in an authenticated client
+            workspace.
+          </p>
+        ) : (
+          <DocumentUploader documents={documents} />
+        )}
+      </section>
     </>
+  );
+}
+
+function DocumentUploader({
+  documents,
+}: {
+  documents: WorkspaceData["documents"];
+}) {
+  const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
+  const saveUpload = useMutation(api.documents.saveUpload);
+  const removeDocument = useMutation(api.documents.removeMine);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [category, setCategory] = useState<string>(DOCUMENT_CATEGORIES[0]);
+  const [description, setDescription] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [removing, setRemoving] = useState("");
+  const [error, setError] = useState("");
+
+  async function upload(files: FileList | null) {
+    if (!files?.length || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      for (const file of Array.from(files)) {
+        if (file.size > MAX_DOCUMENT_BYTES) {
+          throw new Error(
+            `${file.name} is larger than ${formatFileSize(MAX_DOCUMENT_BYTES)}.`,
+          );
+        }
+        const { uploadUrl, token } = await generateUploadUrl();
+        const response = await fetch(uploadUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": file.type || "application/octet-stream",
+          },
+          body: file,
+        });
+        if (!response.ok) throw new Error(`Could not upload ${file.name}.`);
+        const { storageId } = (await response.json()) as {
+          storageId: string;
+        };
+        await saveUpload({
+          token,
+          storageId: storageId as Id<"_storage">,
+          fileName: file.name,
+          category,
+          description,
+        });
+      }
+      setDescription("");
+      if (inputRef.current) inputRef.current.value = "";
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The upload could not be saved. Please try again.",
+      );
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function remove(id: WorkspaceData["documents"][number]["id"]) {
+    if (!window.confirm("Remove this file from your workspace?")) return;
+    setRemoving(id);
+    setError("");
+    try {
+      await removeDocument({ documentId: id });
+    } catch (caught) {
+      setError(
+        caught instanceof Error
+          ? caught.message
+          : "The file could not be removed. Please try again.",
+      );
+    } finally {
+      setRemoving("");
+    }
+  }
+
+  return (
+    <div>
+      <div className="rounded-2xl border border-dashed border-[var(--workspace-line)] bg-[var(--workspace-surface)] p-5">
+        <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+          <label className="text-[11px] font-medium text-[var(--workspace-muted)]">
+            Note for your agency
+            <input
+              type="text"
+              value={description}
+              maxLength={200}
+              onChange={(event) => setDescription(event.target.value)}
+              placeholder="Optional context for this upload"
+              className="mt-1.5 w-full rounded-xl border border-[var(--workspace-line)] bg-white px-3 py-2.5 text-xs text-[var(--workspace-ink)] outline-none"
+            />
+          </label>
+          <label className="text-[11px] font-medium text-[var(--workspace-muted)]">
+            Category
+            <select
+              value={category}
+              onChange={(event) => setCategory(event.target.value)}
+              className="mt-1.5 w-full rounded-xl border border-[var(--workspace-line)] bg-white px-3 py-2.5 text-xs text-[var(--workspace-ink)]"
+            >
+              {DOCUMENT_CATEGORIES.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.json,.zip,.png,.jpg,.jpeg,.webp,.gif"
+            className="sr-only"
+            onChange={(event) => void upload(event.target.files)}
+            aria-label="Choose files to upload"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            className="rounded-full bg-white text-xs"
+            disabled={busy}
+            onClick={() => inputRef.current?.click()}
+          >
+            <Upload size={14} />
+            {busy ? "Uploading…" : "Choose files"}
+          </Button>
+          <span className="text-[10px] text-[var(--workspace-muted)]">
+            PDF, image, Office, text, CSV, JSON, or ZIP · up to{" "}
+            {formatFileSize(MAX_DOCUMENT_BYTES)}
+          </span>
+        </div>
+      </div>
+      {error && (
+        <p role="alert" className="mt-3 rounded-xl bg-red-50 p-3 text-xs text-red-800">
+          {error}
+        </p>
+      )}
+      {documents.length ? (
+        <ul className="mt-4 divide-y divide-[var(--workspace-line)]">
+          {documents.map((document) => (
+            <li key={document.id} className="flex flex-wrap items-center gap-3 py-4">
+              <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[var(--workspace-tint)] text-[var(--commerce-green)]">
+                <FileText size={16} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-medium">{document.fileName}</p>
+                <p className="mt-1 text-[10px] text-[var(--workspace-muted)]">
+                  {document.category} · {formatFileSize(document.size)} ·{" "}
+                  {new Date(document.uploadedAt).toLocaleDateString("en", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                  {document.description ? ` · ${document.description}` : ""}
+                </p>
+              </div>
+              <span className="rounded-full bg-[var(--workspace-soft)] px-2.5 py-1 text-[10px] text-[var(--workspace-muted)]">
+                {document.status === "needs-update"
+                  ? "Needs update"
+                  : document.status.charAt(0).toUpperCase() +
+                    document.status.slice(1)}
+              </span>
+              {document.url && (
+                <a
+                  href={document.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex size-9 items-center justify-center rounded-full border border-[var(--workspace-line)] text-[var(--workspace-muted)] hover:text-[var(--workspace-ink)]"
+                  aria-label={`Download ${document.fileName}`}
+                >
+                  <Download size={15} />
+                </a>
+              )}
+              <button
+                type="button"
+                disabled={removing === document.id}
+                onClick={() => void remove(document.id)}
+                className="inline-flex size-9 items-center justify-center rounded-full border border-[var(--workspace-line)] text-[var(--workspace-muted)] hover:text-red-700 disabled:opacity-50"
+                aria-label={`Remove ${document.fileName}`}
+              >
+                <Trash2 size={15} />
+              </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="mt-4 text-xs text-[var(--workspace-muted)]">
+          No files uploaded yet.
+        </p>
+      )}
+    </div>
   );
 }
 

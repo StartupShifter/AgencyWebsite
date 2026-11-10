@@ -136,7 +136,12 @@ export function ClientWorkspace({
         />
       )}
       {view === "resources" && (
-        <ResourcesView model={model} onboardingHref={onboardingHref} />
+        <ResourcesView
+          model={model}
+          onboardingHref={onboardingHref}
+          documents={data.documents}
+          preview={preview}
+        />
       )}
       {view === "agreement" && <AgreementView data={data} />}
       <Dialog open={updatesOpen} onOpenChange={setUpdatesOpen}>

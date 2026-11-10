@@ -37,6 +37,10 @@ function SavedPreviewDashboard() {
           "Agree the project scope and complete the signed agreement.",
           "Have the agency verify the 40% advance against your agreed invoice.",
         ],
+        project: null,
+        stages: [],
+        activityLog: [],
+        documents: [],
       }}
     />
   );

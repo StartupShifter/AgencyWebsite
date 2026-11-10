@@ -9,12 +9,16 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as documents from "../documents.js";
 import type * as http from "../http.js";
 import type * as onboarding from "../onboarding.js";
 import type * as onboardingPreview from "../onboardingPreview.js";
 import type * as onboardingValidators from "../onboardingValidators.js";
+import type * as projects from "../projects.js";
 import type * as testing from "../testing.js";
 import type * as validateOnboardingDraft from "../validateOnboardingDraft.js";
+import type * as workspace from "../workspace.js";
+import type * as workspaceValidators from "../workspaceValidators.js";
 
 import type {
   ApiFromModules,
@@ -24,12 +28,16 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  documents: typeof documents;
   http: typeof http;
   onboarding: typeof onboarding;
   onboardingPreview: typeof onboardingPreview;
   onboardingValidators: typeof onboardingValidators;
+  projects: typeof projects;
   testing: typeof testing;
   validateOnboardingDraft: typeof validateOnboardingDraft;
+  workspace: typeof workspace;
+  workspaceValidators: typeof workspaceValidators;
 }>;
 
 /**

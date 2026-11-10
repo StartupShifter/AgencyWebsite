@@ -51,7 +51,7 @@ function StoredOnboardingPreview() {
   const [sessionId] = useSessionId();
   const draft = useQuery(api.onboardingPreview.getDraft, sessionId ? { sessionId } : "skip");
   if (!sessionId || draft === undefined) return <OnboardingSkeleton preview />;
-  return <WizardSession key={`${sessionId}:${requestedQuestion}`} requestedQuestion={requestedQuestion} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false }} privacy={previewPrivacy} />;
+  return <WizardSession key={`${sessionId}:${requestedQuestion}`} requestedQuestion={requestedQuestion} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false, project: null, stages: [], activityLog: [], documents: [] }} privacy={previewPrivacy} />;
 }
 function getBusinessName(answers?: Answers): string | undefined {
   const answer = answers?.["P01.2"];

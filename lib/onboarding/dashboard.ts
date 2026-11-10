@@ -9,7 +9,8 @@ import {
   isAnswerEmpty,
   isQuestionVisible,
 } from "./questionnaire";
-import type { Answers } from "./types";
+import { answerText } from "./summary";
+export { answerText } from "./summary";
 
 export type WorkspaceData = NonNullable<
   FunctionReturnType<typeof api.onboarding.getMine>
@@ -25,17 +26,16 @@ export const viewNames: Record<WorkspaceView, string> = {
   agreement: "Agreement & billing",
 };
 
-export function answerText(answers: Answers, id: string, fallback = "") {
-  const answer = answers[id];
-  return answer?.state === "answered" &&
-    typeof answer.value === "string" &&
-    answer.value.trim()
-    ? answer.value.trim()
-    : fallback;
-}
-
 export function getDashboardModel(data: WorkspaceData) {
-  const { draft, engagement, pending, workspaceReady } = data;
+  const {
+    draft,
+    engagement,
+    pending,
+    workspaceReady,
+    project = null,
+    stages: deliveryStages = [],
+    activityLog = [],
+  } = data;
   const answers = draft?.answers ?? {};
   const pages = getPages(answers, draft?.extraModules ?? []);
   const progress = getGuidedProgress(
@@ -130,7 +130,13 @@ export function getDashboardModel(data: WorkspaceData) {
             status: "Recorded in brief",
           }))
         : [];
-  const activity = [
+  const persistedActivity = activityLog.map((item) => ({
+    title: item.title,
+    detail: item.detail,
+    time: item.createdAt,
+    view: workspaceView(item.view),
+  }));
+  const derivedActivity = [
     ...(draft
       ? [
           {
@@ -161,7 +167,10 @@ export function getDashboardModel(data: WorkspaceData) {
           },
         ]
       : []),
-  ].sort((a, b) => b.time - a.time);
+  ];
+  const activity = (
+    persistedActivity.length ? persistedActivity : derivedActivity
+  ).sort((a, b) => b.time - a.time);
   return {
     phases,
     nextPhase,
@@ -175,6 +184,8 @@ export function getDashboardModel(data: WorkspaceData) {
     assets,
     activity,
     workspaceReady,
+    project,
+    deliveryStages,
     submitted: draft?.status === "submitted",
     businessName:
       answerText(answers, "P01.2") === "Use my personal name"
@@ -187,5 +198,15 @@ export function getDashboardModel(data: WorkspaceData) {
     ),
     selectedWork: formatAnswer(answers["P08.1"]),
   };
+}
+
+function workspaceView(value: string | null): WorkspaceView {
+  return value === "overview" ||
+    value === "brief" ||
+    value === "journey" ||
+    value === "resources" ||
+    value === "agreement"
+    ? value
+    : "journey";
 }
 export type DashboardModel = ReturnType<typeof getDashboardModel>;

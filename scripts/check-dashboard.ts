@@ -14,6 +14,10 @@ const empty: WorkspaceData = {
     "Verify the advance.",
   ],
   workspaceReady: false,
+  project: null,
+  stages: [],
+  activityLog: [],
+  documents: [],
 };
 const blank = getDashboardModel(empty);
 assert.equal(blank.progress.completed, 0);
@@ -100,6 +104,10 @@ const activated = getDashboardModel({
   engagement,
   pending: [],
   workspaceReady: true,
+  project: null,
+  stages: [],
+  activityLog: [],
+  documents: [],
 });
 assert.ok(activated.prerequisites.every((item) => item.verified));
 assert.equal(activated.activity.length, 3);

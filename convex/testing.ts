@@ -11,9 +11,14 @@ export const cleanupOnboardingFixture = internalMutation({
     if (!["localhost", "127.0.0.1"].includes(site.hostname)) throw new ConvexError("Fixture cleanup is local-only.");
     const user = await authComponent.getAnyUserById(ctx, authUserId);
     if (!user || !/^onboarding-smoke-[a-f0-9]+@example\.test$/.test(user.email)) throw new ConvexError("Only an onboarding smoke-test fixture may be removed.");
-    for (const table of ["onboarding", "engagements"] as const) {
-      const fixture = await ctx.db.query(table).withIndex("by_authUserId", q => q.eq("authUserId", authUserId)).unique();
-      if (fixture) await ctx.db.delete(fixture._id);
+    for (const table of ["onboarding", "engagements", "projects", "projectStages", "projectActivity", "uploadIntents"] as const) {
+      const fixtures = await ctx.db.query(table).withIndex("by_authUserId", q => q.eq("authUserId", authUserId)).collect();
+      for (const fixture of fixtures) await ctx.db.delete(fixture._id);
+    }
+    const documents = await ctx.db.query("documents").withIndex("by_authUserId", q => q.eq("authUserId", authUserId)).collect();
+    for (const document of documents) {
+      await ctx.db.delete(document._id);
+      await ctx.storage.delete(document.storageId);
     }
     return null;
   },
