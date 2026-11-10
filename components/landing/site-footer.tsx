@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowUpRight, Globe2 } from "lucide-react";
+import { ArrowUpRight, Globe2 } from "lucide-react";
 import Link from "next/link";
 import { Brand } from "./brand";
 import { ContactSection } from "./contact-section";
@@ -104,11 +104,7 @@ export function SiteFooter({
             </nav>
           ))}
         </div>
-        <div className="agencyFooter-meta">
-          <span>© 2026 Starter Shifter</span>
-          <span>Your business. Its next chapter.</span>
-          <a href="#top">Back to top <ArrowUp aria-hidden="true" /></a>
-        </div>
+        {/* Footer signature */}
         <div className="agencyFooter-signature" aria-hidden="true">
           <p>starter shifter</p>
         </div>

@@ -19,9 +19,6 @@ type ResourcePageProps = {
   description: string;
   facts?: ResourceFact[];
   actions?: ReactNode;
-  closingTitle?: string;
-  closingText?: string;
-  closing?: boolean;
   children: ReactNode;
 };
 
@@ -32,9 +29,6 @@ export function ResourcePage({
   description,
   facts,
   actions,
-  closingTitle = "Tell us what you’re building.",
-  closingText = "A short brief is enough to start a conversation. We’ll confirm the selected scope, timing, and costs before any work begins.",
-  closing = true,
   children,
 }: ResourcePageProps) {
   return (
@@ -64,9 +58,9 @@ export function ResourcePage({
                     variant="emerald"
                     size="marketing"
                     nativeButton={false}
-                    render={<Link href="/project-brief" />}
+                    render={<Link href="#contact" />}
                   >
-                    Start a project brief{" "}
+                    Plan your project{" "}
                     <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
                   </Button>
                   <Button
@@ -95,32 +89,6 @@ export function ResourcePage({
         </section>
 
         {children}
-
-        {closing && (
-          <section className="resourceClosing" aria-labelledby="resource-closing-heading">
-            <div className="resourceClosing-inner">
-              <div>
-                <p className="resourceEyebrow">Your next step</p>
-                <h2 id="resource-closing-heading">{closingTitle}</h2>
-                <p>{closingText}</p>
-              </div>
-              <div className="resourceClosing-actions">
-                <Button
-                  variant="lime"
-                  size="marketing"
-                  nativeButton={false}
-                  render={<Link href="/project-brief" />}
-                >
-                  Start a project brief{" "}
-                  <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
-                </Button>
-                <Link href="/#pricing" className="resourceClosing-link">
-                  Compare plans <ArrowUpRight aria-hidden="true" />
-                </Link>
-              </div>
-            </div>
-          </section>
-        )}
       </main>
       <SiteFooter />
     </div>

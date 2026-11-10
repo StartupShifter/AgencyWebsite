@@ -19,7 +19,6 @@ import {
   BadgeDollarSign,
   Route,
   CircleQuestionMark,
-  ClipboardList,
   FolderOpen,
   LifeBuoy,
   Users,
@@ -74,7 +73,6 @@ const sections: NavSection[] = [
     items: [
       { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "/how-we-work" },
       { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "/faq" },
-      { icon: ClipboardList, title: "Project brief", description: "Tell us what you're building.", href: "/project-brief" },
       { icon: FolderOpen, title: "Projects & products", description: "Explore our websites and applications.", href: "/products" },
       { icon: LifeBuoy, title: "Support & care", description: "Help for projects after launch.", href: "/support" },
     ],

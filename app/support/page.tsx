@@ -153,9 +153,9 @@ export default function SupportPage() {
             variant="emerald"
             size="marketing"
             nativeButton={false}
-            render={<Link href="/project-brief" />}
+            render={<Link href="#contact" />}
           >
-            Start a project brief{" "}
+            Plan your project{" "}
             <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
           </Button>
           <Button
@@ -168,8 +168,6 @@ export default function SupportPage() {
           </Button>
         </>
       }
-      closingTitle="Need help with a live project?"
-      closingText="If you already work with us, use the support channel agreed for your project. If you’re planning something new, start with a brief and we’ll confirm the right coverage."
     >
       <ResourceSection
         id="ways-to-work"

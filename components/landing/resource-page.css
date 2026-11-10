@@ -673,92 +673,6 @@
   text-underline-offset: 4px;
 }
 
-/* Project brief */
-.resourceBriefLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-  gap: clamp(36px, 5vw, 72px);
-  align-items: start;
-}
-
-.resourceBriefAside {
-  position: sticky;
-  top: 120px;
-}
-
-.resourceBriefAside h2 {
-  margin-top: 18px;
-  font-size: clamp(2rem, 3.4vw, 2.9rem);
-  font-weight: 500;
-  line-height: 1.03;
-  letter-spacing: -0.058em;
-  text-wrap: balance;
-}
-
-.resourceBriefAside > p {
-  max-width: 440px;
-  margin-top: 16px;
-  font-size: 14.5px;
-  line-height: 1.78;
-  color: var(--muted-foreground);
-  text-wrap: pretty;
-}
-
-.resourceChecklist {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 28px 0 0;
-  padding: 0;
-  border-top: 1px solid var(--resource-line);
-  list-style: none;
-}
-
-.resourceChecklist li {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--resource-line);
-  font-size: 13.5px;
-  line-height: 1.65;
-  color: var(--muted-foreground);
-}
-
-.resourceChecklist svg {
-  width: 17px;
-  height: 17px;
-  flex-shrink: 0;
-  margin-top: 3px;
-  color: var(--commerce-green);
-}
-
-.resourceBriefForm {
-  padding: clamp(22px, 3vw, 34px);
-  border: 1px solid var(--resource-line);
-  border-radius: 24px;
-  background: var(--card);
-}
-
-.resourceBriefForm-head {
-  padding-bottom: 20px;
-  margin-bottom: 22px;
-  border-bottom: 1px solid var(--resource-line);
-}
-
-.resourceBriefForm-head h2 {
-  font-size: 22px;
-  font-weight: 550;
-  letter-spacing: -0.04em;
-}
-
-.resourceBriefForm-head p {
-  margin-top: 8px;
-  font-size: 13px;
-  line-height: 1.65;
-  color: var(--muted-foreground);
-}
-
 .resourceNextSteps {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -864,74 +778,6 @@
   height: 15px;
 }
 
-/* Closing call to action */
-.resourceClosing {
-  margin: 0 24px 24px;
-  border-radius: 32px;
-  background: var(--foreground);
-  color: var(--background);
-}
-
-.resourceClosing-inner {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px 56px;
-  max-width: 1296px;
-  margin-inline: auto;
-  padding: clamp(38px, 5vw, 62px) clamp(24px, 4.4vw, 64px);
-}
-
-.resourceClosing .resourceEyebrow {
-  color: var(--inverse-muted);
-}
-
-.resourceClosing h2 {
-  max-width: 640px;
-  margin-top: 16px;
-  font-size: clamp(2rem, 4vw, 3.4rem);
-  font-weight: 500;
-  line-height: 1.02;
-  letter-spacing: -0.058em;
-  text-wrap: balance;
-}
-
-.resourceClosing p {
-  max-width: 520px;
-  margin-top: 14px;
-  font-size: 14px;
-  line-height: 1.72;
-  color: var(--inverse-muted);
-  text-wrap: pretty;
-}
-
-.resourceClosing-actions {
-  display: flex;
-  flex-wrap: wrap;
-  flex-shrink: 0;
-  align-items: center;
-  gap: 12px;
-}
-
-.resourceClosing-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  font-size: 13px;
-  color: var(--background);
-  text-underline-offset: 5px;
-}
-
-.resourceClosing-link:hover {
-  text-decoration: underline;
-}
-
-.resourceClosing-link svg {
-  width: 15px;
-  height: 15px;
-}
-
 @media (max-width: 1000px) {
   .resourceStep {
     grid-template-columns: 64px minmax(0, 1fr);
@@ -972,14 +818,6 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .resourceBriefLayout {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .resourceBriefAside {
-    position: static;
-  }
-
   .resourceFaqLayout {
     grid-template-columns: minmax(0, 1fr);
     gap: 32px;
@@ -1008,11 +846,6 @@
 
   .resourceCollection {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .resourceClosing-inner {
-    flex-direction: column;
-    align-items: flex-start;
   }
 }
 
@@ -1070,11 +903,6 @@
     border-radius: 24px;
   }
 
-  .resourceClosing {
-    margin: 0 16px 16px;
-    border-radius: 24px;
-  }
-
   .resourceNextSteps {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -1098,16 +926,6 @@
   }
 
   .resourceHero-actions > * {
-    width: 100%;
-  }
-
-  .resourceClosing-actions {
-    width: 100%;
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .resourceClosing-actions > * {
     width: 100%;
   }
 }
