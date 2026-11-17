@@ -2,17 +2,7 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
-import {
-  ArrowDown,
-  ArrowUpRight,
-  ChartNoAxesCombined,
-  Check,
-  Globe,
-  Info,
-  MessagesSquare,
-  Network,
-  ScanSearch,
-} from "lucide-react";
+import { ArrowUpRight, ChartNoAxesCombined, Globe, MessagesSquare, Network, ScanSearch } from "lucide-react";
 import { twLanding } from "@/lib/landing-styles";
 import "./process-section.css";
 
@@ -37,9 +27,9 @@ const steps = [
   },
   {
     title: ["A social", "presence"],
-    description: "We set up your digital marketing: SEO management, email marketing, and social media across WhatsApp, LinkedIn, Pinterest, and the other channels your business needs. The focus is making you easier to find and understand.",
-    details: ["SEO management", "Email marketing", "WhatsApp, LinkedIn & Pinterest"],
-    note: "Basic includes the full marketing setup — SEO, email, and social media — as one-time work. Pro adds lead generation and growth work, with no guaranteed lead volume.",
+    description: "We set up your business pages on the agreed social channels and create a consistent presence. The focus is bringing your company online and making it easier to find and understand.",
+    details: ["Page setup", "Brand consistency", "Content direction"],
+    note: "Basic includes post templates; you manage posting and ads. Pro adds lead generation and growth work, with no guaranteed lead volume.",
     icon: MessagesSquare,
     phase: "Establish",
     tone: "social",
@@ -62,88 +52,74 @@ const steps = [
     phase: "Connect & maintain",
     tone: "care",
   },
-] as const;
-
-const clamp01 = (value: number) => (value < 0 ? 0 : value > 1 ? 1 : value);
+];
 
 export function ProcessSection() {
   const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
+    const heading = headingRef.current;
+    const stack = section?.querySelector<HTMLOListElement>(".process-stack");
+    if (!section || !heading || !stack) return;
 
-    const stack = section.querySelector<HTMLOListElement>(".process-stack");
-    const stepElements = Array.from(section.querySelectorAll<HTMLElement>(".process-step"));
-    if (!stack || stepElements.length === 0) return;
-
-    const navbar = document.querySelector<HTMLElement>(".navbar-pill");
-    const header = document.querySelector<HTMLElement>(".site-header");
+    const navbar = document.querySelector<HTMLElement>(".site-header");
+    const cards = Array.from(section.querySelectorAll<HTMLElement>(".process-card"));
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let frame = 0;
-    let measureFrame = 0;
-    let pinTop = 96;
-    let peek = 12;
+    let scrollFrame = 0;
+    let stackFootprint = 0;
 
-    const update = () => {
-      frame = 0;
-      if (section.dataset.stacking !== "true") return;
-
-      const viewport = window.innerHeight;
-      const entrances = stepElements.map((step, index) => {
-        const pin = pinTop + index * peek;
-        const progress = clamp01((viewport - step.getBoundingClientRect().top) / Math.max(1, viewport - pin));
-        step.style.setProperty("--enter", progress.toFixed(4));
-        return progress;
-      });
-
-      // Cards already in the deck settle back slightly as the next card is dealt.
-      stepElements.forEach((step, index) => {
-        step.style.setProperty("--settle", (entrances[index + 1] ?? 0).toFixed(4));
-      });
+    const updateExit = () => {
+      // Follow the final card upward as soon as the completed deck releases.
+      const offset = section.dataset.stacking === "true"
+        ? Math.min(0, stack.getBoundingClientRect().bottom - stackFootprint)
+        : 0;
+      heading.style.setProperty("--process-exit", `${offset}px`);
     };
-
-    const requestUpdate = () => {
-      if (!frame) frame = window.requestAnimationFrame(update);
+    const onScroll = () => {
+      if (!scrollFrame) {
+        scrollFrame = window.requestAnimationFrame(() => {
+          scrollFrame = 0;
+          updateExit();
+        });
+      }
     };
 
     const measure = () => {
-      measureFrame = 0;
-      // Read the navbar's laid-out box, not its transformed box: the pill shifts
-      // 6px while scrolling, which would otherwise nudge the whole deck.
-      const headerTop = header?.getBoundingClientRect().top ?? 0;
-      const navBottom = navbar ? headerTop + navbar.offsetTop + navbar.offsetHeight : 84;
-      pinTop = Math.round(Math.max(0, navBottom) + 14);
-      peek = Number.parseFloat(getComputedStyle(section).getPropertyValue("--process-peek")) || 12;
+      const navbarTop = navbar ? Number.parseFloat(getComputedStyle(navbar).top) || 0 : 0;
+      const top = navbar ? navbarTop + navbar.offsetHeight : 104;
+      const stackTop = Math.ceil(top + heading.getBoundingClientRect().height + 16);
+      const tallestCard = Math.max(...cards.map((card) => card.offsetHeight));
+      // Leave room for the full card and compress the exposed edges when space is tight.
+      const available = window.innerHeight - stackTop - tallestCard - 24;
+      const peek = Math.min(window.innerWidth <= 760 ? 18 : 24, Math.max(0, available / (cards.length - 1)));
 
-      section.style.setProperty("--process-top", `${pinTop}px`);
-
-      // The deck only needs to fit one card on screen; height is derived from the
-      // viewport, so small screens stack instead of falling back to a gap list.
-      const canPin = window.innerHeight >= 500 && window.innerWidth >= 300;
-      section.dataset.stacking = String(canPin);
-      update();
+      section.style.setProperty("--process-top", `${top}px`);
+      section.style.setProperty("--stack-top", `${stackTop}px`);
+      section.style.setProperty("--stack-peek", `${peek}px`);
+      section.dataset.stacking = String(!reducedMotion.matches && window.innerHeight > 740 && available >= 0);
+      stackFootprint = stackTop + (cards.length - 1) * peek + cards[cards.length - 1].offsetHeight;
+      updateExit();
     };
-
-    const requestMeasure = () => {
-      if (!measureFrame) measureFrame = window.requestAnimationFrame(measure);
+    const scheduleMeasure = () => {
+      window.cancelAnimationFrame(frame);
+      frame = window.requestAnimationFrame(measure);
     };
-
-    const observer = new ResizeObserver(requestMeasure);
-    if (navbar) observer.observe(navbar);
-
+    const observer = new ResizeObserver(scheduleMeasure);
+    [heading, stack, ...cards, ...(navbar ? [navbar] : [])].forEach((element) => observer.observe(element));
     measure();
-    window.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestMeasure);
-    window.addEventListener("orientationchange", requestMeasure);
-    document.fonts?.ready.then(requestMeasure).catch(() => {});
-
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", scheduleMeasure);
+    reducedMotion.addEventListener("change", scheduleMeasure);
     return () => {
       window.cancelAnimationFrame(frame);
-      window.cancelAnimationFrame(measureFrame);
+      window.cancelAnimationFrame(scrollFrame);
       observer.disconnect();
-      window.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestMeasure);
-      window.removeEventListener("orientationchange", requestMeasure);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", scheduleMeasure);
+      reducedMotion.removeEventListener("change", scheduleMeasure);
     };
   }, []);
 
@@ -153,9 +129,8 @@ export function ProcessSection() {
       id="process"
       className={twLanding("section-shell section-space process-section")}
       aria-labelledby="process-heading"
-      data-stacking="false"
     >
-      <div className="process-topline">
+      <div ref={headingRef} className={twLanding("section-topline process-topline")}>
         <div className="process-headingCopy">
           <p className={twLanding("section-kicker")}>How we bring you online</p>
           <h2 id="process-heading" className={twLanding("section-heading")}>
@@ -170,68 +145,36 @@ export function ProcessSection() {
           <Link href="/how-we-work" className={twLanding("action-link")}>
             Read the full delivery guide <ArrowUpRight aria-hidden="true" />
           </Link>
-          <p className="process-scrollHint" aria-hidden="true">
-            <ArrowDown /> Scroll to move through the stages
-          </p>
         </div>
       </div>
-
       <ol className="process-stack">
-        {steps.map(({ title, description, details, note, icon: Icon, phase, tone }, index) => {
-          const number = String(index + 1).padStart(2, "0");
-
-          return (
-            <li
-              key={tone}
-              className="process-step"
-              style={{ "--step-index": index } as CSSProperties}
-            >
-              <article className={`process-card process-${tone}`} aria-labelledby={`process-step-${index}`}>
-                <span className="process-ghost" aria-hidden="true">{number}</span>
-
-                <div className="process-cardTop">
-                  <span className="process-number" aria-hidden="true">
-                    {number}<span> / 05</span>
-                  </span>
-                  <span className="process-phase">{phase}</span>
+        {steps.map(({ title, description, details, note, icon: Icon, phase, tone }, index) => (
+          <li
+            key={tone}
+            className="process-step"
+            style={{ "--step-index": index } as CSSProperties}
+          >
+            <article className={`process-card process-${tone}`} aria-labelledby={`process-step-${index}`}>
+              <div className="process-cardTop">
+                <span className="process-number" aria-hidden="true">0{index + 1}<span> / 05</span></span>
+                <span className="process-phase">{phase}</span>
+              </div>
+              <div className="process-cardHeading">
+                <h3 id={`process-step-${index}`}>
+                  <span>{title[0]}</span>{" "}<span>{title[1]}</span>
+                </h3>
+                <span className="process-icon" aria-hidden="true"><Icon strokeWidth={1.25} /></span>
+              </div>
+              <div className="process-cardBottom">
+                <p className="process-description">{description}</p>
+                <div className="process-deliverables">
+                  <ul>{details.map((detail) => <li key={detail}>{detail}</li>)}</ul>
+                  <p className="process-note">{note}</p>
                 </div>
-
-                <div className="process-cardBody">
-                  <div className="process-lead">
-                    <h3 id={`process-step-${index}`}>
-                      <span>{title[0]}</span>{" "}<span>{title[1]}</span>
-                    </h3>
-                    <p className="process-description">{description}</p>
-                  </div>
-
-                  <aside className="process-aside">
-                    <span className="process-icon" aria-hidden="true">
-                      <Icon strokeWidth={1.1} />
-                    </span>
-                    <div className="process-included">
-                      <p className="process-included-label">What’s included</p>
-                      <ul>
-                        {details.map((detail) => (
-                          <li key={detail}>
-                            <Check aria-hidden="true" />
-                            <span>{detail}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </aside>
-                </div>
-
-                <div className="process-cardFooter">
-                  <p className="process-note">
-                    <Info aria-hidden="true" />
-                    <span><strong>Good to know.</strong> {note}</span>
-                  </p>
-                </div>
-              </article>
-            </li>
-          );
-        })}
+              </div>
+            </article>
+          </li>
+        ))}
       </ol>
     </section>
   );
