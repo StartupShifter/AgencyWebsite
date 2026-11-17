@@ -1,9 +1,13 @@
-/* The same fine, monochrome projected linework as the service illustrations. */
+/* Lightweight isometric objects: one light source, three face tones, soft contact shadows. */
 .aboutBenefits-section {
   --about-ink: #303830;
   --about-muted: #61685f;
   --about-surface: #f5f6f2;
-  --about-plane: #fafbf8;
+  --about-top: var(--background);
+  --about-left: color-mix(in srgb, var(--foreground) 1.5%, var(--background));
+  --about-right: color-mix(in srgb, var(--foreground) 4%, var(--background));
+  --about-accent: color-mix(in srgb, currentColor 10%, var(--background));
+  --about-accent-soft: color-mix(in srgb, currentColor 4%, var(--background));
   --about-ease: cubic-bezier(.23, 1, .32, 1);
   color: var(--about-ink);
   scroll-margin-top: 110px;
@@ -16,47 +20,71 @@
 .aboutBenefits-card { --art-open: 0; position: relative; display: flex; flex-direction: column; min-width: 0; overflow: hidden; padding: 26px; border-radius: 22px; background: var(--about-surface); }
 .aboutBenefits-column:not(.aboutBenefits-middle) > .aboutBenefits-card { min-height: 306px; }
 .aboutBenefits-middle > .aboutBenefits-card { min-height: 199px; }
-.aboutBenefits-art { display: block; width: 100%; flex: 1; min-height: 145px; margin: -12px 0 16px; background: none; color: inherit; cursor: default !important; }
-.aboutBenefits-art svg { display: block; width: 100%; height: 100%; min-height: 145px; max-height: 205px; overflow: visible; }
+.aboutBenefits-art { position: relative; isolation: isolate; display: block; width: 100%; flex: 1; min-height: 145px; margin: -12px 0 16px; border-radius: 16px; background: none; color: inherit; cursor: default !important; -webkit-tap-highlight-color: transparent; }
+.aboutBenefits-art::before { content: ""; position: absolute; z-index: -1; inset: 5% 3%; border-radius: 50%; background: radial-gradient(ellipse, color-mix(in srgb, currentColor 4%, transparent), transparent 68%); opacity: var(--art-open); transform: scale(calc(.86 + var(--art-open) * .14)); transition: opacity 350ms ease, transform 550ms var(--about-ease); pointer-events: none; }
+.aboutBenefits-art svg { position: relative; display: block; width: 100%; height: 100%; min-height: 145px; max-height: 205px; overflow: visible; }
 .aboutBenefits-middle .aboutBenefits-art { min-height: 105px; margin: -18px 0 5px; }
 .aboutBenefits-middle .aboutBenefits-art svg { min-height: 105px; max-height: 125px; }
 .aboutBenefits-cardCopy { position: relative; margin-top: auto; }
 .aboutBenefits-cardCopy h3 { font-size: 18px; letter-spacing: -.035em; line-height: 1.3; font-weight: 550; }
 .aboutBenefits-cardCopy > p { margin-top: 7px; font-size: 12px; line-height: 1.6; color: var(--about-muted); }
 .aboutBenefits-lines { fill: none; stroke: currentColor; stroke-width: 1; stroke-linecap: round; stroke-linejoin: round; opacity: .65; transition: opacity 220ms ease; }
-.aboutBenefits-plane { fill: var(--about-plane); }
-.aboutBenefits-detail { opacity: .5; }
+.aboutBenefits-top { fill: var(--about-top); }
+.aboutBenefits-left { fill: var(--about-left); }
+.aboutBenefits-right { fill: var(--about-right); }
+.aboutBenefits-accent { fill: var(--about-accent); stroke: none; }
+.aboutBenefits-accentSoft { fill: var(--about-accent-soft); stroke: none; }
+.aboutBenefits-detail { opacity: .48; }
+.aboutBenefits-browserBar { fill: color-mix(in srgb, currentColor 3%, var(--background)); }
+.aboutBenefits-browserSidebar { fill: color-mix(in srgb, currentColor 1.5%, var(--background)); }
+.aboutBenefits-browserTile { fill: color-mix(in srgb, currentColor 2.5%, var(--background)); }
+.aboutBenefits-lensGlass { fill: color-mix(in srgb, currentColor 2%, var(--background)); }
+.aboutBenefits-socialDisc { fill: var(--background); }
+.aboutBenefits-ground, .aboutBenefits-contactShadow { fill: currentColor; stroke: none; opacity: calc(.11 - var(--art-open) * .025); filter: blur(3px); transform-box: fill-box; transform-origin: center; transform: scale(calc(1 + var(--art-open) * .05)); transition: opacity 450ms ease, transform 550ms var(--about-ease); }
+.aboutBenefits-contactShadow { filter: blur(2px); }
+.aboutBenefits-objectHighlight { stroke: var(--background); stroke-width: 2; opacity: .85; }
 .aboutBenefits-researchSheet, .aboutBenefits-lens,
 .aboutBenefits-connectLeft, .aboutBenefits-connectTop, .aboutBenefits-connectBottom, .aboutBenefits-connectHub,
 .aboutBenefits-webRear, .aboutBenefits-webMiddle, .aboutBenefits-webFront,
 .aboutBenefits-socialRear, .aboutBenefits-socialMiddle, .aboutBenefits-socialFront,
 .aboutBenefits-supportQuestion, .aboutBenefits-supportReply, .aboutBenefits-supportPerson,
-.aboutBenefits-performanceLens { transition: transform 450ms var(--about-ease), opacity 250ms ease; }
+.aboutBenefits-performanceLens { transition: transform 550ms var(--about-ease), opacity 250ms ease; }
 .aboutBenefits-researchSheet { transform: translateY(calc(var(--art-open) * -8px)); }
-.aboutBenefits-lens { transform: translate(calc(var(--art-open) * -31px), calc(var(--art-open) * -8px)); }
-.aboutBenefits-researchFinding { opacity: calc(var(--art-open) * .75); transition: opacity 250ms ease; }
+.aboutBenefits-lens { transform-origin: 247px 124px; transform: translate(calc(var(--art-open) * -31px), calc(var(--art-open) * -8px)) rotate(calc(var(--art-open) * -7deg)); }
+.aboutBenefits-researchFinding { opacity: var(--art-open); transition: opacity 250ms ease; }
+.aboutBenefits-researchScan { stroke: currentColor; stroke-width: 2; opacity: 0; }
+.aboutBenefits-chartBars { transform-box: fill-box; transform-origin: center bottom; transform: scaleY(calc(.88 + var(--art-open) * .12)); transition: transform 600ms var(--about-ease); }
 .aboutBenefits-connectLeft { transform: translate(calc(var(--art-open) * -8px), calc(var(--art-open) * 3px)); }
-.aboutBenefits-connectTop { transform: translate(calc(var(--art-open) * 7px), calc(var(--art-open) * -6px)); }
-.aboutBenefits-connectBottom { transform: translate(calc(var(--art-open) * 7px), calc(var(--art-open) * 4px)); }
-.aboutBenefits-connectHub { transform: translateY(calc(var(--art-open) * -7px)); }
-.aboutBenefits-nodeCheck { opacity: var(--art-open); transition: opacity 250ms ease; }
-.aboutBenefits-nodeIdle { opacity: calc(1 - var(--art-open)); transition: opacity 250ms ease; }
+.aboutBenefits-connectTop { transform: translate(calc(var(--art-open) * 7px), calc(var(--art-open) * -6px)); transition-delay: 35ms; }
+.aboutBenefits-connectBottom { transform: translate(calc(var(--art-open) * 7px), calc(var(--art-open) * 4px)); transition-delay: 70ms; }
+.aboutBenefits-connectHub { transform: translateY(calc(var(--art-open) * -7px)); transition-delay: 100ms; }
+.aboutBenefits-routeBase { opacity: .45; }
+.aboutBenefits-routePulse { stroke: currentColor; stroke-dasharray: 1 7; stroke-dashoffset: calc(var(--art-open) * -24); opacity: var(--art-open); transition: stroke-dashoffset 900ms var(--about-ease), opacity 250ms ease; }
+.aboutBenefits-nodeCheck { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--art-open)); opacity: var(--art-open); transition: stroke-dashoffset 350ms var(--about-ease) 180ms, opacity 200ms ease; }
+.aboutBenefits-nodeIdle { opacity: calc(1 - var(--art-open)); transition: opacity 180ms ease; }
 .aboutBenefits-signals { opacity: var(--art-open); transition: opacity 250ms ease; }
 .aboutBenefits-webRear { transform: translateY(calc(var(--art-open) * 8px)); }
-.aboutBenefits-webMiddle { transform: translateY(calc(var(--art-open) * -2px)); }
-.aboutBenefits-webFront { transform: translateY(calc(var(--art-open) * -15px)); }
+.aboutBenefits-webMiddle { transform: translateY(calc(var(--art-open) * -2px)); transition-delay: 35ms; }
+.aboutBenefits-webFront { transform: translateY(calc(var(--art-open) * -15px)); transition-delay: 70ms; }
+.aboutBenefits-webCursor { opacity: var(--art-open); transform: translate(calc(15px - var(--art-open) * 15px), calc(-5px + var(--art-open) * 5px)); transition: transform 650ms var(--about-ease) 130ms, opacity 180ms ease 130ms; }
 .aboutBenefits-socialRear { transform: translate(calc(var(--art-open) * -17px), calc(var(--art-open) * -5px)); }
-.aboutBenefits-socialMiddle { transform: translateY(calc(var(--art-open) * -3px)); }
-.aboutBenefits-socialFront { transform: translate(calc(var(--art-open) * 13px), calc(var(--art-open) * 3px)); }
-.aboutBenefits-socialReach { opacity: calc(var(--art-open) * .5); transition: opacity 250ms ease; }
+.aboutBenefits-socialMiddle { transform: translateY(calc(var(--art-open) * -3px)); transition-delay: 35ms; }
+.aboutBenefits-socialFront { transform: translate(calc(var(--art-open) * 13px), calc(var(--art-open) * 3px)); transition-delay: 70ms; }
+.aboutBenefits-socialHeart { fill: transparent; transform-box: fill-box; transform-origin: center; opacity: .65; }
+.aboutBenefits-card[data-active="true"] .aboutBenefits-socialHeart { fill: currentColor; opacity: 1; }
+.aboutBenefits-socialReach { opacity: calc(var(--art-open) * .75); transform: translateY(calc(var(--art-open) * -4px)); transition: opacity 250ms ease, transform 550ms var(--about-ease); }
 .aboutBenefits-supportQuestion { transform: translate(calc(var(--art-open) * -8px), calc(var(--art-open) * -5px)); }
-.aboutBenefits-supportReply { opacity: calc(.3 + var(--art-open) * .7); transform: translate(calc(var(--art-open) * 5px), calc(var(--art-open) * 4px)); }
-.aboutBenefits-supportPerson { opacity: calc(.2 + var(--art-open) * .8); transform: translateY(calc(var(--art-open) * -4px)); }
-.aboutBenefits-supportRoute { opacity: calc(var(--art-open) * .5); transition: opacity 250ms ease; }
-.aboutBenefits-performanceCurve { opacity: calc(.25 + var(--art-open) * .65); stroke-dasharray: 1; stroke-dashoffset: calc(.65 - var(--art-open) * .65); transition: stroke-dashoffset 650ms var(--about-ease), opacity 250ms ease; }
-.aboutBenefits-performanceLens { transform: translate(calc(var(--art-open) * 14px), calc(var(--art-open) * -12px)); }
+.aboutBenefits-supportReply { opacity: calc(.72 + var(--art-open) * .28); transform: translate(calc(var(--art-open) * 5px), calc(var(--art-open) * 4px)); transition-delay: 50ms; }
+.aboutBenefits-supportPerson { opacity: calc(.55 + var(--art-open) * .45); transform: translateY(calc(var(--art-open) * -5px)); transition-delay: 100ms; }
+.aboutBenefits-supportRoute { stroke: currentColor; stroke-dashoffset: calc(var(--art-open) * -15); opacity: calc(var(--art-open) * .8); transition: stroke-dashoffset 800ms var(--about-ease), opacity 250ms ease; }
+.aboutBenefits-supportAcknowledge { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--art-open)); transition: stroke-dashoffset 350ms var(--about-ease) 200ms; }
+.aboutBenefits-performanceArea { fill: var(--about-accent-soft); stroke: none; opacity: calc(.28 + var(--art-open) * .72); transition: opacity 400ms ease; }
+.aboutBenefits-performanceCurve { stroke: currentColor; stroke-width: 1.8; stroke-dasharray: 1; stroke-dashoffset: calc(.72 - var(--art-open) * .72); transition: stroke-dashoffset 800ms var(--about-ease); }
+.aboutBenefits-performanceLens { transform-origin: 204px 105px; transform: translate(calc(var(--art-open) * 14px), calc(var(--art-open) * -12px)) rotate(calc(var(--art-open) * -5deg)); }
 .aboutBenefits-performanceIssue { opacity: calc(1 - var(--art-open)); transition: opacity 180ms ease; }
-.aboutBenefits-performanceCheck, .aboutBenefits-performanceFinding { opacity: var(--art-open); transition: opacity 250ms ease; }
+.aboutBenefits-performanceCheck { stroke-dasharray: 1; stroke-dashoffset: calc(1 - var(--art-open)); opacity: var(--art-open); transition: stroke-dashoffset 350ms var(--about-ease) 200ms, opacity 200ms ease; }
+.aboutBenefits-performanceFinding { opacity: var(--art-open); transform: translateY(calc(6px - var(--art-open) * 6px)); transition: transform 500ms var(--about-ease) 160ms, opacity 250ms ease 160ms; }
+.aboutBenefits-performancePoint { opacity: calc(.45 + var(--art-open) * .55); transition: opacity 250ms ease; }
 .aboutBenefits-cta { background: #262d26; color: #fff; text-decoration: none; }
 .aboutBenefits-ctaArrow { width: 29px; height: 29px; stroke-width: 1; margin: 1px; color: #c4cec0; transition: transform 250ms var(--about-ease); }
 .aboutBenefits-ctaCopy { margin-top: auto; }
@@ -67,16 +95,25 @@
 .aboutBenefits-card:has(.aboutBenefits-art:focus-visible), .aboutBenefits-card[data-active="true"] { --art-open: 1; }
 .aboutBenefits-card:has(.aboutBenefits-art:focus-visible) * { transition: none; animation: none; }
 .aboutBenefits-card[data-active="true"] .aboutBenefits-lines { opacity: .9; }
+.aboutBenefits-card[data-active="true"] .aboutBenefits-researchScan { animation: aboutResearchScan 1050ms var(--about-ease) 120ms both; }
+.aboutBenefits-card[data-active="true"] .aboutBenefits-signalIn { animation: aboutSignalIn 1000ms var(--about-ease) both; }
+.aboutBenefits-card[data-active="true"] .aboutBenefits-signalOut { animation: aboutSignalOut 1000ms var(--about-ease) 180ms both; }
+.aboutBenefits-card[data-active="true"] .aboutBenefits-signalDown { animation: aboutSignalDown 1000ms var(--about-ease) 300ms both; }
+.aboutBenefits-card[data-active="true"] .aboutBenefits-socialHeart { animation: aboutHeartPop 600ms var(--about-ease) 180ms; }
 .aboutBenefits-scope { margin-top: 18px; font-size: 11px; line-height: 1.7; color: var(--about-muted); }
+@keyframes aboutResearchScan { 0% { transform: translateY(-25px); opacity: 0; } 15%, 80% { opacity: .85; } 100% { transform: translateY(7px); opacity: 0; } }
 @keyframes aboutSignalIn { from { transform: translate(-23px, 14px); opacity: 0; } 30% { opacity: 1; } to { transform: translate(18px, -11px); opacity: 0; } }
 @keyframes aboutSignalOut { from { transform: translate(-20px, 12px); opacity: 0; } 30% { opacity: 1; } to { transform: translate(24px, -14px); opacity: 0; } }
 @keyframes aboutSignalDown { from { transform: translate(-20px, -11px); opacity: 0; } 30% { opacity: 1; } to { transform: translate(24px, 13px); opacity: 0; } }
+@keyframes aboutHeartPop { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.22) rotate(-5deg); } }
 @media (hover: hover) and (pointer: fine) {
   .aboutBenefits-card:hover { --art-open: 1; }
   .aboutBenefits-card:hover .aboutBenefits-lines { opacity: .9; }
+  .aboutBenefits-card:hover .aboutBenefits-researchScan { animation: aboutResearchScan 1050ms var(--about-ease) 120ms both; }
   .aboutBenefits-card:hover .aboutBenefits-signalIn { animation: aboutSignalIn 1000ms var(--about-ease) both; }
   .aboutBenefits-card:hover .aboutBenefits-signalOut { animation: aboutSignalOut 1000ms var(--about-ease) 180ms both; }
   .aboutBenefits-card:hover .aboutBenefits-signalDown { animation: aboutSignalDown 1000ms var(--about-ease) 300ms both; }
+  .aboutBenefits-card:hover .aboutBenefits-socialHeart { fill: currentColor; opacity: 1; animation: aboutHeartPop 600ms var(--about-ease) 180ms; }
   .aboutBenefits-cta:hover .aboutBenefits-ctaArrow { transform: translate(4px, -4px); }
 }
 @media (hover: none) { .aboutBenefits-art { cursor: pointer !important; } }
@@ -111,5 +148,6 @@
 @media (prefers-reduced-motion: reduce) {
   .aboutBenefits-section *, .aboutBenefits-section *::before, .aboutBenefits-section *::after { transition: none !important; animation: none !important; }
   .aboutBenefits-card, .aboutBenefits-card:hover, .aboutBenefits-card[data-active="true"], .aboutBenefits-card:has(.aboutBenefits-art:focus-visible) { --art-open: 0; }
+  .aboutBenefits-art::before { transform: none; }
   .aboutBenefits-cta:hover .aboutBenefits-ctaArrow { transform: none; }
 }

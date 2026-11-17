@@ -73,7 +73,7 @@ const sections: NavSection[] = [
     items: [
       { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "/how-we-work" },
       { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "/faq" },
-      { icon: FolderOpen, title: "Projects & products", description: "Explore our websites and applications.", href: "/products" },
+      { icon: FolderOpen, title: "Products & Templates", description: "Explore our websites and applications.", href: "/products" },
       { icon: LifeBuoy, title: "Support & care", description: "Help for projects after launch.", href: "/support" },
     ],
   },

@@ -65,7 +65,7 @@ export function ProjectsSection() {
     <section ref={sectionRef} id="projects" aria-labelledby="projects-heading" className={twLanding("section-shell section-space")}>
       <div className={twLanding("section-topline")}>
         <div>
-          <p className={twLanding("section-kicker")}>Projects & products</p>
+          <p className={twLanding("section-kicker")}>Products & Templates</p>
           <h2 id="projects-heading" className={twLanding("section-heading")}>
             A closer look at<br />what we build.
           </h2>

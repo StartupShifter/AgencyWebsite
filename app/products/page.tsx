@@ -6,7 +6,7 @@ import { ResourcePage, ResourceSection } from "@/components/landing/resource-pag
 import { hasConceptPreviews, projects } from "@/lib/projects";
 
 export const metadata: Metadata = {
-  title: "Projects & products — Starter Shifter",
+  title: "Products & Templates — Starter Shifter",
   description:
     "Explore Starter Shifter’s websites, applications, and connected experiences. Concept previews are labelled separately from completed client work.",
 };
@@ -38,7 +38,7 @@ const buildAreas = [
 export default function ProductsPage() {
   return (
     <ResourcePage
-      eyebrow="Resources / Projects & products"
+      eyebrow="Resources / Products & Templates"
       note="Websites, applications & systems"
       title={
         <>

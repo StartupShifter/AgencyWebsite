@@ -17,7 +17,7 @@ const navigation = [
     links: [
       ["About us", "/about"],
       ["How we work", "/how-we-work"],
-      ["Projects & products", "/products"],
+      ["Products & Templates", "/products"],
       ["Plans & pricing", "/#pricing"],
     ],
   },
