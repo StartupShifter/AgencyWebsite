@@ -103,7 +103,7 @@
   margin-top: 28px;
 }
 
-.ss-pricing-price-value {
+.ss-pricing-price p {
   font-size: clamp(2.75rem, 4vw, 3.25rem);
   font-weight: 650;
   line-height: 1.1;
@@ -115,32 +115,6 @@
   color: var(--pricing-card-muted);
   font-size: 12px;
   line-height: 1.5;
-}
-
-/* Pro's recurring charge sits beside the setup price so the two plans
-   don't read as identical: bold, mint, and clearly a monthly amount. */
-.ss-pricing-price-recurring {
-  font-size: clamp(1.5rem, 2.3vw, 1.9rem);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.04em;
-  font-variant-numeric: lining-nums tabular-nums;
-  color: var(--commerce-mint);
-  white-space: nowrap;
-}
-
-.ss-pricing-price-plus {
-  font-weight: 600;
-  opacity: 0.75;
-}
-
-.ss-pricing-price-period {
-  margin-left: 3px;
-  font-size: 0.5em;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: inherit;
-  opacity: 0.9;
 }
 
 .ss-pricing-billing {
@@ -237,8 +211,7 @@
   .ss-pricing-heading { margin-bottom: 24px; }
   .ss-pricing-plans { gap: 10px; padding: 10px; }
   .ss-pricing-card { padding: 24px 20px; }
-  .ss-pricing-price > span,
-  .ss-pricing-price-recurring { flex-basis: 100%; }
+  .ss-pricing-price > span { flex-basis: 100%; }
 }
 
 @media (max-width: 600px) {

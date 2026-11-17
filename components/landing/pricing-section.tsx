@@ -1,4 +1,4 @@
-import { ArrowUpRight, Check, Globe2, Handshake, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, Check, Globe2, Handshake } from "lucide-react";
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -6,23 +6,7 @@ import { twLanding } from "@/lib/landing-styles";
 import { cn } from "@/lib/utils";
 import "./pricing-section.css";
 
-type Plan = {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  payment: string;
-  billing: string;
-  monthly?: string;
-  monthlyPeriod?: string;
-  includes: string;
-  features: string[];
-  boundary: string;
-  action: string;
-  icon: LucideIcon;
-};
-
-const plans: Plan[] = [
+const plans = [
   {
     id: "basic",
     name: "Basic plan",
@@ -54,9 +38,7 @@ const plans: Plan[] = [
     description: "Everything in Basic, plus a team to maintain and grow it.",
     price: "$2,500",
     payment: "One-time setup",
-    monthly: "$500",
-    monthlyPeriod: "/ month",
-    billing: "for maintenance & lead generation",
+    billing: "+ $500 / month for maintenance & lead generation",
     includes: "Everything in Basic, plus",
     features: [
       "Ongoing maintenance & technical support",
@@ -110,22 +92,10 @@ export function PricingSection() {
               <h3 id={`pricing-${plan.id}`}>{plan.name}</h3>
               <p className="ss-pricing-description">{plan.description}</p>
               <div className="ss-pricing-price">
-                <p className="ss-pricing-price-value">{plan.price}</p>
-                {plan.monthly ? (
-                  <p className="ss-pricing-price-recurring">
-                    <span className="ss-pricing-price-plus">+ </span>
-                    {plan.monthly}
-                    {plan.monthlyPeriod && (
-                      <span className="ss-pricing-price-period">{plan.monthlyPeriod}</span>
-                    )}
-                  </p>
-                ) : (
-                  <span>{plan.payment}</span>
-                )}
+                <p>{plan.price}</p>
+                <span>{plan.payment}</span>
               </div>
-              <p className="ss-pricing-billing">
-                {plan.monthly ? `${plan.payment} · ${plan.billing}` : plan.billing}
-              </p>
+              <p className="ss-pricing-billing">{plan.billing}</p>
               <div className="ss-pricing-inclusions">
                 <h4>{plan.includes}</h4>
                 <ul>
