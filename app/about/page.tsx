@@ -36,10 +36,10 @@ const services: Service[] = [
   },
   {
     icon: Megaphone,
-    title: "Social media",
+    title: "Social media & digital marketing",
     description:
-      "Social page setup and basic post templates to establish your presence. For Pro engagements, we also agree the ongoing content, campaigns, lead generation, and client handling your business needs.",
-    tags: ["Page setup", "Post templates", "Pro: campaigns & lead generation"],
+      "SEO management, email marketing, and social media marketing across WhatsApp, LinkedIn, Pinterest, and other channels as your requirements need. For Pro engagements, we also agree the ongoing campaigns and lead generation your business needs.",
+    tags: ["SEO", "Email marketing", "WhatsApp, LinkedIn & Pinterest"],
   },
   {
     icon: Network,
@@ -72,17 +72,17 @@ const scope = [
   {
     label: "What you receive",
     description:
-      "Basic covers one-time digital setup and basic social post templates. Pro adds ongoing maintenance, lead generation, client handling, and business growth strategy.",
+      "Basic covers the full application build plus digital marketing — SEO management, email marketing, and social media marketing — as one-time work. Pro adds ongoing maintenance, performance enhancement, and lead generation.",
   },
   {
     label: "What you provide",
     description:
-      "Agreed content, business information, account access, and approvals. Timelines depend on these inputs and on third-party platform approvals.",
+      "Agreed content, business information, product catalogs and images, account access, and approvals. Timelines depend on these inputs and on third-party platform approvals.",
   },
   {
     label: "Kept separate",
     description:
-      "Platform subscriptions, hosting, domains, paid apps, usage charges, and advertising spend are separate from agency fees.",
+      "Platform subscriptions, hosting, domains, paid apps, usage charges, ad spend, and payment fees are paid by you, separate from agency fees.",
   },
 ];
 

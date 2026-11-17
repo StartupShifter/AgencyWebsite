@@ -10,46 +10,48 @@ const plans = [
   {
     id: "basic",
     name: "Basic plan",
-    description: "Everything you need to bring your business online.",
-    price: "$1,000",
+    description: "The full build and digital marketing setup, delivered once.",
+    price: "$2,500",
     payment: "One-time payment",
-    billing: "Your digital foundation, built and handed over.",
+    billing: "Your application and marketing, built and handed over.",
     includes: "What’s included",
     features: [
       "Business, market & competitor research",
       "Figma design & creative direction",
       "Website or ecommerce application development",
-      "Social page setup & basic post templates",
+      "SEO management",
+      "Email marketing",
+      "Social media marketing — WhatsApp, LinkedIn, Pinterest & more",
       "AI chatbot & customer-support automation setup",
       "Inventory, shipping & invoice workflow setup",
       "Supported ERP & CRM integrations",
-      "Launch, performance optimization & handover",
+      "Launch & handover",
     ],
     boundary:
-      "You manage posting, ads, and lead generation after handover. Ongoing maintenance is separate.",
+      "One-time build and marketing setup. We don’t promise lead generation or run ongoing maintenance. You pay hosting, domains, ad spend, and payment fees.",
     action: "Get Basic plan",
     icon: Globe2,
   },
   {
     id: "pro",
     name: "Pro plan",
-    description: "Your digital foundation, with a team to help it grow.",
-    price: "$2,000",
+    description: "Everything in Basic, plus a team to maintain and grow it.",
+    price: "$2,500",
     payment: "One-time setup",
-    billing: "+ $500 / month for ongoing maintenance & support",
+    billing: "+ $500 / month for maintenance & lead generation",
     includes: "Everything in Basic, plus",
     features: [
       "Ongoing maintenance & technical support",
+      "Performance enhancement & monitoring",
       "Lead generation & campaign management",
+      "Keeping SEO & marketing current",
       "Business growth strategy & planning",
-      "Social media content & campaign management",
       "Customer enquiries & client handling",
       "Chatbot & automation management",
-      "Performance monitoring & improvements",
       "Ongoing workflow & integration upkeep",
     ],
     boundary:
-      "We manage the agreed growth and support work. Advertising spend is separate; lead volumes aren’t guaranteed.",
+      "We actively run lead generation and help your business grow. Lead volumes aren’t guaranteed — if an approach isn’t working, we restructure and test others. Advertising spend is separate.",
     action: "Get Pro plan",
     icon: Handshake,
   },
@@ -127,7 +129,9 @@ export function PricingSection() {
           Deliverables, quantities, supported tools, and monthly coverage are
           agreed before work begins. You provide business content, account
           access, and approvals. Hosting, domains, software, licenses, usage
-          fees, ad spend, and payment or shipping charges are separate.
+          fees, ad spend, and payment or shipping charges are paid by you and
+          are separate from agency fees. Additional services outside the three
+          groups are quoted separately.
         </p>
         <Link
           href="/support"

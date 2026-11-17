@@ -28,28 +28,30 @@ export const metadata: Metadata = {
 const plans = [
   {
     name: "Basic",
-    price: "$1,000",
+    price: "$2,500",
     payment: "One-time setup",
     description:
-      "A one-time digital foundation, built and handed over. Basic does not include ongoing management.",
+      "The full build and digital marketing setup, delivered once and handed over. Basic does not include ongoing management.",
     items: [
-      "The agreed setup and launch",
-      "Basic social post templates",
+      "The full application build and launch",
+      "SEO management, email marketing, and social media marketing",
+      "Chatbot and automation setup",
       "Handover of agreed access and documentation",
-      "Ongoing support available as a separate scope",
+      "First-month support for changes and bug fixes",
     ],
   },
   {
     name: "Pro",
-    price: "$2,000",
+    price: "$2,500",
     payment: "Setup + $500 / month",
     description:
-      "The Basic foundation plus ongoing maintenance, support, lead generation, client handling, and growth work.",
+      "The Basic foundation plus ongoing maintenance, performance enhancement, lead generation, and keeping SEO and marketing current.",
     items: [
       "Ongoing maintenance and technical support",
-      "Performance monitoring and improvements",
+      "Performance enhancement and monitoring",
+      "Lead generation and campaign management",
+      "Keeping SEO and marketing current",
       "Chatbot and workflow upkeep",
-      "Lead generation, campaigns, and client handling",
     ],
   },
 ];
@@ -120,12 +122,12 @@ const boundaries = [
   {
     title: "Third-party costs",
     description:
-      "Hosting, domains, themes, apps, licenses, software subscriptions, usage charges, ad spend, and payment or shipping fees remain separate from agency fees.",
+      "Hosting, domains, themes, apps, licenses, software subscriptions, usage charges, ad spend, and payment or shipping fees are paid by you, separate from agency fees.",
   },
   {
     title: "Work without a support scope",
     description:
-      "Basic is a one-time setup. If you need ongoing care, we define a separate support scope. It is not assumed to be included.",
+      "Basic is a one-time setup with first-month support for requested changes and bug fixes. After that month, if you aren’t continuing with Pro, further help is quoted based on the issue and services you need.",
   },
 ];
 
@@ -144,7 +146,7 @@ export default function SupportPage() {
       description="Launch is a milestone, not the finish line. Here’s how ongoing care, maintenance, and improvement work after your project goes live — and what sits outside an agreed support scope."
       facts={[
         { label: "Basic", value: "One-time setup" },
-        { label: "Pro", value: "$2,000 + $500/month" },
+        { label: "Pro", value: "$2,500 + $500/month" },
         { label: "Coverage", value: "Agreed per project" },
       ]}
       actions={
@@ -203,9 +205,11 @@ export default function SupportPage() {
           ))}
         </div>
         <p className="resourceFootNote">
-          Pro’s monthly charge covers the agreed ongoing work. Advertising spend,
-          third-party subscriptions, and usage charges are separate. Lead volumes
-          and growth results are not guaranteed.
+          Pro’s monthly charge covers the agreed ongoing work, including active
+          lead generation — where an approach isn’t producing results, we
+          restructure and test others. Advertising spend, third-party
+          subscriptions, and usage charges are paid by you. Lead volumes and
+          growth results are not guaranteed.
         </p>
       </ResourceSection>
 

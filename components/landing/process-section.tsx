@@ -37,9 +37,9 @@ const steps = [
   },
   {
     title: ["A social", "presence"],
-    description: "We set up your business pages on the agreed social channels and create a consistent presence. The focus is bringing your company online and making it easier to find and understand.",
-    details: ["Page setup", "Brand consistency", "Content direction"],
-    note: "Basic includes post templates; you manage posting and ads. Pro adds lead generation and growth work, with no guaranteed lead volume.",
+    description: "We set up your digital marketing: SEO management, email marketing, and social media across WhatsApp, LinkedIn, Pinterest, and the other channels your business needs. The focus is making you easier to find and understand.",
+    details: ["SEO management", "Email marketing", "WhatsApp, LinkedIn & Pinterest"],
+    note: "Basic includes the full marketing setup — SEO, email, and social media — as one-time work. Pro adds lead generation and growth work, with no guaranteed lead volume.",
     icon: MessagesSquare,
     phase: "Establish",
     tone: "social",

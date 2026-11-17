@@ -8,8 +8,8 @@ const services = [
     visual: "web" as const,
   },
   {
-    title: "Social media",
-    text: "Content planning, creative direction, and campaign management for a consistent social presence.",
+    title: "Social media & marketing",
+    text: "SEO management, email marketing, and social media across WhatsApp, LinkedIn, Pinterest, and more.",
     visual: "social" as const,
   },
   {

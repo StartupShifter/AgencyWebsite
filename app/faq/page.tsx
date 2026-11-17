@@ -36,7 +36,7 @@ const groups: FaqGroup[] = [
       {
         question: "What’s the difference between Basic and Pro?",
         answer:
-          "Basic is $1,000 one-time. It covers the agreed digital setup: research and design, website or ecommerce application development, social page setup with basic post templates, chatbot and automation setup, supported operational integrations, and launch. You manage posting, ads, and lead generation after handover. Pro is $2,000 for setup plus $500 per month for ongoing maintenance and support, with agency-managed lead generation, campaign management, client handling, and business growth strategy. Deliverables and coverage are agreed in advance; lead volumes aren’t guaranteed, and third-party costs such as ad spend are separate.",
+          "Basic is $2,500 one-time. It covers the full application build plus the digital marketing setup: research and design, website or ecommerce application development, SEO management, email marketing, and social media marketing across WhatsApp, LinkedIn, Pinterest, and other channels as required, plus chatbot and automation setup, supported operational integrations, and launch. You manage lead generation and ongoing work after handover. Pro is $2,500 for the same setup plus $500 per month for ongoing maintenance, performance enhancement, lead generation, and keeping SEO and marketing current. Deliverables and coverage are agreed in advance; lead volumes aren’t guaranteed, and third-party costs such as hosting, domains, ad spend, and payment fees are paid by you.",
       },
       {
         question: "Can we choose only part of a plan?",
@@ -46,12 +46,12 @@ const groups: FaqGroup[] = [
       {
         question: "Are there costs beyond the plan price?",
         answer:
-          "Yes, potentially. Agency fees are separate from platform subscriptions, hosting and domains, themes, apps, plugins and licenses, ERP, CRM, chatbot and other software subscriptions, usage charges, payment processing fees, advertising spend, asset licensing, and shipping or fulfillment charges. We identify known third-party costs before work begins; their prices can change.",
+          "Yes. Hosting, domains, ad spend, payment processing fees, and other third-party expenses are paid by you, separate from agency fees. Platform subscriptions, themes, apps, plugins and licenses, ERP, CRM, chatbot and other software subscriptions, usage charges, asset licensing, and shipping or fulfillment charges are also your responsibility. Services outside the three areas we cover, or work outside the agreed scope, are quoted separately.",
       },
       {
         question: "Do you guarantee leads, sales, or growth?",
         answer:
-          "No. We work toward agreed outcomes and describe what the engagement covers, but lead volumes, sales, rankings, and growth results depend on the market, offer, budget, and other factors outside our control. We don’t publish or promise specific results.",
+          "We can’t promise a specific number of leads or sales — results depend mostly on the market and factors outside our control. What we do promise for Pro is the work itself: we actively run lead generation and help your business grow, and if one approach isn’t producing results we restructure it and test other approaches to find what fits. We’ll be working on it with you, not just handing you a setup.",
       },
       {
         question: "How does payment work?",
@@ -72,12 +72,12 @@ const groups: FaqGroup[] = [
       {
         question: "How long will our project take?",
         answer:
-          "It depends on the scope, technical requirements, content readiness, third-party approvals, and review cycles. We agree milestones and timing in your proposal. We don’t publish a single timeline because a simple website and a connected operations build are very different projects.",
+          "The first handoff of research and a Figma design draft is targeted within a maximum of 3–4 days after onboarding is complete. The full build then depends on the scope, technical requirements, content readiness, third-party approvals, and review cycles. We schedule two Google Meet calls each week to share progress, and we agree milestones and timing in your proposal.",
       },
       {
         question: "What is the intended early handoff?",
         answer:
-          "After the signed contract, 40% advance, and company/project details are complete, we intend to provide an early handoff of company, market, and competitor research plus a basic Figma design draft with variants. The exact deadline, clock start, research depth, number of variants, and revision allowance are confirmed for your project. The handoff is a direction-setting step, not the completed website or all integrations.",
+          "After the signed contract, 40% advance, and company/project details are complete, we target a first handoff within 3–4 days of company, market, and competitor research plus a basic Figma design draft with variants. The exact clock start, research depth, number of variants, and revision allowance are confirmed for your project. The handoff is a direction-setting step, not the completed website or all integrations.",
       },
       {
         question: "How do revisions work?",
@@ -129,7 +129,7 @@ const groups: FaqGroup[] = [
       {
         question: "Can you help after launch?",
         answer:
-          "Yes. Pro includes ongoing maintenance and support for $500 per month in addition to its $2,000 setup fee. Basic is a one-time setup; ongoing support is separate. We agree the covered systems, tasks, capacity, and support terms before the work starts.",
+          "Yes. Pro includes ongoing maintenance and support for $500 per month in addition to its $2,500 setup fee. We enhance performance, keep your SEO and marketing current, and work toward better sales. Basic is a one-time setup, but every one-time client is still supported for the full first month from onboarding — we handle requested changes and bug fixes. After that first month, if you’re not continuing with Pro, further help is quoted based on the issue and services you need.",
       },
       {
         question: "What does maintenance cover?",
@@ -144,12 +144,12 @@ const groups: FaqGroup[] = [
       {
         question: "Who owns the website and accounts after handover?",
         answer:
-          "Ownership, access, and handover arrangements are set out in your contract. We agree what is transferred at launch, including documentation and account access where applicable. Platform accounts, licenses, and third-party services may remain subject to their own terms.",
+          "You do. After handover you manage the website, its accounts, and its content. We don’t require you to continue with our services unless you want ongoing support. Platform accounts, licenses, and third-party services may remain subject to their own terms.",
       },
       {
         question: "Can you run our ads and lead generation?",
         answer:
-          "Pro includes agency-managed lead generation and campaign work within the agreed scope. Basic excludes agency-run ads and lead generation. Advertising spend is always separate from agency fees, and lead volumes aren’t guaranteed. Channels, campaign scope, content quantities, and reporting cadence are agreed in advance.",
+          "Pro includes agency-managed lead generation and campaign work within the agreed scope. Basic excludes agency-run lead generation. We work actively to bring in leads and sales, and if an approach isn’t working we restructure and test others. Advertising spend is always paid by you, separate from agency fees, and lead volumes aren’t guaranteed — results depend on the market. Channels, campaign scope, content quantities, and reporting cadence are agreed in advance.",
       },
     ],
   },

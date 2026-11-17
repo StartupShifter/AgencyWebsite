@@ -105,7 +105,8 @@ const workingTogether = [
     icon: ClipboardCheck,
     title: "What you provide",
     items: [
-      "Business content, product data, and brand assets",
+      "Your full company and project details, completed during onboarding",
+      "Business content, product data, catalogs, and product images",
       "Account access and technical contacts",
       "Policies, tax rules, shipping details, and approvals",
       "A decision-maker for reviews and sign-off",
@@ -273,10 +274,11 @@ export default function HowWeWorkPage() {
         <p className="resourceBandNote">
           <LifeBuoy aria-hidden="true" />
           <span>
-            The stated intention is an early handoff around 24 hours after the
-            signed contract, 40% advance, and complete company/project details.
-            The precise deadline, clock start, research depth, variant count,
-            and revision allowance are confirmed in your proposal.
+            The stated intention is a first handoff within a maximum of 3–4 days
+            after the signed contract, 40% advance, and complete company/project
+            details. During the build we schedule two Google Meet calls each
+            week to share progress. The precise clock start, research depth,
+            variant count, and revision allowance are confirmed in your proposal.
           </span>
         </p>
       </ResourceBand>

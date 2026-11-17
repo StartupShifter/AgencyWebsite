@@ -64,7 +64,7 @@ No public contact address was available when implemented. ContactSection accepts
 
 ## Content boundaries
 
-Pricing now shows owner-approved Basic ($1,000 one-time) and Pro ($2,000 setup plus $500/month maintenance). Basic covers digitalization and post templates; Pro adds ongoing support, lead generation, client handling, and growth strategy. Exact deliverables and monthly coverage are agreed, with third-party costs separate and no guaranteed lead volumes. No delivery deadlines, invented case studies, or testimonials are published.
+Pricing now shows owner-approved Basic ($2,500 one-time) and Pro ($2,500 setup plus $500/month maintenance). Basic covers the full application build plus digital marketing (SEO, email, and social media across WhatsApp, LinkedIn, Pinterest, and others as required); Pro adds ongoing maintenance, performance, lead generation, and keeping SEO and marketing current. Exact deliverables and monthly coverage are agreed, with third-party costs (hosting, domains, ad spend, payment fees) paid by the client and no guaranteed lead volumes. The first handoff is targeted within 3–4 days, with two Google Meet calls per week scheduled by the agency. No invented case studies or testimonials are published.
 
 ## Pricing refinement (2026-11-01)
 

@@ -52,7 +52,7 @@ const sections: NavSection[] = [
     label: "Services",
     items: [
       { icon: Store, title: "Ecommerce websites", description: "Storefronts shaped around how you sell.", href: "/services/ecommerce" },
-      { icon: Megaphone, title: "Social & campaigns", description: "Content and presence, planned and managed.", href: "/services/social-campaigns" },
+      { icon: Megaphone, title: "Social & marketing", description: "SEO, email, and social presence, planned and delivered.", href: "/services/social-campaigns" },
       { icon: MessagesSquare, title: "Chatbots & automation", description: "Common questions answered, the rest routed.", href: "/services/chatbots-automation" },
       { icon: Package, title: "Inventory systems", description: "A clear, reliable view of your stock.", href: "/services/inventory" },
       { icon: Truck, title: "Shipping & orders", description: "Fewer manual steps between order and dispatch.", href: "/services/shipping-orders" },
@@ -63,7 +63,7 @@ const sections: NavSection[] = [
       { icon: Presentation, title: "Presentations & planning", description: "A shared view of your project, early.", href: "/services/project-planning" },
     ],
     footer: {
-      text: "Basic for $1,000 once. Pro for $2,000 plus $500/month.",
+      text: "Basic for $2,500 once. Pro for $2,500 plus $500/month.",
       linkLabel: "See pricing",
       href: "#pricing",
     },

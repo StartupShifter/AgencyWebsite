@@ -11,21 +11,33 @@ import {
 const questions = [
   {
     id: "services",
-    question: "Can we work on just one part of my business?",
+    question: "What exactly is included?",
     answer:
-      "Yes. Basic and Pro describe our digital setup and ongoing growth options. If you need a smaller or different engagement, we can discuss a tailored scope. The selected deliverables and price are agreed before work begins.",
+      "Basic covers the full build and the digital marketing setup as one-time work: your website or ecommerce application, SEO management, email marketing, and social media marketing across WhatsApp, LinkedIn, Pinterest, and other channels as your requirements need. Pro adds everything in Basic, plus $500 per month for ongoing maintenance, performance, and lead generation. Services outside these three areas are quoted separately.",
   },
   {
     id: "price",
     question: "What’s the difference between Basic and Pro?",
     answer:
-      "Basic costs $1,000 once and covers the agreed digital setup: research and design, website or ecommerce application development, social page setup and basic post templates, automation, supported integrations, and launch. You manage posting, ads, and lead generation after handover. Pro costs $2,000 for setup plus $500 per month for ongoing maintenance and support, with lead generation, campaign management, client handling, and business growth strategy. We agree the deliverables and coverage in advance; lead volumes are not guaranteed, and third-party costs including ad spend are separate.",
+      "Basic is $2,500 one-time and delivers the full application build and marketing setup, then hands it over. Pro is $2,500 for the same setup plus $500 per month for ongoing maintenance, performance enhancement, and lead generation. Basic does not include lead generation or ongoing maintenance. Lead volumes aren’t guaranteed in either plan.",
+  },
+  {
+    id: "costs",
+    question: "Are there extra or hidden fees?",
+    answer:
+      "Hosting, domains, ad spend, payment fees, and other third-party expenses are paid by you, not included in the agency fee. If you need services beyond the three areas we cover, or work outside the agreed scope, that is quoted separately.",
   },
   {
     id: "getting-started",
     question: "What do you need from us to get started?",
     answer:
-      "Onboarding begins after a signed contract, a 40% advance, and your company and project details. Depending on the scope, we may also need product information, brand assets, access to your existing tools, and a contact for reviews and approvals.",
+      "A signed contract, a 40% advance, and your company and project details. You then complete onboarding and provide any additional information or documents through your dashboard — including catalogs and product images so we can build accurate mockups.",
+  },
+  {
+    id: "timeline",
+    question: "How long will our project take?",
+    answer:
+      "The first handoff of research and a Figma design draft is targeted within a maximum of 3–4 days after onboarding is complete. After that we schedule two Google Meet calls each week to share progress and updates until your application is built and handed over.",
   },
   {
     id: "integrations",
@@ -34,16 +46,22 @@ const questions = [
       "We offer integrations between stores, inventory, shipping, and business systems such as ERP and CRM tools. We review your exact systems, available access, and platform limitations before confirming compatibility and the work involved.",
   },
   {
-    id: "timeline",
-    question: "How long will our project take?",
-    answer:
-      "The timeline depends on the scope, technical requirements, available content, and review cycles. The intended early handoff includes company, market, and competitor research plus a basic Figma design draft. Your project’s milestones and timing are agreed individually.",
-  },
-  {
     id: "support",
     question: "Can you help after launch?",
     answer:
-      "Yes. Pro includes ongoing maintenance and support for $500 per month in addition to its $2,000 setup fee. Basic is a one-time setup; ongoing support is separate. We agree on the covered systems, tasks, capacity, and support terms. New features and changes outside that coverage need their own scope.",
+      "Yes. Pro includes $500 per month for ongoing maintenance and support: we enhance performance, keep your SEO and marketing current, and work toward better sales. Basic is one-time, but every one-time client is still supported for the full first month from onboarding — we handle requested changes and bug fixes. After that month, if you're not continuing with Pro, further help is quoted based on the issue and services you need.",
+  },
+  {
+    id: "ownership",
+    question: "Who owns the website and accounts after handover?",
+    answer:
+      "You do. After handover you manage the website, its accounts, and its content. We don’t require you to continue with our services unless you want ongoing support.",
+  },
+  {
+    id: "results",
+    question: "Do you guarantee leads or sales?",
+    answer:
+      "We can’t promise a specific number, because results depend mostly on the market. What Pro clients get is active, ongoing lead generation: we work to bring in leads and sales, and if one approach isn’t working, we restructure it and test other approaches to find what fits your business.",
   },
 ];
 
