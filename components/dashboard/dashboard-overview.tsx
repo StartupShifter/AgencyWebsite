@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { ReactNode } from "react";
 import {
   ArrowDownToLine,
@@ -75,7 +74,6 @@ export function DashboardOverview({
   model,
   data,
   name,
-  onboardingHref,
   onNavigate,
   onTopic,
   onExport,
@@ -85,13 +83,12 @@ export function DashboardOverview({
   model: DashboardModel;
   data: WorkspaceData;
   name: string;
-  onboardingHref: string;
   onNavigate: (view: WorkspaceView) => void;
   onTopic: (id: string) => void;
   onExport: () => void;
   onFollowups: () => void;
 }) {
-  const { progress, prerequisites, topics, submitted, openItems, project } =
+  const { briefProgress: progress, prerequisites, topics, submitted, openItems, project } =
     model;
   const verified = prerequisites.filter((item) => item.verified).length;
   const selected = topics.filter((topic) => topic.kind === "module");
@@ -153,13 +150,13 @@ export function DashboardOverview({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {!submitted && (
-            <Link
-              href={onboardingHref}
+            <button
+              onClick={() => onNavigate("brief")}
               className="inline-flex items-center gap-2 rounded-full bg-[var(--commerce-green)] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-[var(--commerce-deep)] xl:hidden"
             >
-              {data.draft ? "Continue next phase" : "Start first phase"}
+              View project brief
               <ArrowUpRight size={14} />
-            </Link>
+            </button>
           )}
           <Button
             variant="outline"
@@ -237,29 +234,29 @@ export function DashboardOverview({
           </p>
         </button>
         <button
-          onClick={() => onNavigate("brief")}
+          onClick={() => onNavigate("journey")}
           className="workspace-stat-card rounded-[18px] bg-[#edf2ef] p-5 text-left hover:bg-[#e1eae4]"
         >
           <div className="flex items-center justify-between text-xs text-[var(--workspace-muted)]">
             <span className="flex items-center gap-2">
               <Layers3 size={16} />
-              Your requirements
+              Project delivery
             </span>
             <ArrowUpRight size={15} />
           </div>
           <p className="mt-5 text-[32px] font-medium leading-none tracking-[-1.2px]">
-            {selected.length.toString().padStart(2, "0")}
+            {project ? `${project.progressPercent}%` : "—"}
           </p>
           <div className="mt-4 flex h-7 items-center gap-1">
             <span className="rounded-md bg-white/60 p-1.5">
               <Layers3 size={15} />
             </span>
             <span className="flex items-center px-1 text-[11px] text-[var(--workspace-muted)]">
-              Tailored to your brief
+              {project ? project.currentStage.replaceAll("-", " ") : "Awaiting project update"}
             </span>
           </div>
           <p className="mt-3 text-[11px] text-[var(--workspace-muted)]">
-            Relevant service modules
+            {project ? "Latest progress from your agency" : "Your agency’s delivery progress appears here"}
           </p>
         </button>
         <button
@@ -421,13 +418,13 @@ export function DashboardOverview({
               {nextDescription}
             </p>
             {!submitted ? (
-              <Link
-                href={onboardingHref}
+              <button
+                onClick={() => onNavigate("brief")}
                 className="relative z-10 inline-flex items-center gap-3 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-[var(--commerce-deep)] transition-colors hover:bg-[var(--commerce-soft)]"
               >
-                {data.draft ? model.nextPhase?.id === "final" && model.nextPhase.complete ? "Review and send" : "Continue next phase" : "Start first phase"}
+                {progress.percent === 100 ? "Review project brief" : "Complete project brief"}
                 <ArrowRight size={15} />
-              </Link>
+              </button>
             ) : (
               <Button
                 variant="hero"

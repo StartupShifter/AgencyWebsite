@@ -5,16 +5,13 @@ import Link from "next/link";
 import {
   ArrowUpRight,
   Check,
-  ChevronRight,
   CircleCheck,
   CircleDashed,
   Clock3,
   Download,
   ExternalLink,
   FileText,
-  Flag,
   FolderOpen,
-  Search,
   ShieldCheck,
   Trash2,
   Upload,
@@ -25,7 +22,6 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
-  ANSWER_STATE_LABELS,
   formatAnswer,
 } from "@/lib/onboarding/engine";
 import {
@@ -38,7 +34,7 @@ import {
   type DeliveryStageStatus,
 } from "@/lib/onboarding/delivery";
 import type { DashboardModel, WorkspaceData } from "@/lib/onboarding/dashboard";
-import { panelClass, subtleButton } from "./dashboard-overview";
+import { panelClass } from "./dashboard-overview";
 
 export function ViewHeading({
   title,
@@ -61,247 +57,6 @@ export function ViewHeading({
       </div>
       {children}
     </div>
-  );
-}
-
-export function BriefView({
-  model,
-  selectedTopic,
-  onTopic,
-  query,
-  onSearch,
-  onboardingHref,
-  initialFilter = "all",
-}: {
-  model: DashboardModel;
-  selectedTopic: string;
-  onTopic: (id: string) => void;
-  query: string;
-  onSearch: (value: string) => void;
-  onboardingHref: string;
-  initialFilter?: "all" | "follow-ups";
-}) {
-  const [filter, setFilter] = useState<string>(initialFilter);
-  const normalized = query.trim().toLowerCase();
-  const topics = model.topics.filter(
-    (topic) =>
-      (filter === "all" ||
-        (filter === "complete" && topic.percent === 100) ||
-        (filter === "remaining" && topic.percent < 100) ||
-        (filter === "follow-ups" &&
-          model.openItems.some((item) => item.pageId === topic.id))) &&
-      (!normalized ||
-        [
-          topic.title,
-          ...topic.questions.flatMap((question) => [
-            question.label,
-            formatAnswer(model.answers[question.id], question),
-          ]),
-        ].some((text) => text.toLowerCase().includes(normalized))),
-  );
-  const active =
-    topics.find((topic) => topic.id === selectedTopic) ?? topics[0];
-  const questionMatches =
-    active?.questions.filter(
-      (question) =>
-        !normalized ||
-        active.title.toLowerCase().includes(normalized) ||
-        [question.label, formatAnswer(model.answers[question.id], question)].some(
-          (text) => text.toLowerCase().includes(normalized),
-        ),
-    ) ?? [];
-  return (
-    <>
-      <ViewHeading
-        title="Your story, in one place."
-        description="Every detail you’ve shared, organized into simple topics. Choose a topic to review your answers."
-      >
-        <Link
-          href={onboardingHref}
-          className="inline-flex items-center gap-2 rounded-full bg-[var(--commerce-green)] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-[var(--commerce-deep)]"
-        >
-          Edit my brief
-          <ArrowUpRight size={15} />
-        </Link>
-      </ViewHeading>
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <div
-          role="group"
-          aria-label="Filter brief topics"
-          className="flex flex-wrap gap-1 rounded-2xl bg-[var(--workspace-soft)] p-1 sm:rounded-full"
-        >
-          {[
-            { id: "all", label: "All topics" },
-            { id: "remaining", label: "To complete" },
-            { id: "complete", label: "Complete" },
-            { id: "follow-ups", label: "Follow-ups" },
-          ].map((item) => (
-            <button
-              key={item.id}
-              aria-pressed={filter === item.id}
-              onClick={() => setFilter(item.id)}
-              className={`workspace-filter-button rounded-full px-3 py-2 text-xs font-medium ${filter === item.id ? "bg-[var(--commerce-deep)] text-white shadow-sm" : "text-[var(--workspace-muted)] hover:bg-white hover:text-[var(--workspace-ink)]"}`}
-            >
-              {item.label}
-            </button>
-          ))}
-        </div>
-        <label className="flex items-center gap-2 rounded-full border border-[var(--workspace-line)] bg-white px-4 py-2.5">
-          <Search size={15} className="text-[var(--workspace-muted)]" />
-          <input
-            type="search"
-            aria-label="Search topics and answers"
-            value={query}
-            onChange={(event) => onSearch(event.target.value)}
-            placeholder="Find a detail…"
-            className="w-40 bg-transparent text-xs outline-none"
-          />
-        </label>
-      </div>
-      <div className="grid items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <div className="overflow-hidden rounded-[20px] border border-[var(--workspace-line)] bg-white">
-          <div className="border-b border-[var(--workspace-line)] px-5 py-4 text-xs text-[var(--workspace-muted)]">
-            {topics.length} {topics.length === 1 ? "topic" : "topics"}
-            {normalized ? " found" : " in your brief"}
-          </div>
-          <div className="p-4 lg:hidden">
-            <label
-              htmlFor="mobile-brief-topic"
-              className="mb-2 block text-[11px] text-[var(--workspace-muted)]"
-            >
-              Choose a topic
-            </label>
-            <select
-              id="mobile-brief-topic"
-              value={active?.id ?? ""}
-              disabled={!topics.length}
-              onChange={(event) => onTopic(event.target.value)}
-              className="w-full rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-surface)] p-3 text-sm"
-            >
-              {!topics.length && <option value="">No matching topics</option>}
-              {topics.map((topic) => (
-                <option key={topic.id} value={topic.id}>
-                  {topic.title} · {topic.percent}%
-                </option>
-              ))}
-            </select>
-          </div>
-          <nav
-            aria-label="Brief topics"
-            className="hidden max-h-[590px] overflow-y-auto p-2 lg:block"
-          >
-            {topics.map((topic) => (
-              <button
-                key={topic.id}
-                onClick={() => onTopic(topic.id)}
-                aria-current={active?.id === topic.id ? "true" : undefined}
-                className="workspace-topic-button mb-1 flex w-full items-center gap-3 rounded-xl px-3 py-3.5 text-left hover:bg-[var(--workspace-soft)]"
-              >
-                <span
-                  className={`flex size-7 shrink-0 items-center justify-center rounded-full text-[10px] ${topic.percent === 100 ? "bg-[var(--workspace-tint)] text-[var(--commerce-green)]" : active?.id === topic.id ? "bg-white text-[var(--workspace-muted)]" : "bg-[var(--workspace-soft)] text-[var(--workspace-muted)]"}`}
-                >
-                  {topic.percent === 100 ? (
-                    <Check size={13} />
-                  ) : (
-                    topic.id.replace(/^P|^M/, "")
-                  )}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs leading-snug">{topic.title}</p>
-                  <p className="mt-1 text-[10px] text-[var(--workspace-muted)]">
-                    {topic.completed} of {topic.total} complete
-                  </p>
-                </div>
-                <ChevronRight size={13} className="shrink-0 text-[var(--workspace-muted)]" />
-              </button>
-            ))}
-          </nav>
-        </div>
-        <section className={panelClass}>
-          {active ? (
-            <>
-              <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <span className="text-[10px] text-[var(--workspace-muted)]">
-                    {active.kind === "module"
-                      ? "Selected requirements"
-                      : "Your project details"}
-                  </span>
-                  <h2 className="mt-1 text-xl font-medium tracking-[-.5px]">
-                    {active.title}
-                  </h2>
-                  {active.description && (
-                    <p className="mt-2 max-w-lg text-xs leading-relaxed text-[var(--workspace-muted)]">
-                      {active.description}
-                    </p>
-                  )}
-                </div>
-                <span className="rounded-full bg-[var(--workspace-tint)] px-3 py-1.5 text-[11px] text-[var(--workspace-muted)]">
-                  {active.percent}% complete
-                </span>
-              </div>
-              <Progress
-                value={active.percent}
-                aria-label={`${active.title} completion`}
-                className="mb-6 [&_[data-slot=progress-track]]:h-1.5 [&_[data-slot=progress-track]]:bg-[var(--workspace-line)] [&_[data-slot=progress-indicator]]:bg-[var(--commerce-green)]"
-              />
-              <dl className="divide-y divide-[var(--workspace-line)]">
-                {questionMatches.map((question) => {
-                  const answer = model.answers[question.id];
-                  return (
-                    <div key={question.id} className="py-4 first:pt-0">
-                      <dt className="mb-2 text-[12px] font-medium leading-relaxed text-[var(--workspace-ink)]">
-                        {question.label}
-                      </dt>
-                      <dd
-                        className={`break-words whitespace-pre-wrap text-sm leading-relaxed ${!answer ? "text-[var(--workspace-subtle)]" : "text-[var(--workspace-ink)]"}`}
-                      >
-                        {formatAnswer(answer, question)}
-                      </dd>
-                      {answer &&
-                        answer.state !== "answered" &&
-                        answer.state !== "not-applicable" && (
-                          <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-[#f3efdc] px-2.5 py-1 text-[10px] text-[#74652b]">
-                            <Flag size={11} />
-                            {ANSWER_STATE_LABELS[answer.state]}
-                          </span>
-                        )}
-                    </div>
-                  );
-                })}
-              </dl>
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--workspace-line)] pt-4">
-                <span className="text-[11px] text-[var(--workspace-muted)]">
-                  Changes are saved through your onboarding brief.
-                </span>
-                <Link href={onboardingHref} className={subtleButton}>
-                  Edit answers
-                  <ArrowUpRight size={14} />
-                </Link>
-              </div>
-            </>
-          ) : (
-            <div className="py-16 text-center">
-              <Search size={28} className="mx-auto mb-4 text-[var(--workspace-muted)]" />
-              <h2 className="font-medium">No matching topics</h2>
-              <p className="mt-2 text-xs text-[var(--workspace-muted)]">
-                Try a different search or show all topics.
-              </p>
-              <Button
-                variant="outline"
-                className="mt-5 text-xs"
-                onClick={() => {
-                  setFilter("all");
-                  onSearch("");
-                }}
-              >
-                Clear filters
-              </Button>
-            </div>
-          )}
-        </section>
-      </div>
-    </>
   );
 }
 

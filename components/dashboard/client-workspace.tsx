@@ -1,7 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { getPhaseHref } from "@/lib/onboarding/phase-engine";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { OnboardingPhases } from "./onboarding-phases";
 import { useState } from "react";
 import Link from "next/link";
@@ -22,12 +21,8 @@ import {
 import { formatAnswer } from "@/lib/onboarding/engine";
 import { DashboardShell } from "./dashboard-shell";
 import { DashboardOverview } from "./dashboard-overview";
-import {
-  AgreementView,
-  BriefView,
-  JourneyView,
-  ResourcesView,
-} from "./dashboard-details";
+import { BriefView, type BriefFilter } from "./project-brief";
+import { AgreementView, JourneyView, ResourcesView } from "./dashboard-details";
 
 export function ClientWorkspace({
   data,
@@ -38,29 +33,63 @@ export function ClientWorkspace({
   name: string;
   preview?: boolean;
 }) {
-  const completedId = useSearchParams().get("completedPhase");
-  const [view, setView] = useState<WorkspaceView>("overview");
-  const [selectedTopic, setSelectedTopic] = useState("P01");
-  const [briefFilter, setBriefFilter] = useState<"all" | "follow-ups">("all");
+  const params = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const completedId = params.get("completedPhase");
+  const requestedView = params.get("view");
+  const view: WorkspaceView =
+    requestedView === "brief" ||
+    requestedView === "journey" ||
+    requestedView === "resources" ||
+    requestedView === "agreement"
+      ? requestedView
+      : "overview";
+  const selectedPhase = params.get("phase") ?? "";
+  const requestedFilter = params.get("filter");
+  const briefFilter: BriefFilter =
+    requestedFilter === "remaining" ||
+    requestedFilter === "answered" ||
+    requestedFilter === "follow-ups"
+      ? requestedFilter
+      : "all";
   const [query, setQuery] = useState("");
   const [updatesOpen, setUpdatesOpen] = useState(false);
   const model = getDashboardModel(data);
   const displayName = name || answerText(model.answers, "P01.1");
   const onboardingBase = preview ? "/onboarding/preview" : "/onboarding";
-  const onboardingHref = model.nextPhase ? model.nextPhase.id === "final" && model.nextPhase.complete ? `${onboardingBase}?question=review` : getPhaseHref(onboardingBase, model.nextPhase) : onboardingBase;
+  const onboardingHref = `${onboardingBase}?question=review`;
+  function updateLocation(
+    next: WorkspaceView,
+    phase?: string,
+    filter: BriefFilter = "all",
+  ) {
+    const search = new URLSearchParams();
+    if (next !== "overview") search.set("view", next);
+    if (next === "brief" && phase) search.set("phase", phase);
+    if (next === "brief" && filter !== "all") search.set("filter", filter);
+    router.push(`${pathname}${search.size ? `?${search}` : ""}`, {
+      scroll: false,
+    });
+  }
   function navigate(next: WorkspaceView) {
-    setView(next);
     setQuery("");
-    setBriefFilter("all");
+    updateLocation(next);
+  }
+  function openBrief(phase?: string) {
+    setQuery("");
+    updateLocation("brief", phase);
   }
   function openTopic(id: string) {
-    setSelectedTopic(id);
-    navigate("brief");
+    openBrief(
+      model.phases.find((phase) =>
+        phase.questions.some((question) => question.page.id === id),
+      )?.id,
+    );
   }
   function search(value: string) {
     setQuery(value);
-    setView("brief");
-    setBriefFilter("all");
+    if (view !== "brief" || briefFilter !== "all") updateLocation("brief");
   }
   function exportBrief() {
     if (!data.draft) return;
@@ -103,29 +132,35 @@ export function ClientWorkspace({
     >
       {view === "overview" && (
         <DashboardOverview
-          phasePanel={<OnboardingPhases model={model} baseHref={onboardingBase} completedId={completedId} />}
+          phasePanel={
+            <OnboardingPhases
+              model={model}
+              completedId={completedId}
+              onOpenBrief={openBrief}
+            />
+          }
           model={model}
           data={data}
           name={displayName}
-          onboardingHref={onboardingHref}
           onNavigate={navigate}
           onTopic={openTopic}
           onExport={exportBrief}
           onFollowups={() => {
-            navigate("brief");
-            setBriefFilter("follow-ups");
+            setQuery("");
+            updateLocation("brief", undefined, "follow-ups");
           }}
         />
       )}
       {view === "brief" && (
         <BriefView
           model={model}
-          selectedTopic={selectedTopic}
-          onTopic={setSelectedTopic}
+          selectedPhase={selectedPhase}
+          onPhase={(id) => updateLocation("brief", id, briefFilter)}
           query={query}
           onSearch={setQuery}
-          initialFilter={briefFilter}
-          onboardingHref={onboardingHref}
+          filter={briefFilter}
+          onFilter={(filter) => updateLocation("brief", selectedPhase, filter)}
+          onboardingBase={onboardingBase}
         />
       )}
       {view === "journey" && (
@@ -160,10 +195,15 @@ export function ClientWorkspace({
                 }}
                 className="flex w-full items-start gap-3 rounded-xl bg-[var(--workspace-soft)] p-4 text-left transition-colors hover:bg-[var(--workspace-tint)]"
               >
-                <Check size={17} className="mt-0.5 shrink-0 text-[var(--commerce-green)]" />
+                <Check
+                  size={17}
+                  className="mt-0.5 shrink-0 text-[var(--commerce-green)]"
+                />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{item.title}</p>
-                  <p className="mt-1 text-xs text-[var(--workspace-muted)]">{item.detail}</p>
+                  <p className="mt-1 text-xs text-[var(--workspace-muted)]">
+                    {item.detail}
+                  </p>
                   <p className="mt-2 text-[10px] text-[var(--workspace-subtle)]">
                     {new Date(item.time).toLocaleDateString("en", {
                       month: "short",
@@ -172,7 +212,10 @@ export function ClientWorkspace({
                     })}
                   </p>
                 </div>
-                <ArrowUpRight size={15} className="shrink-0 text-[var(--workspace-muted)]" />
+                <ArrowUpRight
+                  size={15}
+                  className="shrink-0 text-[var(--workspace-muted)]"
+                />
               </button>
             ))}
             {!model.activity.length && (

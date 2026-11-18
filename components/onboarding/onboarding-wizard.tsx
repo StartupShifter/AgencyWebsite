@@ -76,6 +76,10 @@ function initialAnswers(user: User, mine: Mine, privacy: PrivacySettings): Answe
 }
 function WizardSession({ user, initial, privacy, preview = false, previewSessionId, requestedQuestion }: { requestedQuestion?: string | null; user: User; initial: Mine; privacy: PrivacySettings; preview?: boolean; previewSessionId?: SessionId }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const fromBrief = searchParams.get("returnTo") === "brief";
+  const editingBriefQuestion = fromBrief && searchParams.get("mode") === "question";
+  const dashboardBase = preview ? "/dashboard/preview" : "/dashboard";
   const { getPages, getSelectedModules, validateSubmission } = createQuestionnaire(initial.questionnaire.definition);
   const MODULE_PAGES = initial.questionnaire.definition.pages.filter(page => page.kind === "module");
   const getOnboardingPhases = (answers: Answers = {}, extras: string[] = [], privacyReady = true) => buildPhases(initial.questionnaire.definition, answers, extras, privacyReady);
@@ -124,6 +128,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   const phases = getOnboardingPhases(answers, extras, privacy.approved || preview);
   const phaseIndex = Math.max(0, phases.findIndex(item => item.steps.some(candidate => candidate.id === step.id)));
   const phase = phases[phaseIndex];
+  const briefReturnHref = `${dashboardBase}?${new URLSearchParams({ view: "brief", phase: phase.id })}`;
   const phaseQuestions = phase.steps.filter(item => item.question);
   const phaseProgress = getPhaseQuestionProgress(phase, answers, privacy.approved || preview);
   const questionStatus = getQuestionStatus(step, answers, privacy.approved || preview);
@@ -232,6 +237,15 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     dirty.current = true;
     setSaveState("Unsaved changes");
     setAnswers(nextAnswers);
+    if (editingBriefQuestion && question) {
+      setBusy(true);
+      try {
+        await persist({ answers: nextAnswers, extras, currentId, currentQuestion: step.id });
+        router.push(briefReturnHref);
+      } catch (error) { setFailure(error instanceof Error ? error.message : "Unable to save this answer."); }
+      finally { setBusy(false); }
+      return;
+    }
     // Recompute after an answer: it may add service questions or change visibility.
     const nextPhases = getOnboardingPhases(nextAnswers, extras, privacy.approved || preview);
     const nextPhase = nextPhases.find(item => item.steps.some(candidate => candidate.id === step.id))!;
@@ -308,7 +322,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   }
   async function saveExit() {
     setBusy(true);
-    try { await persist(); router.push(preview ? "/dashboard/preview" : "/dashboard"); } catch (e) { setFailure(e instanceof Error ? e.message : "Unable to save."); } finally { setBusy(false); }
+    try { await persist(); router.push(fromBrief ? briefReturnHref : dashboardBase); } catch (e) { setFailure(e instanceof Error ? e.message : "Unable to save."); } finally { setBusy(false); }
   }
   function toggleModule(id: string) { dirty.current = true; setSaveState("Unsaved changes"); setExtras(old => old.includes(id) ? old.filter(s => s !== id) : [...old, id]); }
 
@@ -334,7 +348,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
       {initial.questionnaire.customized && <div className="ob-preview-banner">Your agency prepared this questionnaire for your project. Please review any newly requested details.</div>}
       <div className="ob-journey-top">
         <div className="ob-journey-title">One question at a time</div>
-        <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={16} aria-hidden="true" />Save and exit</button>
+        <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={16} aria-hidden="true" />{fromBrief ? "Save and return to brief" : "Save and exit"}</button>
       </div>
       <div className="ob-question-layout">
       <OnboardingProgress phases={phases} activeIndex={phaseIndex} currentQuestion={reviewPhase ? "" : step.id} answers={answers} privacyReady={privacy.approved || preview} busy={busy} onNavigate={id => void navigate(id)} />
@@ -377,7 +391,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
           </div>
           <div className="ob-guided-actions">
             <Button type="button" variant="ghost" size="marketing" disabled={busy || currentStepIndex === 0} onClick={() => void navigate(steps[currentStepIndex - 1].id)}><ArrowLeft data-icon="inline-start" />Back</Button>
-            <Button type="submit" variant="default" size="marketing" disabled={busy}>{busy ? "Saving…" : editingPhaseReview ? "Back to phase review" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? "Skip for now" : endsPhase ? "Continue to next phase" : "Continue"}<ArrowRight data-icon="inline-end" /></Button>
+            <Button type="submit" variant="default" size="marketing" disabled={busy}>{busy ? "Saving…" : editingBriefQuestion && question ? "Save and return to brief" : editingPhaseReview ? "Back to phase review" : isLast ? preview ? "Save and open dashboard" : "Submit onboarding details" : step.id === "review" ? "Looks good" : question && !isQuestionRequired(question, answers) && !hasAnswer ? "Skip for now" : endsPhase ? "Continue to next phase" : "Continue"}<ArrowRight data-icon="inline-end" /></Button>
           </div>
         </form>
       </section>}

@@ -10,8 +10,8 @@ Next.js Cache Components and Partial Prefetching are enabled in `next.config.ts`
 
 The interface uses Tailwind and shared shadcn buttons, dialogs, and progress controls. `components/dashboard/` contains the shell, overview, brief, journey, resource, and engagement views. `lib/onboarding/dashboard.ts` derives the view model from the existing Convex query results; it does not write client or agency data.
 
-- Overview: question completion, verified prerequisites, selected requirement modules, flagged follow-ups, compact topic shortcuts, and the next step. The next-step copy prefers the agency-managed `projects` record when one exists.
-- Brief: all visible questions from the current adaptive route, saved answers, text search, completion/follow-up filters, and an edit link to onboarding. Mobile uses a topic selector instead of the desktop topic list.
+- Overview: answered-question completion, missing/invalid/deferred counts, verified prerequisites, agency-recorded delivery progress, flagged follow-ups, compact topic shortcuts, and the next step. Start/Continue phase opens the project brief with the next unfinished phase selected. The next-step copy prefers the agency-managed `projects` record when one exists.
+- Brief: phases from the client’s assigned adaptive questionnaire, each with its own completion bar and answered/missing/invalid/deferred counts. Question-level filters and search apply to both questions and saved answers. Each question has an exact edit/answer link, its saved response, and a clear status. Mobile uses a phase selector instead of the desktop phase list. Brief completion reaches 100% only when every visible question has a valid answer or an allowed not-applicable response; permitted help/unknown/deferred responses remain for later. Submission status is shown separately, and the existing submission rules still permit allowed follow-ups. Answered responses flagged for discussion also appear under Follow-ups.
 - Journey: submission and agency verification of activation prerequisites, plus persisted delivery stages from `projectStages`. A `projects` record holds the current checkpoint, overall delivery percentage, next step, summary, and optional dates. Agency updates appear immediately because the dashboard reads Convex subscriptions.
 - Resources: recorded asset readiness, content contact, HTTP/HTTPS links from the brief, and files uploaded through the workspace. File bytes live in Convex file storage; name, size, type, category, status, uploader, and note are stored in `documents` with the owning `authUserId`.
 - Agreement: approved scope, exclusions, third-party costs, recorded fees, billing details, agreement verification, and advance verification. This is not a payment system.
@@ -51,6 +51,8 @@ bunx convex run documents:updateStatus '{"documentId":"<document-id>","status":"
 ```
 
 `upsertProject` and `upsertStage` log an activity entry automatically. Existing records are never replaced by `seedWorkspace`; it only fills missing project/stage rows and keeps brief/activation status aligned with submission and prerequisite verification. A stage marked `blocked` is left untouched by that automatic sync.
+
+Dashboard views, brief phases, and filters use URL query parameters, so refresh and browser Back retain navigation. Opening an individual question uses `returnTo=brief&mode=question`; the primary action validates and saves that answer before returning to its phase. Start/Continue phase uses `mode=phase` to retain the guided flow. Save and return preserves unfinished input through the existing draft save path and returns to the current phase. Edits to a submitted brief reopen it through the existing backend rules.
 
 Brief export downloads a JSON document with topic labels, readable answers, and saved/submission timestamps. It does not send the brief to another service.
 
