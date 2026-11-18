@@ -1,4 +1,6 @@
 import { ConvexError, v } from "convex/values";
+import { paginationOptsValidator } from "convex/server";
+import { questionValidator } from "./questionnaireValidators";
 import { mutation, query, type MutationCtx, type QueryCtx } from "./_generated/server";
 import { authComponent } from "./auth";
 import { isAdminEmail } from "./admin";
@@ -706,6 +708,53 @@ export const getClient = query({
   handler: async (ctx, { authUserId }) => {
     await requireAdmin(ctx);
     return await clientDetail(ctx, authUserId);
+  },
+});
+
+/** Removed responses still belong in an admin's complete onboarding export. */
+export const getRetainedOnboardingAnswers = query({
+  args: {
+    authUserId: v.string(),
+    questionnaireVersion: v.string(),
+    paginationOpts: paginationOptsValidator,
+  },
+  returns: v.object({
+    page: v.array(v.object({
+      questionId: v.string(),
+      question: v.union(questionValidator, v.null()),
+      pageTitle: v.union(v.string(), v.null()),
+      version: v.string(),
+      answer: answerValidator,
+    })),
+    isDone: v.boolean(),
+    continueCursor: v.string(),
+  }),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    const draft = await ctx.db.query("onboarding")
+      .withIndex("by_authUserId", q => q.eq("authUserId", args.authUserId)).unique();
+    const assigned = await resolveQuestionnaire(ctx, "client", args.authUserId, draft?.version);
+    requireAssignedVersion(assigned.version, args.questionnaireVersion);
+    const result = await ctx.db.query("questionnaireRetainedAnswers")
+      .withIndex("by_authUserId_questionId", q => q.eq("authUserId", args.authUserId))
+      .paginate({ ...args.paginationOpts, numItems: Math.min(args.paginationOpts.numItems, 50) });
+    const versions = new Map(await Promise.all([...new Set(result.page.map(row => row.version))]
+      .map(async version => [version, await ctx.db.query("questionnaireVersions")
+        .withIndex("by_version", q => q.eq("version", version)).unique()] as const)));
+    return {
+      isDone: result.isDone,
+      continueCursor: result.continueCursor,
+      page: result.page.map(row => {
+        const page = versions.get(row.version)?.definition.pages.find(page => page.questions.some(question => question.id === row.questionId));
+        return {
+          questionId: row.questionId,
+          question: page?.questions.find(question => question.id === row.questionId) ?? null,
+          pageTitle: page?.title ?? null,
+          version: row.version,
+          answer: row.answer,
+        };
+      }),
+    };
   },
 });
 
