@@ -1,5 +1,6 @@
 import { getGuidedProgress, getGuidedSteps } from "./guided-flow";
 import { answerValues, getOptionLabel, createQuestionnaire } from "./engine";
+import { content } from "../../context/content";
 import type { Answers, QuestionnaireDefinition } from "./types";
 
 export function answerText(answers: Answers, id: string, fallback = "") {
@@ -36,7 +37,7 @@ export function getClientSummary({
     answers,
     true,
   );
-  const personalName = answerText(answers, "P01.2") === "Use my personal name";
+  const personalName = answerText(answers, "P01.2") === content.shared.workspaceFallback.personalNameOption;
   return {
     businessName:
       (personalName

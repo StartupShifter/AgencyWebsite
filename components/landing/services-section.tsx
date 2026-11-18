@@ -1,37 +1,22 @@
 import { ServiceCard } from "@/components/landing/service-card";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 
-const services = [
-  {
-    title: "Web application",
-    text: "Websites and web applications, with design and development shaped around how your business works.",
-    visual: "web" as const,
-  },
-  {
-    title: "Social media & marketing",
-    text: "SEO management, email marketing, and social media across WhatsApp, LinkedIn, Pinterest, and more.",
-    visual: "social" as const,
-  },
-  {
-    title: "AI workflow",
-    text: "Connected tools, task automation, and customer chat flows that bring your team in when needed.",
-    visual: "ai" as const,
-  },
-];
+const services = content.landing.services.cards;
 
 export function ServicesSection() {
+  const section = content.landing.services;
   return (
     <section id="services" className={twLanding("section-shell section-space")} aria-labelledby="services-heading">
       <div className={twLanding("section-topline")}>
         <div>
-          <p className={twLanding("section-kicker")}>What we do</p>
+          <p className={twLanding("section-kicker")}>{section.kicker}</p>
           <h2 id="services-heading" className={twLanding("section-heading")}>
-            Good on the outside.<br />Connected on the inside.
+            {section.titleLines[0]}<br />{section.titleLines[1]}
           </h2>
         </div>
         <p className={twLanding("section-intro")}>
-          Your online presence. Your social voice. The workflows behind it.
-          Three connected services, shaped around your business.
+          {section.intro}
         </p>
       </div>
       <div className={twLanding("services-grid")}>

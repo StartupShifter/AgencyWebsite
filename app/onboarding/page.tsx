@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth-server";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
 import { OnboardingSkeleton } from "@/components/skeletons/onboarding-skeleton";
+import { content } from "@/context/content";
 
-export const metadata: Metadata = { title: "Your project brief — Starter Shifter", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: content.metadata.onboarding.title, robots: { index: false, follow: false } };
 
 async function AuthenticatedOnboarding() {
   const user = await requireUser("/onboarding");

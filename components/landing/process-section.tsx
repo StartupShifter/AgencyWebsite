@@ -2,57 +2,23 @@
 
 import { useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowUpRight, ChartNoAxesCombined, Globe, MessagesSquare, Network, ScanSearch } from "lucide-react";
+import { ArrowUpRight, ChartNoAxesCombined, Globe, MessagesSquare, Network, ScanSearch, type LucideIcon } from "lucide-react";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 import "./process-section.css";
 
-const steps = [
-  {
-    title: ["Research &", "direction"],
-    description: "We get to know your business, study your market, and analyse the competition. Those insights shape the plan and an initial design direction for your review.",
-    details: ["Business research", "Market analysis", "Competitor insights"],
-    note: "Research depth and design deliverables are agreed for your project.",
-    icon: ScanSearch,
-    phase: "Understand",
-    tone: "research",
-  },
-  {
-    title: ["Your business,", "built online"],
-    description: "We design and build your website or web application on Shopify or WordPress, with WooCommerce when you need a store. The platform and features follow how your business works.",
-    details: ["Shopify or WordPress", "Design & development", "Launch & handover"],
-    note: "You supply business content, product details, account access, and approvals.",
-    icon: Globe,
-    phase: "Build",
-    tone: "build",
-  },
-  {
-    title: ["A social", "presence"],
-    description: "We set up your digital marketing: SEO management, email marketing, and social media across WhatsApp, LinkedIn, Pinterest, and the other channels your business needs. The focus is making you easier to find and understand.",
-    details: ["SEO management", "Email marketing", "WhatsApp, LinkedIn & Pinterest"],
-    note: "Basic includes the full marketing setup — SEO, email, and social media — as one-time work. Pro adds lead generation and growth work, with no guaranteed lead volume.",
-    icon: MessagesSquare,
-    phase: "Establish",
-    tone: "social",
-  },
-  {
-    title: ["AI that helps", "you respond"],
-    description: "We set up chatbots for common customer questions and support workflows, connected to your social channels where supported. Conversations that need your team are handed over to a person.",
-    details: ["Customer chatbots", "Supported social channels", "Human handoff"],
-    note: "Channel access, approved FAQs, and software usage limits shape the setup.",
-    icon: Network,
-    phase: "Automate",
-    tone: "automation",
-  },
-  {
-    title: ["Connected.", "Cared for."],
-    description: "We maintain and improve the agreed systems, and connect supported business tools: ERP for operations and CRM for customer relationships. Shipping and invoice workflows can be part of those integrations.",
-    details: ["Maintenance & performance", "ERP & CRM connections", "Shipping & invoicing"],
-    note: "Integrations depend on third-party capabilities. Ongoing care is billed monthly; third-party charges are separate.",
-    icon: ChartNoAxesCombined,
-    phase: "Connect & maintain",
-    tone: "care",
-  },
-];
+const stepIcons: Record<string, LucideIcon> = {
+  scanSearch: ScanSearch,
+  globe: Globe,
+  messagesSquare: MessagesSquare,
+  network: Network,
+  chartNoAxesCombined: ChartNoAxesCombined,
+};
+
+const steps = content.landing.process.steps.map((step) => ({
+  ...step,
+  icon: stepIcons[step.icon] ?? Globe,
+}));
 
 export function ProcessSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -132,18 +98,17 @@ export function ProcessSection() {
     >
       <div ref={headingRef} className={twLanding("section-topline process-topline")}>
         <div className="process-headingCopy">
-          <p className={twLanding("section-kicker")}>How we bring you online</p>
+          <p className={twLanding("section-kicker")}>{content.landing.process.kicker}</p>
           <h2 id="process-heading" className={twLanding("section-heading")}>
-            From understanding your business<br />to connecting it online.
+            {content.landing.process.titleLines[0]}<br />{content.landing.process.titleLines[1]}
           </h2>
         </div>
         <div className="process-intro">
           <p className={twLanding("section-intro")}>
-            Five stages of a connected digital presence. We agree which services
-            your project needs, then build around that scope.
+            {content.landing.process.intro}
           </p>
           <Link href="/how-we-work" className={twLanding("action-link")}>
-            Read the full delivery guide <ArrowUpRight aria-hidden="true" />
+            {content.landing.process.linkLabel} <ArrowUpRight aria-hidden="true" />
           </Link>
         </div>
       </div>

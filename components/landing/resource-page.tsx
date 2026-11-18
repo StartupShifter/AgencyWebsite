@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 import "./resource-page.css";
 
 export type ResourceFact = {
@@ -24,7 +25,7 @@ type ResourcePageProps = {
 
 export function ResourcePage({
   eyebrow,
-  note = "Starter Shifter · Resources",
+  note = content.common.resourceNoteDefault,
   title,
   description,
   facts,
@@ -34,7 +35,7 @@ export function ResourcePage({
   return (
     <div id="top" className="resourcePage">
       <a className={twLanding("skip-link")} href="#main">
-        Skip to content
+        {content.common.skipToContent}
       </a>
       <SiteHeader />
       <main id="main">
@@ -60,7 +61,7 @@ export function ResourcePage({
                     nativeButton={false}
                     render={<Link href="#contact" />}
                   >
-                    Plan your project{" "}
+                    {content.common.planYourProject}{" "}
                     <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
                   </Button>
                   <Button
@@ -69,7 +70,7 @@ export function ResourcePage({
                     nativeButton={false}
                     render={<Link href="/support" />}
                   >
-                    Support &amp; care
+                    {content.common.supportAndCare}
                   </Button>
                 </>
               )}
@@ -145,6 +146,54 @@ type ResourceBandProps = {
   intro?: string;
   children: ReactNode;
 };
+
+/**
+ * Renders a multi-line title where the trailing `mark` phrase is highlighted.
+ * `mark` is highlighted when it ends the last line (e.g. "what we build.")
+ * or is appended after a space (e.g. "Its next chapter" + "online.").
+ */
+export function MarkedTitle({
+  lines,
+  mark,
+  markClass = "resourceHero-mark",
+}: {
+  lines: string[];
+  mark?: string;
+  markClass?: string;
+}) {
+  const last = lines.length - 1;
+  return (
+    <>
+      {lines.map((line, index) => {
+        let before = line;
+        let marked = "";
+        let appendSpace = false;
+        if (index === last && mark) {
+          if (line.endsWith(mark)) {
+            before = line.slice(0, line.length - mark.length);
+            marked = mark;
+          } else {
+            before = line;
+            marked = mark;
+            appendSpace = true;
+          }
+        }
+        return (
+          <span key={index}>
+            {index > 0 && <br />}
+            {before}
+            {marked && (
+              <>
+                {appendSpace ? " " : null}
+                <span className={markClass}>{marked}</span>
+              </>
+            )}
+          </span>
+        );
+      })}
+    </>
+  );
+}
 
 export function ResourceBand({
   id,

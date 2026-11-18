@@ -5,10 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectPreview } from "@/components/projects/project-preview";
-import { projects } from "@/lib/projects";
+import { content } from "@/context/content";
 import { twLanding } from "@/lib/landing-styles";
 import "./projects-section.css";
 
+const projects = content.projects;
 // Extra cycles let cards return around the back, outside the visible stack.
 const showcaseProjects = [...projects, ...projects, ...projects];
 
@@ -65,18 +66,17 @@ export function ProjectsSection() {
     <section ref={sectionRef} id="projects" aria-labelledby="projects-heading" className={twLanding("section-shell section-space")}>
       <div className={twLanding("section-topline")}>
         <div>
-          <p className={twLanding("section-kicker")}>Products & Templates</p>
+          <p className={twLanding("section-kicker")}>{content.landing.projects.kicker}</p>
           <h2 id="projects-heading" className={twLanding("section-heading")}>
-            A closer look at<br />what we build.
+            {content.landing.projects.titleLines[0]}<br />{content.landing.projects.titleLines[1]}
           </h2>
         </div>
         <div className="flex max-w-[360px] flex-col items-start gap-5">
           <p className={twLanding("section-intro")}>
-            Websites, applications, and connected experiences.
-            Explore the collection, one screen at a time.
+            {content.landing.projects.intro}
           </p>
           <Button variant="emerald" size="marketing" nativeButton={false} render={<Link href="/products" />}>
-            View All Products <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
+            {content.landing.projects.cta} <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
           </Button>
         </div>
       </div>
@@ -84,7 +84,7 @@ export function ProjectsSection() {
       <div
         role="region"
         aria-roledescription="carousel"
-        aria-label="Project showcase"
+        aria-label={content.landing.projects.showcaseLabel}
         className="project-showcase"
         data-instant={instant}
         onKeyDown={(event) => {
@@ -133,8 +133,7 @@ export function ProjectsSection() {
                 className="project-slide"
                 data-offset={offset}
                 data-distance={Math.abs(offset)}
-                aria-label={`Explore ${item.title}`}
-                aria-hidden={!active}
+                aria-label={`${content.common.explorePrefix}${item.title}`}                aria-hidden={!active}
                 tabIndex={active ? 0 : -1}
                 onClick={(event) => {
                   if (!active) {

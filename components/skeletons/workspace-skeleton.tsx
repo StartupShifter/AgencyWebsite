@@ -1,4 +1,5 @@
 import { LoadingRegion, SkeletonBlock } from "./loading";
+import { content } from "@/context/content";
 
 const panelClass =
   "rounded-[20px] border border-[var(--workspace-line)] bg-white p-5 sm:p-6";
@@ -42,7 +43,7 @@ function TopicRows({ rows = 4 }: { rows?: number }) {
 
 export function WorkspaceSkeletonContent() {
   return (
-    <LoadingRegion label="Loading your workspace">
+    <LoadingRegion label={content.common.loading.workspace}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="min-w-0 flex-1">
           <SkeletonBlock className="h-3 w-44" />

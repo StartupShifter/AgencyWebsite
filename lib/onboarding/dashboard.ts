@@ -1,5 +1,6 @@
 import type { FunctionReturnType } from "convex/server";
 import type { api } from "@/convex/_generated/api";
+import { content } from "../../context/content";
 import { getOnboardingPhases } from "./phase-engine";
 import { getGuidedProgress, getGuidedSteps } from "./guided-flow";
 import {
@@ -19,13 +20,7 @@ export type WorkspaceData = NonNullable<
 export type WorkspaceDraft = WorkspaceData["draft"];
 export type WorkspaceView =
   "overview" | "brief" | "journey" | "resources" | "agreement";
-export const viewNames: Record<WorkspaceView, string> = {
-  overview: "Overview",
-  brief: "Project brief",
-  journey: "Project journey",
-  resources: "Brand & resources",
-  agreement: "Agreement & billing",
-};
+export const viewNames = content.shared.workspaceViewNames as Record<WorkspaceView, string>;
 
 export function getDashboardModel(data: WorkspaceData) {
   const { getPages, getOpenItems, getPageById } = createQuestionnaire(
@@ -137,37 +132,37 @@ export function getDashboardModel(data: WorkspaceData) {
   const prerequisites = [
     {
       id: "brief",
-      label: "Project brief",
+      label: content.shared.prerequisites.briefLabel,
       detail:
         draft?.status === "submitted"
-          ? "Your brief has been submitted."
-          : "Complete and submit your project details.",
+          ? content.shared.prerequisites.briefSubmitted
+          : content.shared.prerequisites.briefDetail,
       verified: draft?.status === "submitted",
     },
     {
       id: "identity",
-      label: "Contact verification",
-      detail: "Your project and workspace contact emails.",
+      label: content.shared.prerequisites.identityLabel,
+      detail: content.shared.prerequisites.identityDetail,
       verified: Boolean(
         draft && !pending.some((item) => item.startsWith("Verify the project")),
       ),
     },
     {
       id: "agreement",
-      label: "Signed agreement",
-      detail: "Confirm the scope with your agency.",
+      label: content.shared.prerequisites.agreementLabel,
+      detail: content.shared.prerequisites.agreementDetail,
       verified: Boolean(engagement?.signedAgreementRef),
     },
     {
       id: "advance",
-      label: "40% advance",
-      detail: "Agency verification against your agreed invoice.",
+      label: content.shared.prerequisites.advanceLabel,
+      detail: content.shared.prerequisites.advanceDetail,
       verified: Boolean(engagement?.advancePaymentRef),
     },
     ...(engagement?.dependencies.map((item, index) => ({
       id: `dependency-${index}`,
       label: item.label,
-      detail: `Responsible: ${item.owner}`,
+      detail: `${content.shared.prerequisites.responsiblePrefix}${item.owner}`,
       verified: item.verified,
     })) ?? []),
   ];
@@ -180,20 +175,12 @@ export function getDashboardModel(data: WorkspaceData) {
           .filter(([, value]) => value.trim())
           .map(([label, status]) => ({
             label,
-            status:
-              (
-                {
-                  ready: "Ready",
-                  "needs-updating": "Needs updating",
-                  "needs-help": "Needs help",
-                  "not-available": "Not available",
-                } as Record<string, string>
-              )[status] ?? status,
+            status: content.shared.assetStatusLabels[status] ?? status,
           }))
       : assetAnswer?.state === "answered" && Array.isArray(assetAnswer.value)
         ? assetAnswer.value.map((label) => ({
             label,
-            status: "Recorded in brief",
+            status: content.shared.assetStatusLabels.recorded,
           }))
         : [];
   const persistedActivity = activityLog.map((item) => ({
@@ -206,7 +193,7 @@ export function getDashboardModel(data: WorkspaceData) {
     ...(draft
       ? [
           {
-            title: "Project brief saved",
+            title: content.shared.activity.briefSaved,
             detail: `${progress.completed} of ${progress.total} questions complete`,
             time: draft.updatedAt,
             view: "brief" as const,
@@ -216,8 +203,8 @@ export function getDashboardModel(data: WorkspaceData) {
     ...(draft?.submittedAt
       ? [
           {
-            title: "Brief submitted",
-            detail: "Your project details are ready for review",
+            title: content.shared.activity.briefSubmitted,
+            detail: content.shared.activity.briefSubmittedDetail,
             time: draft.submittedAt,
             view: "brief" as const,
           },
@@ -226,8 +213,8 @@ export function getDashboardModel(data: WorkspaceData) {
     ...(engagement
       ? [
           {
-            title: "Engagement record updated",
-            detail: `${engagement.plan} · Scope and prerequisites recorded`,
+            title: content.shared.activity.engagementUpdated,
+            detail: `${engagement.plan} · ${content.shared.activity.engagementUpdatedDetail}`,
             time: engagement.updatedAt,
             view: "agreement" as const,
           },
@@ -258,13 +245,13 @@ export function getDashboardModel(data: WorkspaceData) {
     deliveryStages,
     submitted: draft?.status === "submitted",
     businessName:
-      answerText(answers, "P01.2") === "Use my personal name"
-        ? answerText(answers, "P01.1", "Your next chapter")
-        : answerText(answers, "P01.2", "Your next chapter"),
+      answerText(answers, "P01.2") === content.shared.workspaceFallback.personalNameOption
+        ? answerText(answers, "P01.1", content.shared.workspaceFallback.businessName)
+        : answerText(answers, "P01.2", content.shared.workspaceFallback.businessName),
     description: answerText(
       answers,
       "P03.1",
-      "A dedicated space for your business, your brief, and everything that comes next.",
+      content.shared.workspaceFallback.description,
     ),
     selectedWork: formatAnswer(
       answers["P08.1"],

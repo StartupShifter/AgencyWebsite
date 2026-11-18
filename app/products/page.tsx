@@ -1,71 +1,40 @@
 import type { Metadata } from "next";
-import { ArrowUpRight, Bot, LayoutTemplate, Store } from "lucide-react";
+import { ArrowUpRight, Bot, LayoutTemplate, Store, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ProjectPreview } from "@/components/projects/project-preview";
-import { ResourcePage, ResourceSection } from "@/components/landing/resource-page";
-import { hasConceptPreviews, projects } from "@/lib/projects";
+import { MarkedTitle, ResourcePage, ResourceSection } from "@/components/landing/resource-page";
+import { content, hasConceptPreviews } from "@/context/content";
 
-export const metadata: Metadata = {
-  title: "Products & Templates — Starter Shifter",
-  description:
-    "Explore Starter Shifter’s websites, applications, and connected experiences. Concept previews are labelled separately from completed client work.",
+export const metadata: Metadata = content.metadata.products;
+
+const buildAreaIcons: Record<string, LucideIcon> = {
+  store: Store,
+  layoutTemplate: LayoutTemplate,
+  bot: Bot,
 };
 
-const buildAreas = [
-  {
-    icon: Store,
-    title: "Websites & ecommerce",
-    description:
-      "Storefronts and business websites shaped around how you sell, with catalog, checkout, and content built on an agreed platform.",
-    tags: ["Shopify", "WordPress + WooCommerce", "Design & build"],
-  },
-  {
-    icon: LayoutTemplate,
-    title: "Web applications & operations",
-    description:
-      "Internal tools and customer-facing applications that bring orders, inventory, and connected business systems into clearer workflows.",
-    tags: ["Dashboards", "Workflows", "ERP & CRM connections"],
-  },
-  {
-    icon: Bot,
-    title: "AI & automation experiences",
-    description:
-      "Chatbots, support flows, and supported automations that answer common questions, route enquiries, and reduce repetitive work.",
-    tags: ["Chatbots", "Human handoff", "Supported integrations"],
-  },
-];
+const buildAreas = content.pages.products.buildAreas.map((area) => ({
+  ...area,
+  icon: buildAreaIcons[area.icon] ?? Store,
+}));
 
 export default function ProductsPage() {
+  const page = content.pages.products;
+  const projects = content.projects;
   return (
     <ResourcePage
-      eyebrow="Resources / Products & Templates"
-      note="Websites, applications & systems"
-      title={
-        <>
-          A closer look at
-          <br />
-          what we <span className="resourceHero-mark">build.</span>
-        </>
-      }
-      description="Websites, applications, and connected experiences. Explore the collection, the categories of work behind it, and how we label the difference between a concept and completed client work."
-      facts={[
-        { label: "Focus", value: "Websites, applications & systems" },
-        { label: "Collection", value: "Concept previews" },
-        { label: "Evidence policy", value: "Approved work only" },
-      ]}
+      eyebrow={page.eyebrow}
+      note={page.note}
+      title={<MarkedTitle lines={page.titleLines} mark={page.titleMark} />}
+      description={page.description}
+      facts={page.facts}
     >
       <ResourceSection
         id="what-we-build"
         index="01"
-        label="The work"
-        title={
-          <>
-            Three areas.
-            <br />
-            One connected experience.
-          </>
-        }
-        intro="Most projects touch more than one area. A store may need an operations view; a support flow may need a website and a CRM connection behind it."
+        label={page.workLabel}
+        title={<MarkedTitle lines={page.workTitleLines} />}
+        intro={page.workIntro}
       >
         <div className="resourceGrid resourceGrid--3">
           {buildAreas.map(({ icon: Icon, title, description, tags }) => (
@@ -88,18 +57,12 @@ export default function ProductsPage() {
       <ResourceSection
         id="collection"
         index="02"
-        label="The collection"
-        title={
-          <>
-            Concepts today.
-            <br />
-            Evidence as it’s approved.
-          </>
-        }
+        label={page.collectionLabel}
+        title={<MarkedTitle lines={page.collectionTitleLines} />}
         intro={
           hasConceptPreviews
-            ? "The collection currently shows design concepts. These are illustrative previews; completed project details and screenshots will appear only when supplied and approved."
-            : "Explore the collection of websites, applications, and connected experiences."
+            ? page.collectionIntroWithPreviews
+            : page.collectionIntroWithoutPreviews
         }
       >
         <div className="resourceCollection">
@@ -121,16 +84,14 @@ export default function ProductsPage() {
                   rel="noopener noreferrer"
                   className="resourceCollection-link"
                 >
-                  Visit project <ArrowUpRight aria-hidden="true" />
+                  {page.visitProject} <ArrowUpRight aria-hidden="true" />
                 </a>
               )}
             </article>
           ))}
         </div>
         <p className="resourceFootNote">
-          Concept previews illustrate a direction; they are not client results or
-          published case studies. We don’t publish client names, logos,
-          testimonials, or metrics without permission and verification.
+          {page.collectionFootNote}
         </p>
       </ResourceSection>
     </ResourcePage>

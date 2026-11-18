@@ -10,14 +10,12 @@ import {
 import { SiteHeader } from "@/components/landing/site-header";
 import { SiteFooter } from "@/components/landing/site-footer";
 import { Button } from "@/components/ui/button";
+import { MarkedTitle } from "@/components/landing/resource-page";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 import "./about.css";
 
-export const metadata: Metadata = {
-  title: "About us — Starter Shifter",
-  description:
-    "Meet Starter Shifter, an agency helping businesses worldwide connect their websites, social presence, and operations through research, design, development, and automation.",
-};
+export const metadata: Metadata = content.metadata.about;
 
 type Service = {
   icon: LucideIcon;
@@ -26,77 +24,27 @@ type Service = {
   tags: string[];
 };
 
-const services: Service[] = [
-  {
-    icon: Globe2,
-    title: "Web applications",
-    description:
-      "Websites and ecommerce stores shaped around your products and customers. We bring research, creative direction, and development together on Shopify or WordPress with WooCommerce, with the platform and features agreed for your project.",
-    tags: ["Shopify", "WordPress + WooCommerce", "Design & build"],
-  },
-  {
-    icon: Megaphone,
-    title: "Social media & digital marketing",
-    description:
-      "SEO management, email marketing, and social media marketing across WhatsApp, LinkedIn, Pinterest, and other channels as your requirements need. For Pro engagements, we also agree the ongoing campaigns and lead generation your business needs.",
-    tags: ["SEO", "Email marketing", "WhatsApp, LinkedIn & Pinterest"],
-  },
-  {
-    icon: Network,
-    title: "AI workflows",
-    description:
-      "Chatbots and supported automations that help answer common questions, route enquiries, and reduce repetitive work. We can connect agreed inventory, shipping, invoicing, and business tools where the platforms support it.",
-    tags: ["Chatbots", "Customer support", "Supported integrations"],
-  },
-];
+const serviceIcons: Record<string, LucideIcon> = {
+  globe: Globe2,
+  megaphone: Megaphone,
+  network: Network,
+};
 
-const steps = [
-  {
-    title: "Understand your business",
-    description:
-      "We discuss your goals, products, customers, and existing systems, then agree the deliverables, responsibilities, timeline, and costs.",
-  },
-  {
-    title: "Find a shared direction",
-    description:
-      "Company, market, and competitor research informs a basic Figma design draft. You review the direction and share feedback before we move into the agreed build and connected workflows.",
-  },
-  {
-    title: "Build, launch, and plan what follows",
-    description:
-      "We implement and test the selected website and workflows, with your content, account access, and approvals. Handover and any ongoing maintenance or growth work follow the coverage agreed for your plan.",
-  },
-];
+const services: Service[] = content.pages.about.services.map((service) => ({
+  ...service,
+  icon: serviceIcons[service.icon] ?? Globe2,
+}));
 
-const scope = [
-  {
-    label: "What you receive",
-    description:
-      "Basic covers the full application build plus digital marketing — SEO management, email marketing, and social media marketing — as one-time work. Pro adds ongoing maintenance, performance enhancement, and lead generation.",
-  },
-  {
-    label: "What you provide",
-    description:
-      "Agreed content, business information, product catalogs and images, account access, and approvals. Timelines depend on these inputs and on third-party platform approvals.",
-  },
-  {
-    label: "Kept separate",
-    description:
-      "Platform subscriptions, hosting, domains, paid apps, usage charges, ad spend, and payment fees are paid by you, separate from agency fees.",
-  },
-];
-
-const facts = [
-  { label: "Focus", value: "Web, social & AI workflows" },
-  { label: "Reach", value: "Businesses worldwide" },
-  { label: "Ways to work", value: "Basic setup or Pro support" },
-];
+const steps = content.pages.about.steps;
+const scope = content.pages.about.scope;
+const facts = content.pages.about.facts;
 
 export default function AboutPage() {
+  const page = content.pages.about;
   return (
     <div id="top" className="aboutPage">
       <a className={twLanding("skip-link")} href="#main">
-        Skip to content
+        {content.common.skipToContent}
       </a>
       <SiteHeader />
       <main id="main">
@@ -105,22 +53,20 @@ export default function AboutPage() {
           className={`${twLanding("section-shell")} aboutHero`}
         >
           <div className="aboutHero-top">
-            <p className="aboutEyebrow">About Starter Shifter</p>
-            <p className="aboutHero-note">Working with businesses worldwide</p>
+            <p className="aboutEyebrow">{page.eyebrow}</p>
+            <p className="aboutHero-note">{page.note}</p>
           </div>
 
           <h1 id="about-page-heading">
-            Your business.
-            <br />
-            Its next chapter <span className="aboutHero-mark">online.</span>
+            <MarkedTitle
+              lines={page.titleLines}
+              mark={page.titleMark}
+              markClass="aboutHero-mark"
+            />
           </h1>
 
           <div className="aboutHero-bottom">
-            <p className="aboutHero-lede">
-              We’re Starter Shifter, an agency helping businesses bring their
-              products and operations online. We connect the website your
-              customers see with the tools and workflows behind it.
-            </p>
+            <p className="aboutHero-lede">{page.lede}</p>
             <div className="aboutHero-actions">
               <Button
                 variant="emerald"
@@ -128,7 +74,7 @@ export default function AboutPage() {
                 nativeButton={false}
                 render={<Link href="/#contact" />}
               >
-                Tell us about your business{" "}
+                {page.primaryCta}{" "}
                 <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
               </Button>
               <Button
@@ -137,7 +83,7 @@ export default function AboutPage() {
                 nativeButton={false}
                 render={<Link href="/#pricing" />}
               >
-                Explore our plans
+                {page.secondaryCta}
               </Button>
             </div>
           </div>
@@ -157,22 +103,14 @@ export default function AboutPage() {
           className="aboutStatement"
         >
           <div className="aboutStatement-inner">
-            <p className="aboutEyebrow">The short version</p>
+            <p className="aboutEyebrow">{page.statementEyebrow}</p>
             <h2 id="about-statement-heading">
-              We connect the website your customers see with the workflows your
-              team relies on.
+              {page.statementTitle}
             </h2>
             <div className="aboutStatement-columns">
-              <p>
-                We work with businesses worldwide, across industries. Whether
-                you’re establishing an online presence or improving an existing
-                setup, the starting point is your business and what it needs.
-              </p>
-              <p>
-                Our approach brings research, design, development, and supported
-                integrations into one agreed plan, so each part has a clear
-                purpose.
-              </p>
+              {page.statementParagraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
             </div>
           </div>
         </section>
@@ -184,21 +122,18 @@ export default function AboutPage() {
           <div className="aboutWork-head">
             <div>
               <p className="aboutSectionLabel">
-                <span aria-hidden="true">01</span> What we do
+                <span aria-hidden="true">01</span> {page.workLabel}
               </p>
               <h2 id="about-services-heading">
-                Three areas.
+                {page.workTitleLines[0]}
                 <br />
-                One connected plan.
+                {page.workTitleLines[1]}
               </h2>
             </div>
             <div className="aboutWork-aside">
-              <p>
-                Three areas of work, shaped around the way your business sells,
-                communicates, and operates.
-              </p>
+              <p>{page.workAside}</p>
               <Link href="/#services" className="aboutTextLink">
-                Explore our services <ArrowUpRight aria-hidden="true" />
+                {page.workLink} <ArrowUpRight aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -235,24 +170,23 @@ export default function AboutPage() {
           <div className="aboutProcess-inner">
             <div className="aboutProcess-head">
               <p className="aboutSectionLabel aboutSectionLabel--inverse">
-                <span aria-hidden="true">02</span> How we work
+                <span aria-hidden="true">02</span> {page.processLabel}
               </p>
               <h2 id="about-process-heading">
-                Research first.
+                {page.processTitleLines[0]}
                 <br />
-                A clear path forward.
+                {page.processTitleLines[1]}
               </h2>
               <p className="aboutProcess-intro">
-                Your knowledge of the business and our research guide the work.
-                Shared decisions keep the design, build, and handover aligned.
+                {page.processIntro}
               </p>
 
               <div className="aboutProcess-gate">
-                <p>Before work begins</p>
+                <p>{page.gateLabel}</p>
                 <ul>
-                  <li>Signed contract</li>
-                  <li>40% advance</li>
-                  <li>Company &amp; project details</li>
+                  {page.gateItems.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -280,17 +214,16 @@ export default function AboutPage() {
           <div className="aboutScope-head">
             <div>
               <p className="aboutSectionLabel">
-                <span aria-hidden="true">03</span> Working together
+                <span aria-hidden="true">03</span> {page.scopeLabel}
               </p>
               <h2 id="about-scope-heading">
-                Clear scope.
+                {page.scopeTitleLines[0]}
                 <br />
-                Shared expectations.
+                {page.scopeTitleLines[1]}
               </h2>
             </div>
             <p className="aboutScope-intro">
-              Before work begins, we define the selected services, what you
-              provide, and what sits outside agency fees.
+              {page.scopeIntro}
             </p>
           </div>
 
@@ -313,12 +246,11 @@ export default function AboutPage() {
               nativeButton={false}
               render={<Link href="/#pricing" />}
             >
-              Compare Basic and Pro{" "}
+              {page.scopeCta}{" "}
               <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
             </Button>
             <p>
-              Deliverables, quantities, supported tools, revisions, and support
-              coverage are agreed before work begins.
+              {page.scopeFooter}
             </p>
           </div>
         </section>

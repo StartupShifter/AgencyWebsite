@@ -1,12 +1,14 @@
+import { content } from "../../context/content";
 import { isStepComplete, type OnboardingPhase } from "./phase-engine";
 import type { GuidedStep } from "./guided-flow";
 import type { Answers } from "./types";
 import { isAnswerEmpty } from "./engine";
 
 export type QuestionStatus = "answered" | "later" | "pending" | "attention" | "review";
-export const QUESTION_STATUS_LABELS: Record<QuestionStatus, string> = {
-  answered: "Answered", later: "For later", pending: "Not answered", attention: "Needs attention", review: "Review",
-};
+export const QUESTION_STATUS_LABELS = content.shared.questionStatusLabels as Record<
+  QuestionStatus,
+  string
+>;
 
 /** Current location is independent of answer status, including on a revisit. */
 export function getQuestionStatus(step: GuidedStep, answers: Answers, privacyReady: boolean): QuestionStatus {

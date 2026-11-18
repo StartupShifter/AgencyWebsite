@@ -1,11 +1,7 @@
+import { content } from "../../context/content";
+
 /** Shared document rules for the client workspace and Convex validation. */
-export const DOCUMENT_CATEGORIES = [
-  "Brand assets",
-  "Content & copy",
-  "Documents",
-  "Technical",
-  "Other",
-] as const;
+export const DOCUMENT_CATEGORIES = content.shared.documentCategories;
 export type DocumentCategory = (typeof DOCUMENT_CATEGORIES)[number];
 
 export const MAX_DOCUMENT_BYTES = 20 * 1024 * 1024;

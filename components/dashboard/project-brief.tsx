@@ -21,16 +21,11 @@ import {
 import { ViewHeading } from "./dashboard-details";
 import { ProgressRing } from "./dashboard-overview";
 import type { QuestionStatus } from "@/lib/onboarding/progress-state";
+import { content } from "@/context/content";
 
 export type BriefFilter = "all" | "remaining" | "answered" | "follow-ups";
 type BriefQuestion = DashboardModel["phases"][number]["questions"][number];
-const statusLabels: Record<QuestionStatus, string> = {
-  answered: "Answered",
-  pending: "Not answered",
-  later: "For later",
-  attention: "Needs attention",
-  review: "Review",
-};
+const statusLabels = content.dashboard.brief.statusLabels as Record<QuestionStatus, string>;
 const statusIcons = {
   answered: CircleCheck,
   pending: CircleDashed,
@@ -58,6 +53,7 @@ export function BriefView({
   filter: BriefFilter;
   onFilter: (filter: BriefFilter) => void;
 }) {
+  const copy = content.dashboard.brief;
   const { briefProgress: progress } = model;
   const normalized = query.trim().toLowerCase();
   const followupIds = new Set([
@@ -100,23 +96,23 @@ export function BriefView({
         question.status === "pending" || question.status === "attention",
     ) ?? active?.questions.find((question) => question.status === "later");
   const filters = [
-    { id: "all", label: "All questions", count: progress.total },
+    { id: "all", label: copy.filters[0].label, count: progress.total },
     {
       id: "remaining",
-      label: "To complete",
+      label: copy.filters[1].label,
       count: progress.missing + progress.attention,
     },
-    { id: "follow-ups", label: "Follow-ups", count: followupIds.size },
-    { id: "answered", label: "Answered", count: progress.answered },
+    { id: "follow-ups", label: copy.filters[2].label, count: followupIds.size },
+    { id: "answered", label: copy.filters[3].label, count: progress.answered },
   ] as const;
   return (
     <>
       <ViewHeading
-        title="Your project brief"
-        description="Review your onboarding progress, check the answers you’ve shared, and fill in any missing details."
+        title={copy.title}
+        description={copy.description}
       />
       <section
-        aria-label="Your brief progress"
+        aria-label={copy.progressLabel}
         className="mb-6 grid gap-5 rounded-[20px] border border-[var(--workspace-line)] bg-white p-5 sm:p-6 xl:grid-cols-[1fr_1.2fr]"
       >
         <div className="flex items-center gap-4">
@@ -124,14 +120,14 @@ export function BriefView({
           <div>
             <p className="text-base font-medium">
               {progress.percent === 100
-                ? "Every detail is covered"
-                : "Your brief is taking shape"}
+                ? copy.everyDetailCovered
+                : copy.briefTakingShape}
             </p>
             <p className="mt-1 text-sm text-[var(--workspace-muted)]">
-              {progress.answered} of {progress.total} questions answered
+              {progress.answered} of {progress.total} {copy.questionsAnswered}
             </p>
             <p className="mt-2 text-xs text-[var(--workspace-muted)]">
-              {model.completedPhases} of {model.phases.length} phases complete
+              {model.completedPhases} of {model.phases.length} {copy.phasesComplete}
             </p>
           </div>
         </div>
@@ -141,15 +137,15 @@ export function BriefView({
               className={`brief-status ${model.submitted ? "brief-status-answered" : "brief-status-pending"}`}
             >
               {model.submitted
-                ? "Submitted to your agency"
-                : "Draft · Not submitted"}
+                ? copy.submittedToAgency
+                : copy.draftNotSubmitted}
             </span>
             {!model.submitted && (
               <Link
                 href={`${onboardingBase}?question=review&returnTo=brief&mode=phase`}
                 className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-[var(--commerce-green)]"
               >
-                Review and send
+                {copy.reviewAndSend}
                 <ArrowRight size={15} aria-hidden="true" />
               </Link>
             )}
@@ -157,16 +153,16 @@ export function BriefView({
           <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">
             {progress.percent === 100
               ? model.submitted
-                ? "You can update any answer. Changes reopen your brief for review and submission."
-                : "Your answers are complete. Review and submit your brief to finish onboarding."
-              : "Completion counts answered and not-applicable questions. Details saved for later remain open; you can still discuss them with your agency."}
+                ? copy.updateReopens
+                : copy.completeSubmit
+              : copy.completionNote}
           </p>
         </div>
       </section>
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div
           role="group"
-          aria-label="Filter brief questions"
+          aria-label={copy.filterLabel}
           className="flex flex-wrap gap-1 rounded-2xl bg-[var(--workspace-soft)] p-1"
         >
           {filters.map((item) => (
@@ -187,8 +183,8 @@ export function BriefView({
           <Search size={16} aria-hidden="true" />
           <input
             type="search"
-            aria-label="Search questions and answers"
-            placeholder="Search questions or answers"
+            aria-label={copy.searchLabel}
+            placeholder={copy.searchPlaceholder}
             value={query}
             onChange={(event) => onSearch(event.target.value)}
             className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none sm:w-56"
@@ -198,9 +194,9 @@ export function BriefView({
       <div className="grid items-start gap-5 lg:grid-cols-[280px_minmax(0,1fr)] xl:grid-cols-[300px_minmax(0,1fr)]">
         <aside className="min-w-0 overflow-hidden rounded-[20px] border border-[var(--workspace-line)] bg-white">
           <div className="flex items-center justify-between border-b border-[var(--workspace-line)] px-5 py-4">
-            <h2 className="text-sm font-medium">Onboarding phases</h2>
+            <h2 className="text-sm font-medium">{copy.onboardingPhases}</h2>
             <span className="text-xs text-[var(--workspace-muted)]">
-              {phases.length} shown
+              {phases.length} {copy.shown}
             </span>
           </div>
           <div className="p-4 lg:hidden">
@@ -208,7 +204,7 @@ export function BriefView({
               htmlFor="brief-phase"
               className="mb-2 block text-xs text-[var(--workspace-muted)]"
             >
-              Choose a phase
+              {copy.chooseAPhase}
             </label>
             <select
               id="brief-phase"
@@ -217,7 +213,7 @@ export function BriefView({
               onChange={(event) => onPhase(event.target.value)}
               className="min-h-12 w-full min-w-0 rounded-xl border border-[var(--workspace-line)] bg-[var(--workspace-surface)] px-3 text-sm"
             >
-              {!phases.length && <option value="">No matching phases</option>}
+              {!phases.length && <option value="">{copy.noMatchingPhases}</option>}
               {phases.map((phase) => (
                 <option key={phase.id} value={phase.id}>
                   {model.phases.findIndex((item) => item.id === phase.id) + 1}.{" "}
@@ -227,7 +223,7 @@ export function BriefView({
             </select>
           </div>
           <nav
-            aria-label="Onboarding phases"
+            aria-label={copy.onboardingPhases}
             className="hidden max-h-[650px] overflow-y-auto p-2 lg:block"
           >
             {phases.map((phase) => (
@@ -241,7 +237,7 @@ export function BriefView({
                   className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs ${phase.resolved ? "bg-[var(--workspace-tint)] text-[var(--commerce-green)]" : "bg-[var(--workspace-soft)] text-[var(--workspace-muted)]"}`}
                 >
                   {phase.resolved ? (
-                    <Check size={14} aria-label="Complete" />
+                    <Check size={14} aria-label={copy.complete} />
                   ) : (
                     model.phases.findIndex((item) => item.id === phase.id) + 1
                   )}
@@ -251,7 +247,7 @@ export function BriefView({
                     {phase.title}
                   </span>
                   <span className="mt-1.5 block text-xs text-[var(--workspace-muted)]">
-                    {phase.answered}/{phase.total} answered ·{" "}
+                    {phase.answered}/{phase.total} {copy.answered} ·{" "}
                     {phase.resolvedPercent}%
                   </span>
                   <span className="mt-2 block h-1 overflow-hidden rounded-full bg-[var(--workspace-line)]">
@@ -265,7 +261,7 @@ export function BriefView({
                   </span>
                   {phase.later > 0 && (
                     <span className="mt-1.5 block text-xs text-[var(--workspace-warning)]">
-                      {phase.later} for later
+                      {phase.later} {copy.forLaterSuffix}
                     </span>
                   )}
                 </span>
@@ -278,7 +274,7 @@ export function BriefView({
             ))}
             {!phases.length && (
               <p className="p-4 text-sm text-[var(--workspace-muted)]">
-                No phases match this filter.
+                {copy.noPhasesMatch}
               </p>
             )}
           </nav>
@@ -291,10 +287,10 @@ export function BriefView({
             <>
               <div className="border-b border-[var(--workspace-line)] p-5 sm:p-6">
                 <p className="mb-2 text-xs font-medium text-[var(--commerce-green)]">
-                  PHASE{" "}
+                  {copy.phase}{" "}
                   {model.phases.findIndex((phase) => phase.id === active.id) +
                     1}{" "}
-                  OF {model.phases.length}
+                  {copy.of} {model.phases.length}
                 </p>
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0">
@@ -312,8 +308,8 @@ export function BriefView({
                     className={`brief-status ${active.resolved ? "brief-status-answered" : "brief-status-pending"}`}
                   >
                     {active.resolved
-                      ? "Complete"
-                      : `${active.resolvedPercent}% complete`}
+                      ? copy.statusComplete
+                      : `${active.resolvedPercent}% ${copy.percentCompleteSuffix}`}
                   </span>
                 </div>
                 <Progress
@@ -322,17 +318,17 @@ export function BriefView({
                   className="mt-5 [&_[data-slot=progress-track]]:h-1.5"
                 />
                 <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-[var(--workspace-muted)]">
-                  <span>{active.answered} answered</span>
-                  <span>{active.missing} not answered</span>
-                  <span>{active.attention} need attention</span>
-                  <span>{active.later} for later</span>
+                  <span>{active.answered} {copy.answered}</span>
+                  <span>{active.missing} {copy.notAnswered}</span>
+                  <span>{active.attention} {copy.needAttention}</span>
+                  <span>{active.later} {copy.forLater}</span>
                 </div>
                 {firstPending && (
                   <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-xl bg-[var(--workspace-soft)] p-4">
                     <p className="text-sm text-[var(--workspace-muted)]">
                       {active.missing + active.attention
-                        ? "Pick up where you left off."
-                        : "Ready to revisit the details saved for later?"}
+                        ? copy.pickUpWhereLeft
+                        : copy.readyToRevisit}
                     </p>
                     <Link
                       href={getBriefQuestionHref(
@@ -344,8 +340,8 @@ export function BriefView({
                       className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[var(--commerce-green)] px-4 text-xs font-medium text-white hover:bg-[var(--commerce-deep)]"
                     >
                       {active.answered || active.later
-                        ? "Continue phase"
-                        : "Start phase"}
+                        ? copy.continuePhase
+                        : copy.startPhase}
                       <ArrowRight size={15} aria-hidden="true" />
                     </Link>
                   </div>
@@ -355,8 +351,7 @@ export function BriefView({
                 className="border-b border-[var(--workspace-line)] bg-[var(--workspace-surface)] px-5 py-3 text-xs text-[var(--workspace-muted)] sm:px-6"
                 role="status"
               >
-                Showing {active.matching.length} of {active.total} questions in
-                this phase
+                {copy.showingPrefix}{active.matching.length} of {active.total}{copy.showingOfSuffix}
                 {filter !== "all"
                   ? ` · ${filters.find((item) => item.id === filter)?.label}`
                   : ""}
@@ -369,7 +364,7 @@ export function BriefView({
                     <li key={item.id} className="p-5 sm:p-6">
                       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                         <p className="text-xs text-[var(--workspace-muted)]">
-                          Question{" "}
+                          {copy.question}{" "}
                           {active.questions.findIndex(
                             (question) => question.id === item.id,
                           ) + 1}{" "}
@@ -380,7 +375,7 @@ export function BriefView({
                             followupIds.has(item.id) && (
                               <span className="brief-status brief-status-later">
                                 <CircleAlert size={13} aria-hidden="true" />
-                                Follow-up requested
+                                {copy.followUpRequested}
                               </span>
                             )}
                           <span
@@ -389,7 +384,7 @@ export function BriefView({
                             <Icon size={13} aria-hidden="true" />
                             {answer?.state === "not-applicable" &&
                             item.status === "answered"
-                              ? "Not applicable"
+                              ? copy.notApplicable
                               : statusLabels[item.status]}
                           </span>
                         </div>
@@ -401,11 +396,11 @@ export function BriefView({
                         className={`mt-3 rounded-xl p-4 text-sm leading-relaxed ${item.status === "pending" ? "border border-dashed border-[var(--workspace-line)] text-[var(--workspace-muted)]" : "bg-[var(--workspace-surface)]"}`}
                       >
                         {item.status === "pending" ? (
-                          <p>No answer provided yet.</p>
+                          <p>{copy.noAnswerYet}</p>
                         ) : (
                           <>
                             <p className="mb-1 text-xs font-medium text-[var(--workspace-muted)]">
-                              Your saved answer
+                              {copy.yourSavedAnswer}
                             </p>
                             <p className="whitespace-pre-wrap break-words [overflow-wrap:anywhere]">
                               {formatAnswer(answer, item.question)}
@@ -415,8 +410,7 @@ export function BriefView({
                       </div>
                       {item.status === "attention" && (
                         <p className="mt-3 text-xs leading-relaxed text-[var(--workspace-warning)]">
-                          {item.error ||
-                            "Please check this answer before finishing the phase."}
+                          {item.error || copy.checkAnswerDefault}
                         </p>
                       )}
                       {item.status === "pending" && item.question.help && (
@@ -431,14 +425,14 @@ export function BriefView({
                             active,
                             item.id,
                           )}
-                          aria-label={`${item.status === "answered" ? "Edit answer" : "Answer question"}: ${item.question.label}`}
+                          aria-label={`${item.status === "answered" ? copy.editAnswer : copy.answerNow}: ${item.question.label}`}
                           className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[var(--workspace-line)] px-4 text-xs font-medium text-[var(--commerce-green)] hover:bg-[var(--workspace-soft)]"
                         >
                           {item.status === "answered"
-                            ? "Edit answer"
+                            ? copy.editAnswer
                             : item.status === "attention"
-                              ? "Check answer"
-                              : "Answer now"}
+                              ? copy.checkAnswer
+                              : copy.answerNow}
                           <ArrowRight size={14} aria-hidden="true" />
                         </Link>
                       </div>
@@ -447,8 +441,7 @@ export function BriefView({
                 })}
               </ol>
               <p className="border-t border-[var(--workspace-line)] p-5 text-xs leading-relaxed text-[var(--workspace-muted)] sm:px-6">
-                Open a question to update it. Your saved answer will be
-                prefilled, and you can return to this phase after saving.
+                {copy.updateNote}
               </p>
             </>
           ) : (
@@ -460,17 +453,17 @@ export function BriefView({
               />
               <h2 id="brief-phase-heading" className="text-lg font-medium">
                 {normalized
-                  ? "No matching questions"
+                  ? copy.noMatchingQuestions
                   : filter === "remaining"
-                    ? "No unanswered questions"
+                    ? copy.noUnansweredQuestions
                     : filter === "follow-ups"
-                      ? "No details saved for later"
-                      : "No questions to show"}
+                      ? copy.noDetailsForLater
+                      : copy.noQuestionsToShow}
               </h2>
               <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-[var(--workspace-muted)]">
                 {normalized
-                  ? "Try another search or clear the filters to see your brief."
-                  : "Choose another filter to review the rest of your brief."}
+                  ? copy.tryAnotherSearch
+                  : copy.chooseAnotherFilter}
               </p>
               <Button
                 variant="outline"
@@ -480,7 +473,7 @@ export function BriefView({
                   onSearch("");
                 }}
               >
-                Show all questions
+                {copy.showAllQuestions}
               </Button>
             </div>
           )}

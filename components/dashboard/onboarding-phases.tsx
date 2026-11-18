@@ -2,6 +2,7 @@ import { ArrowRight, Check, CircleCheck, ClipboardList } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import type { DashboardModel } from "@/lib/onboarding/dashboard";
+import { content } from "@/context/content";
 
 export function OnboardingPhases({
   model,
@@ -17,6 +18,7 @@ export function OnboardingPhases({
     (phase) => phase.id === completedId && phase.complete,
   );
   const complete = progress.percent === 100;
+  const copy = content.dashboard.phases;
   return (
     <section className="mb-6" aria-labelledby="workspace-phases-heading">
       {completed && (
@@ -25,7 +27,7 @@ export function OnboardingPhases({
           className="mb-4 flex items-center gap-2 rounded-xl bg-[var(--workspace-tint)] p-4 text-sm"
         >
           <Check size={18} aria-hidden="true" />
-          {completed.title} saved. Review your progress below.
+          {completed.title}{copy.savedSuffix}
         </p>
       )}
       <div className="overflow-hidden rounded-[20px] border border-[var(--workspace-line)] bg-white">
@@ -33,22 +35,22 @@ export function OnboardingPhases({
           <div>
             <p className="mb-3 flex items-center gap-2 text-xs font-medium text-[var(--commerce-green)]">
               <ClipboardList size={16} aria-hidden="true" />
-              YOUR ONBOARDING
+              {copy.yourOnboarding}
             </p>
             <h2
               id="workspace-phases-heading"
               className="text-2xl font-medium tracking-tight"
             >
               {complete
-                ? "Your project brief is complete."
-                : "Let’s complete your project brief."}
+                ? copy.completeTitle
+                : copy.incompleteTitle}
             </h2>
             <p className="mt-2 max-w-lg text-sm leading-relaxed text-[var(--workspace-muted)]">
               {complete
                 ? model.submitted
-                  ? "Your answers have been submitted. You can review or update any detail in your brief."
-                  : "Every question has an answer. Review your brief and send it to your agency when you’re ready."
-                : "See what you’ve shared, find the details still needed, and finish one phase at a time."}
+                  ? copy.completeSubmitted
+                  : copy.completeNotSubmitted
+                : copy.incomplete}
             </p>
             <div className="mt-5 flex flex-wrap items-center gap-3">
               <Button
@@ -57,16 +59,16 @@ export function OnboardingPhases({
               >
                 {complete
                   ? model.submitted
-                    ? "Review project brief"
-                    : "Review and send brief"
+                    ? copy.reviewProjectBrief
+                    : copy.reviewAndSendBrief
                   : nextPhase?.answered || nextPhase?.later
-                    ? "Continue phase"
-                    : "Start phase"}
+                    ? copy.continuePhase
+                    : copy.startPhase}
                 <ArrowRight size={16} aria-hidden="true" />
               </Button>
               {nextPhase && !complete && (
                 <span className="text-xs text-[var(--workspace-muted)]">
-                  Phase {model.phases.indexOf(nextPhase) + 1} ·{" "}
+                  {copy.phasePrefix}{model.phases.indexOf(nextPhase) + 1} ·{" "}
                   {nextPhase.title}
                 </span>
               )}
@@ -76,43 +78,43 @@ export function OnboardingPhases({
             <div className="flex items-end justify-between gap-3">
               <div>
                 <p className="text-xs text-[var(--workspace-muted)]">
-                  Brief completion
+                  {copy.briefCompletion}
                 </p>
                 <p className="mt-2 text-4xl font-medium tracking-tight">
                   {progress.percent}%
                 </p>
               </div>
               <p className="pb-1 text-xs text-[var(--workspace-muted)]">
-                {progress.answered} of {progress.total} answered
+                {progress.answered} of {progress.total} {copy.answeredSuffix}
               </p>
             </div>
             <Progress
               value={progress.percent}
-              aria-label="Project brief completion"
+              aria-label={copy.briefCompletionLabel}
               className="my-4 [&_[data-slot=progress-track]]:h-2"
             />
             <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-[var(--workspace-muted)]">
-              <span>{progress.missing} not answered</span>
-              <span>{progress.attention} need attention</span>
-              <span>{progress.later} for later</span>
+              <span>{progress.missing} {copy.notAnswered}</span>
+              <span>{progress.attention} {copy.needAttention}</span>
+              <span>{progress.later} {copy.forLater}</span>
             </div>
             <p className="mt-4 flex items-center gap-1.5 border-t border-[var(--workspace-line)] pt-3 text-xs text-[var(--commerce-deep)]">
               <CircleCheck size={14} aria-hidden="true" />
-              {model.completedPhases} of {model.phases.length} phases complete
+              {model.completedPhases} of {model.phases.length} {copy.phasesComplete}
             </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--workspace-line)] bg-[var(--workspace-surface)] px-5 py-3 text-xs text-[var(--workspace-muted)] sm:px-6">
           <span>
             {progress.later
-              ? "Details marked for later stay visible until you resolve them."
-              : "Your answers are saved as you go. You can pause at any time."}
+              ? copy.laterStaysVisible
+              : copy.answersSavedAsYouGo}
           </span>
           <button
             className="min-h-9 font-medium text-[var(--commerce-green)] hover:underline"
             onClick={() => onOpenBrief()}
           >
-            View all phases <span aria-hidden="true">→</span>
+            {copy.viewAllPhases} <span aria-hidden="true">→</span>
           </button>
         </div>
       </div>

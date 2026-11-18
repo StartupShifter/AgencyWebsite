@@ -3,13 +3,10 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ServiceIllustration, type ServiceType } from "@/components/landing/service-illustrations";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 import "./service-card.css";
 
-const labels = {
-  web: "Explore the web application illustration",
-  social: "Explore the social media illustration",
-  ai: "Explore the AI workflow illustration",
-};
+const labels = content.landing.services.illustrationLabels;
 
 export function ServiceCard({ type, children }: { type: ServiceType; children: ReactNode }) {
   const [expanded, setExpanded] = useState(false);

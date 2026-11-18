@@ -22,16 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 
-export const projectBriefServiceOptions = [
-  "Ecommerce & websites",
-  "Research & design",
-  "Marketing & campaigns",
-  "Automation & integrations",
-  "Maintenance & performance",
-];
+export const projectBriefServiceOptions = content.projectBrief.serviceOptions;
 
 export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
+  const copy = content.projectBrief;
   const id = useId();
   const [services, setServices] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -65,32 +61,31 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
     const form = event.currentTarget;
     const data = new FormData(form);
     const value = (key: string) => String(data.get(key) ?? "").trim();
+    const fields = copy.briefFields;
     const brief = [
-      "Starter Shifter — Project brief",
+      copy.headerLine,
       "",
-      `Name: ${value("name")}`,
-      `Email: ${value("email")}`,
-      `Company: ${value("company") || "Not specified"}`,
-      `Services: ${services.length ? services.join(", ") : "Let's explore the options"}`,
-      `Timing: ${value("timing") || "Not specified"}`,
+      `${fields.name}${value("name")}`,
+      `${fields.email}${value("email")}`,
+      `${fields.company}${value("company") || fields.notSpecified}`,
+      `${fields.services}${services.length ? services.join(", ") : fields.exploreOptions}`,
+      `${fields.timing}${value("timing") || fields.notSpecified}`,
       "",
-      "Project goals:",
+      fields.projectGoals,
       value("goals"),
       "",
-      "What is already in place:",
-      value("currentSetup") || "Not specified",
+      fields.alreadyInPlace,
+      value("currentSetup") || fields.notSpecified,
       "",
-      "This brief is a starting point for discussion, not an agreed scope or quote.",
+      fields.disclaimer,
     ].join("\n");
 
     if (contactEmail) {
       const subject = encodeURIComponent(
-        `Project enquiry — ${value("company") || value("name")}`,
+        `${copy.emailSubjectPrefix}${value("company") || value("name")}`,
       );
       window.location.href = `mailto:${encodeURIComponent(contactEmail)}?subject=${subject}&body=${encodeURIComponent(brief)}`;
-      setStatus(
-        "Your email draft is ready to open. Review it in your email app and send when you're ready.",
-      );
+      setStatus(copy.emailDraftReady);
       return;
     }
 
@@ -99,14 +94,12 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
     );
     const link = document.createElement("a");
     link.href = url;
-    link.download = "starter-shifter-project-brief.txt";
+    link.download = copy.downloadFileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setStatus(
-      "Your project brief is ready in your downloads. Nothing has been sent to Starter Shifter.",
-    );
+    setStatus(copy.downloadReady);
   }
 
   return (
@@ -114,7 +107,7 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
       <FieldGroup>
         <FieldGroup className={twLanding("sm:flex-row")}>
           <Field data-invalid={Boolean(errors.name)}>
-            <FieldLabel htmlFor={fieldId("name")}>Your name</FieldLabel>
+            <FieldLabel htmlFor={fieldId("name")}>{copy.nameLabel}</FieldLabel>
             <Input
               className={twLanding("h-11")}
               id={fieldId("name")}
@@ -136,7 +129,7 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
             )}
           </Field>
           <Field data-invalid={Boolean(errors.email)}>
-            <FieldLabel htmlFor={fieldId("email")}>Email</FieldLabel>
+            <FieldLabel htmlFor={fieldId("email")}>{copy.emailLabel}</FieldLabel>
             <Input
               className={twLanding("h-11")}
               id={fieldId("email")}
@@ -162,7 +155,7 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
         <FieldGroup className={twLanding("sm:flex-row")}>
           <Field>
             <FieldLabel htmlFor={fieldId("company")}>
-              Company (optional)
+              {copy.companyLabel}
             </FieldLabel>
             <Input
               className={twLanding("h-11")}
@@ -174,22 +167,22 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
           </Field>
           <Field>
             <FieldLabel htmlFor={fieldId("timing")}>
-              Timing (optional)
+              {copy.timingLabel}
             </FieldLabel>
             <Input
               className={twLanding("h-11")}
               id={fieldId("timing")}
               name="timing"
-              placeholder="For example, before a launch date"
+              placeholder={copy.timingPlaceholder}
               maxLength={150}
             />
           </Field>
         </FieldGroup>
 
         <FieldSet>
-          <FieldLegend variant="label">What could we help with?</FieldLegend>
+          <FieldLegend variant="label">{copy.servicesLegend}</FieldLegend>
           <FieldDescription>
-            Select any that fit, or leave this open.
+            {copy.servicesDescription}
           </FieldDescription>
           <FieldGroup data-slot="checkbox-group">
             {projectBriefServiceOptions.map((service, index) => (
@@ -216,12 +209,12 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
 
         <Field data-invalid={Boolean(errors.goals)}>
           <FieldLabel htmlFor={fieldId("goals")}>
-            What would you like to make possible?
+            {copy.goalsLabel}
           </FieldLabel>
           <Textarea
             id={fieldId("goals")}
             name="goals"
-            placeholder="Tell us about your business, what you need, and the outcome you have in mind."
+            placeholder={copy.goalsPlaceholder}
             required
             minLength={10}
             maxLength={3000}
@@ -241,15 +234,15 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
 
         <Field>
           <FieldLabel htmlFor={fieldId("currentSetup")}>
-            What is already in place? (optional)
+            {copy.currentSetupLabel}
           </FieldLabel>
           <FieldDescription>
-            An existing website, store, social pages, or business tools.
+            {copy.currentSetupDescription}
           </FieldDescription>
           <Textarea
             id={fieldId("currentSetup")}
             name="currentSetup"
-            placeholder="Share the systems, platforms, or accounts you already use."
+            placeholder={copy.currentSetupPlaceholder}
             maxLength={2000}
             rows={3}
           />
@@ -262,7 +255,7 @@ export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
             ) : (
               <Download data-icon="inline-start" aria-hidden="true" />
             )}
-            {contactEmail ? "Open email draft" : "Download project brief"}
+            {contactEmail ? copy.openEmailDraft : copy.downloadBrief}
           </Button>
           <p
             role="status"

@@ -9,6 +9,7 @@ import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { DashboardLoading } from "@/components/dashboard/dashboard-shell";
 import { answerText } from "@/lib/onboarding/dashboard";
 import { PreviewSessionProvider } from "./preview-session";
+import { content } from "@/context/content";
 
 export function PreviewDashboard() {
   return (
@@ -37,11 +38,7 @@ function SavedPreviewDashboard() {
         questionnaire,
         engagement: null,
         workspaceReady: false,
-        pending: [
-          "Verify the project or workspace contact email when you create your client account.",
-          "Agree the project scope and complete the signed agreement.",
-          "Have the agency verify the 40% advance against your agreed invoice.",
-        ],
+        pending: content.onboarding.previewPending,
         project: null,
         stages: [],
         activityLog: [],

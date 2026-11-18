@@ -1,5 +1,6 @@
 "use client";
 import { twLanding } from "@/lib/landing-styles";
+import { content } from "@/context/content";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
@@ -47,52 +48,34 @@ type NavSection = {
   footer?: { text: string; linkLabel: string; href: string };
 };
 
-const sections: NavSection[] = [
-  {
-    label: "Services",
-    items: [
-      { icon: Store, title: "Ecommerce websites", description: "Storefronts shaped around how you sell.", href: "/services/ecommerce" },
-      { icon: Megaphone, title: "Social & marketing", description: "SEO, email, and social presence, planned and delivered.", href: "/services/social-campaigns" },
-      { icon: MessagesSquare, title: "Chatbots & automation", description: "Common questions answered, the rest routed.", href: "/services/chatbots-automation" },
-      { icon: Package, title: "Inventory systems", description: "A clear, reliable view of your stock.", href: "/services/inventory" },
-      { icon: Truck, title: "Shipping & orders", description: "Fewer manual steps between order and dispatch.", href: "/services/shipping-orders" },
-      { icon: Database, title: "ERP & CRM integrations", description: "Your business tools, working together.", href: "/services/erp-crm-integrations" },
-      { icon: Wrench, title: "Maintenance & support", description: "Ongoing technical care after launch.", href: "/services/maintenance-support" },
-      { icon: Gauge, title: "Performance improvement", description: "Find and address the bottlenecks.", href: "/services/performance" },
-      { icon: PenTool, title: "Research & creative direction", description: "Market insight and Figma design drafts.", href: "/services/research-creative-direction" },
-      { icon: Presentation, title: "Presentations & planning", description: "A shared view of your project, early.", href: "/services/project-planning" },
-    ],
-    footer: {
-      text: "Basic for $2,500 once. Pro for $2,500 plus $500/month.",
-      linkLabel: "See pricing",
-      href: "#pricing",
-    },
-  },
-  {
-    label: "Resources",
-    items: [
-      { icon: Route, title: "How we work", description: "Delivery stages from discovery to launch.", href: "/how-we-work" },
-      { icon: CircleQuestionMark, title: "FAQs", description: "Common questions, answered plainly.", href: "/faq" },
-      { icon: FolderOpen, title: "Products & Templates", description: "Explore our websites and applications.", href: "/products" },
-      { icon: LifeBuoy, title: "Support & care", description: "Help for projects after launch.", href: "/support" },
-    ],
-  },
-];
+const navIcons: Record<string, LucideIcon> = {
+  store: Store,
+  megaphone: Megaphone,
+  messagesSquare: MessagesSquare,
+  package: Package,
+  truck: Truck,
+  database: Database,
+  wrench: Wrench,
+  gauge: Gauge,
+  penTool: PenTool,
+  presentation: Presentation,
+  route: Route,
+  circleQuestionMark: CircleQuestionMark,
+  folderOpen: FolderOpen,
+  lifeBuoy: LifeBuoy,
+  users: Users,
+  pricing: BadgeDollarSign,
+};
 
-const directLinks: NavEntry[] = [
-  {
-    icon: Users,
-    title: "About",
-    description: "Who Starter Shifter is and how we work.",
-    href: "/about",
-  },
-  {
-    icon: BadgeDollarSign,
-    title: "Pricing",
-    description: "Compare Basic setup and Pro ongoing support.",
-    href: "/#pricing",
-  },
-];
+const sections: NavSection[] = content.navigation.sections.map((section) => ({
+  ...section,
+  items: section.items.map((item) => ({ ...item, icon: navIcons[item.icon] ?? Store })),
+}));
+
+const directLinks: NavEntry[] = content.navigation.directLinks.map((entry) => ({
+  ...entry,
+  icon: navIcons[entry.icon] ?? Users,
+}));
 
 // A single column lists up to 4 entries; every additional group of 4
 // spreads the menu out by one more column (5-8 → 2, 9-12 → 3, and so on).
@@ -222,16 +205,16 @@ export function SiteHeader() {
   return (
     <header className={twLanding("site-header")}>
       <div ref={pillRef} className={twLanding("navbar-pill")}>
-        <Link href="/" aria-label="Starter Shifter home" className={twLanding("navbar-brand")}>
+        <Link href="/" aria-label={content.brand.homeAriaLabel} className={twLanding("navbar-brand")}>
           <span className={twLanding("brand-mark")}>
             <ArrowUpRight aria-hidden="true" strokeWidth={2.6} />
           </span>
-          starter&nbsp;shifter
+          {content.brand.nameLower}
         </Link>
         <NavigationMenu
           align="center"
           className={twLanding("desktop-nav")}
-          aria-label="Main navigation"
+          aria-label={content.navigation.mainNavigationLabel}
         >
           <NavigationMenuList>
             {directLinks.map((entry) => (
@@ -258,13 +241,13 @@ export function SiteHeader() {
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
           <Link href="/login" className={twLanding("navbar-cta")}>
-            Get started <ArrowUpRight aria-hidden="true" />
+            {content.navigation.cta} <ArrowUpRight aria-hidden="true" />
           </Link>
           <Button
             className={twLanding("mobile-menu-toggle")}
             variant="ghost"
             size="icon-lg"
-            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-label={open ? content.common.closeNavigation : content.common.openNavigation}
             aria-expanded={open}
             aria-controls="mobile-navigation"
             onClick={() => setOpen(!open)}
@@ -276,7 +259,7 @@ export function SiteHeader() {
           <nav
             id="mobile-navigation"
             className={twLanding("mobile-navigation")}
-            aria-label="Mobile navigation"
+            aria-label={content.navigation.mobileNavigationLabel}
           >
             {directLinks.map((entry) => (
               <div key={entry.title} className={twLanding("mobile-nav-section")}>

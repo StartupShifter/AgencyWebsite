@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { content } from "@/context/content";
 
 function ResearchVisual() {
   return (
@@ -235,7 +236,7 @@ function BenefitCard({ type, title, description, children }: { type: string; tit
     <button
       type="button"
       className="aboutBenefits-art"
-      aria-label={`Explore ${title.toLowerCase()} illustration`}
+      aria-label={`${content.common.explorePrefix}${title.toLowerCase()}${content.common.illustrationSuffix}`}
       aria-pressed={active}
       onClick={(event) => {
         // Hover drives desktop; tapping the artwork gives touch users the same view.
@@ -248,22 +249,35 @@ function BenefitCard({ type, title, description, children }: { type: string; tit
 }
 
 export function AboutBenefits() {
+  const benefits = content.landing.about.benefits;
+  const benefit = (type: string) => {
+    const item = benefits.find((entry) => entry.type === type);
+    return { title: item?.title ?? "", description: item?.description ?? "" };
+  };
+  const research = benefit("research");
+  const integrations = benefit("integrations");
+  const website = benefit("website");
+  const social = benefit("social");
+  const automation = benefit("automation");
+  const performance = benefit("performance");
+  const ctaTitle = content.landing.about.ctaTitleLines;
+  const ctaLabel = content.landing.about.ctaLabel;
   return <div className="aboutBenefits-grid">
     <div className="aboutBenefits-column">
-      <BenefitCard type="research" title="Clarity before you build" description="Research that gives your next move direction."><ResearchVisual /></BenefitCard>
-      <BenefitCard type="integrations" title="Your tools, connected" description="Supported connections. Fewer manual steps."><IntegrationsVisual /></BenefitCard>
+      <BenefitCard type="research" title={research.title} description={research.description}><ResearchVisual /></BenefitCard>
+      <BenefitCard type="integrations" title={integrations.title} description={integrations.description}><IntegrationsVisual /></BenefitCard>
     </div>
     <div className="aboutBenefits-column aboutBenefits-middle">
-      <BenefitCard type="website" title="Your business, online" description="A website or store shaped around you."><WebsiteVisual /></BenefitCard>
-      <BenefitCard type="social" title="A consistent social presence" description="Your brand, carried into pages and templates."><SocialVisual /></BenefitCard>
-      <BenefitCard type="automation" title="Support with a human touch" description="AI for the routine. Your team when it matters."><SupportVisual /></BenefitCard>
+      <BenefitCard type="website" title={website.title} description={website.description}><WebsiteVisual /></BenefitCard>
+      <BenefitCard type="social" title={social.title} description={social.description}><SocialVisual /></BenefitCard>
+      <BenefitCard type="automation" title={automation.title} description={automation.description}><SupportVisual /></BenefitCard>
     </div>
     <div className="aboutBenefits-column">
       <a href="/dashboard" className="aboutBenefits-card aboutBenefits-cta">
         <ArrowUpRight className="aboutBenefits-ctaArrow" aria-hidden="true" />
-        <div className="aboutBenefits-ctaCopy"><h3>Let’s make your<br />next move digital.</h3><span>Talk about your project <ArrowUpRight aria-hidden="true" /></span></div>
+        <div className="aboutBenefits-ctaCopy"><h3>{ctaTitle[0]}<br />{ctaTitle[1]}</h3><span>{ctaLabel} <ArrowUpRight aria-hidden="true" /></span></div>
       </a>
-      <BenefitCard type="performance" title="See what needs attention" description="Find bottlenecks. Focus on better performance."><PerformanceVisual /></BenefitCard>
+      <BenefitCard type="performance" title={performance.title} description={performance.description}><PerformanceVisual /></BenefitCard>
     </div>
   </div>;
 }

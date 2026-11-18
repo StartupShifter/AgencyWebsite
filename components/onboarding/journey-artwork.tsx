@@ -1,13 +1,19 @@
-import { ArrowUpRight, Check, Compass, Fingerprint, Layers, PartyPopper, Store } from "lucide-react";
+import { ArrowUpRight, Check, Compass, Fingerprint, Layers, PartyPopper, Store, type LucideIcon } from "lucide-react";
 import { OnboardingMascot, type MascotMood } from "./onboarding-mascot";
+import { content } from "@/context/content";
 
-const scenes = [
-  { icon: Store, title: "Your business", subtitle: "Made of good ideas & real people", tag: "Nice to meet you" },
-  { icon: Compass, title: "Your direction", subtitle: "A little clarity. A lot of possibility.", tag: "Think big" },
-  { icon: Fingerprint, title: "Your signature", subtitle: "The details that make it yours", tag: "Make your mark" },
-  { icon: Layers, title: "Your toolkit", subtitle: "Connecting the pieces of your project", tag: "Piece by piece" },
-  { icon: PartyPopper, title: "Your next chapter", subtitle: "A brief we can build on, together", tag: "Coming together" },
-];
+const sceneIcons: Record<string, LucideIcon> = {
+  store: Store,
+  compass: Compass,
+  fingerprint: Fingerprint,
+  layers: Layers,
+  partyPopper: PartyPopper,
+};
+
+const scenes = content.onboarding.journeyArtwork.scenes.map((scene) => ({
+  ...scene,
+  icon: sceneIcons[scene.icon] ?? Store,
+}));
 
 /** A decorative, code-native illustration built from the existing brand companion. */
 export function JourneyArtwork({ scene = 0, mood = "welcome" }: { scene?: number; mood?: MascotMood }) {
@@ -19,7 +25,7 @@ export function JourneyArtwork({ scene = 0, mood = "welcome" }: { scene?: number
       <span className="ob-art-icon"><Icon size={25} strokeWidth={1.6} /></span>
       <strong>{title}</strong><span>{subtitle}</span>
       <div className="ob-art-lines"><i /><i /></div>
-      <span className="ob-art-check"><Check size={14} /> A little more you</span>
+      <span className="ob-art-check"><Check size={14} /> {content.onboarding.journeyArtwork.tagline}</span>
     </div>
     <span className="ob-art-sticker"><ArrowUpRight size={25} /></span>
     <span className="ob-art-tag">{tag}</span>

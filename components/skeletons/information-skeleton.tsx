@@ -3,19 +3,20 @@ import { SiteHeader } from "@/components/landing/site-header";
 import { twLanding } from "@/lib/landing-styles";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
+import { content } from "@/context/content";
 
 export function InformationSkeleton() {
   return (
     <div id="top">
       <a className={twLanding("skip-link")} href="#main">
-        Skip to content
+        {content.common.skipToContent}
       </a>
       <SiteHeader />
       <main
         id="main"
         className={`${twLanding("section-shell")} py-14 sm:py-24`}
       >
-        <LoadingRegion label="Loading your onboarding information">
+        <LoadingRegion label={content.common.loading.onboardingInformation}>
           <div className="max-w-3xl">
             <SkeletonBlock className="mb-10 h-4 w-32" />
             <SkeletonBlock className="h-12 w-11/12 max-w-2xl sm:h-16" />

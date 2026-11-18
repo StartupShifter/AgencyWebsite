@@ -1,12 +1,13 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
+import { content } from "@/context/content";
 
 export function AuthSkeleton() {
   return (
     <AuthShell>
       <LoadingRegion
-        label="Loading sign-in options"
+        label={content.common.loading.signInOptions}
         className="flex w-full flex-col"
       >
         <div className="mb-7 text-center">

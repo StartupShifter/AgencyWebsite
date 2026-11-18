@@ -35,6 +35,7 @@ import {
 } from "@/lib/onboarding/delivery";
 import type { DashboardModel, WorkspaceData } from "@/lib/onboarding/dashboard";
 import { panelClass } from "./dashboard-overview";
+import { content } from "@/context/content";
 
 export function ViewHeading({
   title,
@@ -70,78 +71,37 @@ export function JourneyView({
   onboardingHref: string;
 }) {
   const persistedStages = model.deliveryStages;
-  const fallbackStages = [
-    {
-      id: "brief",
-      title: "Your project brief",
-      status: model.submitted ? "Complete" : "In progress",
-      description:
-        "Share your business, goals, content, and requirements. Your answers help shape the project discussion.",
-      done: model.submitted,
-      progress: model.submitted ? 100 : model.progress.percent,
-      note: "",
-      targetDate: null,
-    },
-    {
-      id: "activation",
-      title: "Agreement & activation",
-      status: model.workspaceReady
-        ? "Verified"
-        : model.submitted
-          ? "Needs verification"
-          : "Up next",
-      description:
-        "Your agency verifies the contact details, signed agreement, 40% advance, and project dependencies before activation.",
-      done: model.workspaceReady,
-      progress: model.workspaceReady ? 100 : 0,
-      note: "",
-      targetDate: null,
-    },
-    {
-      id: "research",
-      title: "Research & direction",
-      status: "Upcoming",
-      description:
-        "Business, market, and competitor research establishes the direction. Timing and deliverables follow your agreed project scope.",
-      done: false,
-      progress: 0,
-      note: "",
-      targetDate: null,
-    },
-    {
-      id: "design",
-      title: "Design & feedback",
-      status: "Upcoming",
-      description:
-        "Explore the agreed design work, review drafts, and share feedback. The number of variants and revisions follows your agreement.",
-      done: false,
-      progress: 0,
-      note: "",
-      targetDate: null,
-    },
-    {
-      id: "build",
-      title: "Build & connect",
-      status: "Upcoming",
-      description:
-        "The agreed website, content, workflows, and supported connections take shape. Selected requirements are confirmed in the project scope.",
-      done: false,
-      progress: 0,
-      note: "",
-      targetDate: null,
-    },
-    {
-      id: "handoff",
-      title: "Review & handoff",
-      status: "Upcoming",
-      description:
-        "Review the agreed deliverables and prepare for handoff. Launch requirements and ongoing support depend on your engagement.",
-      done: false,
-      progress: 0,
-      note: "",
-      targetDate: null,
-    },
-  ];
+  const journey = content.dashboard.journey;
+  const fallbackStages = journey.fallbackStages.map((stage) => ({
+    id: stage.id,
+    title: stage.title,
+    status:
+      stage.id === "brief"
+        ? model.submitted
+          ? journey.statusComplete
+          : journey.statusInProgress
+        : stage.id === "activation"
+          ? model.workspaceReady
+            ? journey.statusVerified
+            : model.submitted
+              ? journey.statusNeedsVerification
+              : journey.statusUpNext
+          : journey.statusUpcoming,
+    description: stage.description,
+    done: stage.id === "brief" ? model.submitted : stage.id === "activation" ? model.workspaceReady : false,
+    progress:
+      stage.id === "brief"
+        ? model.submitted
+          ? 100
+          : model.progress.percent
+        : stage.id === "activation"
+          ? model.workspaceReady
+            ? 100
+            : 0
+          : 0,
+    note: "",
+    targetDate: null,
+  }));
   const stages = persistedStages.length
     ? persistedStages.map((stage) => ({
         id: stage.stageId,
@@ -174,15 +134,15 @@ export function JourneyView({
   return (
     <>
       <ViewHeading
-        title="One step closer, every day."
-        description="A clear view of your project’s preparation and the delivery journey ahead."
+        title={content.dashboard.journey.title}
+        description={content.dashboard.journey.description}
       />
       <section className={`${panelClass} mb-5`}>
         <div className="mb-7 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs text-[var(--workspace-muted)]">Current checkpoint</p>
+            <p className="text-xs text-[var(--workspace-muted)]">{content.dashboard.journey.currentCheckpoint}</p>
             <h2 className="mt-1.5 text-xl font-medium tracking-[-.4px]">
-              {stages[current]?.title ?? "Your project"}
+              {stages[current]?.title ?? content.dashboard.journey.yourProject}
             </h2>
             {model.project?.summary && (
               <p className="mt-2 max-w-xl text-xs leading-relaxed text-[var(--workspace-muted)]">
@@ -191,15 +151,15 @@ export function JourneyView({
             )}
             {model.project?.targetDate && (
               <p className="mt-2 text-[11px] text-[var(--workspace-muted)]">
-                Target date: {model.project.targetDate}
+                {content.dashboard.journey.targetDate}{model.project.targetDate}
               </p>
             )}
           </div>
           <span className="inline-flex items-center gap-2 rounded-full bg-[var(--workspace-tint)] px-3 py-2 text-xs text-[var(--workspace-muted)]">
             <RouteIcon />
             {model.project
-              ? `${model.project.progressPercent}% delivery complete`
-              : `${completed} preparation stages complete`}
+              ? `${model.project.progressPercent}% ${content.dashboard.journey.deliveryComplete}`
+              : `${completed} ${content.dashboard.journey.preparationStagesComplete}`}
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
@@ -242,7 +202,7 @@ export function JourneyView({
           {selected.progress > 0 && (
             <div className="mt-5">
               <div className="mb-2 flex items-center justify-between text-[11px] text-[var(--workspace-muted)]">
-                <span>Stage progress</span>
+                <span>{content.dashboard.journey.stageProgress}</span>
                 <span>{selected.progress}%</span>
               </div>
               <Progress
@@ -259,7 +219,7 @@ export function JourneyView({
           )}
           {selected.targetDate && (
             <p className="mt-3 text-[11px] text-[var(--workspace-muted)]">
-              Target date: {selected.targetDate}
+              {content.dashboard.journey.targetDate}{selected.targetDate}
             </p>
           )}
           {selected.id === "brief" || selected.id === "activation" ? (
@@ -288,7 +248,7 @@ export function JourneyView({
                       </p>
                     </div>
                     <span className="ml-auto shrink-0 text-[10px] text-[var(--workspace-muted)]">
-                      {item.verified ? "Verified" : "Pending"}
+                      {item.verified ? content.dashboard.overview.verified : content.dashboard.overview.pending}
                     </span>
                   </div>
                 ))}
@@ -298,14 +258,14 @@ export function JourneyView({
                   href={onboardingHref}
                   className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--workspace-ink)] px-4 py-2.5 text-xs text-white"
                 >
-                  {model.submitted ? "Review brief" : "Continue brief"}
+                  {model.submitted ? content.dashboard.journey.reviewBrief : content.dashboard.journey.continueBrief}
                   <ArrowUpRight size={14} />
                 </Link>
               )}
               {selected.id === "activation" && data.pending.length > 0 && (
                 <details className="mt-6 rounded-xl bg-[var(--workspace-soft)] p-4">
                   <summary className="cursor-pointer text-xs font-medium">
-                    View all pending verification items ({data.pending.length})
+                    {content.dashboard.journey.viewAllPending} ({data.pending.length})
                   </summary>
                   <ul className="mt-3 list-disc space-y-2 pl-4 text-xs leading-relaxed text-[var(--workspace-muted)]">
                     {data.pending.map((item) => (
@@ -319,14 +279,13 @@ export function JourneyView({
             <div className="mt-6 flex items-start gap-3 rounded-xl bg-[var(--workspace-soft)] p-4">
               <Clock3 size={17} className="mt-0.5 shrink-0 text-[var(--workspace-muted)]" />
               <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">
-                No delivery update has been recorded for this stage. Your agency
-                will confirm the applicable work and timing after activation.
+                {content.dashboard.journey.noDeliveryUpdate}
               </p>
             </div>
           )}
         </section>
         <section className={panelClass}>
-          <h2 className="mb-5 text-base font-medium">Workspace activity</h2>
+          <h2 className="mb-5 text-base font-medium">{content.dashboard.journey.workspaceActivity}</h2>
           {model.activity.length ? (
             <div className="space-y-6">
               {model.activity.map((item, index) => (
@@ -359,13 +318,11 @@ export function JourneyView({
             </div>
           ) : (
             <p className="text-sm leading-relaxed text-[var(--workspace-muted)]">
-              Your saved progress and submission updates will appear here once
-              you start your brief.
+              {content.dashboard.journey.activityEmpty}
             </p>
           )}
           <p className="mt-6 border-t border-[var(--workspace-line)] pt-4 text-[11px] leading-relaxed text-[var(--workspace-muted)]">
-            These are your latest saved records. Delivery dates and completion
-            are confirmed separately by your agency.
+            {content.dashboard.journey.activityFootNote}
           </p>
         </section>
       </div>
@@ -417,24 +374,24 @@ export function ResourcesView({
   return (
     <>
       <ViewHeading
-        title="The pieces of your brand."
-        description="See the content readiness and reference links you shared in your project brief."
+        title={content.dashboard.resources.title}
+        description={content.dashboard.resources.description}
       >
         <Link
           href={onboardingHref}
           className="inline-flex items-center gap-2 rounded-full bg-[var(--workspace-ink)] px-4 py-2.5 text-xs text-white"
         >
-          Update resources
+          {content.dashboard.resources.updateResources}
           <ArrowUpRight size={15} />
         </Link>
       </ViewHeading>
       <div className="grid gap-5 xl:grid-cols-[1.2fr_1fr]">
         <section className={panelClass}>
           <h2 className="mb-2 text-base font-medium">
-            Brand & content readiness
+            {content.dashboard.resources.brandContentReadiness}
           </h2>
           <p className="mb-6 text-xs text-[var(--workspace-muted)]">
-            The asset statuses you recorded during onboarding.
+            {content.dashboard.resources.assetStatuses}
           </p>
           {model.assets.length ? (
             <div className="grid gap-3 sm:grid-cols-2">
@@ -452,25 +409,24 @@ export function ResourcesView({
             <div className="rounded-2xl bg-[var(--workspace-soft)] p-8 text-center">
               <FolderOpen size={28} className="mx-auto mb-4 text-[var(--commerce-green)]" />
               <h3 className="text-sm font-medium">
-                Let’s gather your starting points.
+                {content.dashboard.resources.gatherStartingPoints}
               </h3>
               <p className="mt-2 text-xs leading-relaxed text-[var(--workspace-muted)]">
-                Add your logo, photos, copy, and content readiness to your
-                brief. Final files can be shared securely with your agency.
+                {content.dashboard.resources.gatherStartingPointsDesc}
               </p>
             </div>
           )}
           <div className="mt-6 border-t border-[var(--workspace-line)] pt-4">
-            <p className="mb-2 text-[11px] text-[var(--workspace-muted)]">Content contact</p>
+            <p className="mb-2 text-[11px] text-[var(--workspace-muted)]">{content.dashboard.resources.contentContact}</p>
             <p className="text-sm leading-relaxed">
               {formatAnswer(model.answers["P10.3"])}
             </p>
           </div>
         </section>
         <section className={panelClass}>
-          <h2 className="mb-2 text-base font-medium">Your shared links</h2>
+          <h2 className="mb-2 text-base font-medium">{content.dashboard.resources.yourSharedLinks}</h2>
           <p className="mb-5 text-xs text-[var(--workspace-muted)]">
-            Website, folder, and reference links from your answers.
+            {content.dashboard.resources.sharedLinksDesc}
           </p>
           {urls.length ? (
             <ul className="divide-y divide-[var(--workspace-line)]">
@@ -497,22 +453,20 @@ export function ResourcesView({
                       size={16}
                       className="shrink-0 text-[var(--workspace-muted)]"
                     />
-                    <span className="sr-only">Opens in a new tab</span>
+                    <span className="sr-only">{content.dashboard.resources.opensNewTab}</span>
                   </a>
                 </li>
               ))}
             </ul>
           ) : (
             <p className="rounded-xl bg-[var(--workspace-soft)] p-5 text-xs leading-relaxed text-[var(--workspace-muted)]">
-              No reference links shared yet. You can add them while updating
-              your brief.
+              {content.dashboard.resources.noLinksYet}
             </p>
           )}
           <div className="mt-6 flex items-start gap-3 rounded-xl border border-[var(--workspace-line)] p-4">
             <ShieldCheck size={19} className="mt-0.5 shrink-0 text-[var(--commerce-green)]" />
             <p className="text-xs leading-relaxed text-[var(--workspace-muted)]">
-              Share files and access using your agreed secure method. Account
-              passwords do not belong in your project brief.
+              {content.dashboard.resources.secureShare}
             </p>
           </div>
         </section>
@@ -520,20 +474,18 @@ export function ResourcesView({
       <section className={`${panelClass} mt-5`}>
         <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
           <div>
-            <h2 className="text-base font-medium">Project files</h2>
+            <h2 className="text-base font-medium">{content.dashboard.resources.projectFiles}</h2>
             <p className="mt-2 max-w-2xl text-xs leading-relaxed text-[var(--workspace-muted)]">
-              Upload logos, copy, photos, or reference documents. Each file is
-              stored with your workspace and is visible to your agency.
+              {content.dashboard.resources.projectFilesDesc}
             </p>
           </div>
           <span className="rounded-full bg-[var(--workspace-soft)] px-3 py-1.5 text-[10px] text-[var(--workspace-muted)]">
-            {documents.length} {documents.length === 1 ? "file" : "files"}
+            {documents.length} {documents.length === 1 ? content.dashboard.resources.file : content.dashboard.resources.files}
           </span>
         </div>
         {preview ? (
           <p className="rounded-xl bg-[var(--workspace-soft)] p-5 text-xs leading-relaxed text-[var(--workspace-muted)]">
-            Document sharing becomes available in an authenticated client
-            workspace.
+            {content.dashboard.resources.previewNote}
           </p>
         ) : (
           <DocumentUploader documents={documents} />
@@ -595,7 +547,7 @@ function DocumentUploader({
       setError(
         caught instanceof Error
           ? caught.message
-          : "The upload could not be saved. Please try again.",
+          : content.dashboard.resources.uploadError,
       );
     } finally {
       setBusy(false);
@@ -603,7 +555,7 @@ function DocumentUploader({
   }
 
   async function remove(id: WorkspaceData["documents"][number]["id"]) {
-    if (!window.confirm("Remove this file from your workspace?")) return;
+    if (!window.confirm(content.dashboard.resources.removeConfirm)) return;
     setRemoving(id);
     setError("");
     try {
@@ -612,7 +564,7 @@ function DocumentUploader({
       setError(
         caught instanceof Error
           ? caught.message
-          : "The file could not be removed. Please try again.",
+          : content.dashboard.resources.removeError,
       );
     } finally {
       setRemoving("");
@@ -624,18 +576,18 @@ function DocumentUploader({
       <div className="rounded-2xl border border-dashed border-[var(--workspace-line)] bg-[var(--workspace-surface)] p-5">
         <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
           <label className="text-[11px] font-medium text-[var(--workspace-muted)]">
-            Note for your agency
+            {content.dashboard.resources.noteForAgency}
             <input
               type="text"
               value={description}
               maxLength={200}
               onChange={(event) => setDescription(event.target.value)}
-              placeholder="Optional context for this upload"
+              placeholder={content.dashboard.resources.notePlaceholder}
               className="mt-1.5 w-full rounded-xl border border-[var(--workspace-line)] bg-white px-3 py-2.5 text-xs text-[var(--workspace-ink)] outline-none"
             />
           </label>
           <label className="text-[11px] font-medium text-[var(--workspace-muted)]">
-            Category
+            {content.dashboard.resources.category}
             <select
               value={category}
               onChange={(event) => setCategory(event.target.value)}
@@ -657,7 +609,7 @@ function DocumentUploader({
             accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,.json,.zip,.png,.jpg,.jpeg,.webp,.gif"
             className="sr-only"
             onChange={(event) => void upload(event.target.files)}
-            aria-label="Choose files to upload"
+            aria-label={content.dashboard.resources.chooseFilesLabel}
           />
           <Button
             type="button"
@@ -667,10 +619,10 @@ function DocumentUploader({
             onClick={() => inputRef.current?.click()}
           >
             <Upload size={14} />
-            {busy ? "Uploading…" : "Choose files"}
+            {busy ? content.dashboard.resources.uploading : content.dashboard.resources.chooseFiles}
           </Button>
           <span className="text-[10px] text-[var(--workspace-muted)]">
-            PDF, image, Office, text, CSV, JSON, or ZIP · up to{" "}
+            {content.dashboard.resources.fileTypesHint}
             {formatFileSize(MAX_DOCUMENT_BYTES)}
           </span>
         </div>
@@ -701,7 +653,7 @@ function DocumentUploader({
               </div>
               <span className="rounded-full bg-[var(--workspace-soft)] px-2.5 py-1 text-[10px] text-[var(--workspace-muted)]">
                 {document.status === "needs-update"
-                  ? "Needs update"
+                  ? content.dashboard.resources.needsUpdate
                   : document.status.charAt(0).toUpperCase() +
                     document.status.slice(1)}
               </span>
@@ -730,7 +682,7 @@ function DocumentUploader({
         </ul>
       ) : (
         <p className="mt-4 text-xs text-[var(--workspace-muted)]">
-          No files uploaded yet.
+          {content.dashboard.resources.noFilesYet}
         </p>
       )}
     </div>
@@ -742,14 +694,14 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
   return (
     <>
       <ViewHeading
-        title="Clear scope. Shared expectations."
-        description="Your agency’s confirmed engagement record, fees, and verification status."
+        title={content.dashboard.agreement.title}
+        description={content.dashboard.agreement.description}
       />
       {engagement ? (
         <>
           <div className="mb-5 grid gap-4 md:grid-cols-3">
             <section className="rounded-[20px] bg-[var(--workspace-tint)] p-6">
-              <p className="text-xs text-[var(--workspace-muted)]">Your engagement</p>
+              <p className="text-xs text-[var(--workspace-muted)]">{content.dashboard.agreement.yourEngagement}</p>
               <p className="mt-4 text-3xl font-medium tracking-[-1px]">
                 {engagement.plan}
               </p>
@@ -758,17 +710,17 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
               </p>
             </section>
             <section className="rounded-[20px] bg-[var(--workspace-tint)] p-6">
-              <p className="text-xs text-[var(--workspace-muted)]">Setup fee</p>
+              <p className="text-xs text-[var(--workspace-muted)]">{content.dashboard.agreement.setupFee}</p>
               <p className="mt-4 text-3xl font-medium tracking-[-1px]">
                 <span className="mr-2 text-base">{engagement.currency}</span>
                 {engagement.setupFee.toLocaleString()}
               </p>
               <p className="mt-3 text-xs text-[var(--workspace-muted)]">
-                As recorded in your engagement
+                {content.dashboard.agreement.asRecorded}
               </p>
             </section>
             <section className="rounded-[20px] bg-[var(--workspace-tint)] p-6">
-              <p className="text-xs text-[var(--workspace-muted)]">Ongoing fee</p>
+              <p className="text-xs text-[var(--workspace-muted)]">{content.dashboard.agreement.ongoingFee}</p>
               <p className="mt-4 text-3xl font-medium tracking-[-1px]">
                 {engagement.recurringFee !== undefined ? (
                   <>
@@ -778,19 +730,19 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
                     {engagement.recurringFee.toLocaleString()}
                   </>
                 ) : (
-                  "Not recorded"
+                  content.dashboard.agreement.notRecorded
                 )}
               </p>
               <p className="mt-3 text-xs text-[var(--workspace-muted)]">
                 {engagement.recurringFee !== undefined
-                  ? "Per month, according to agreed scope"
-                  : "Ongoing work follows your agreement"}
+                  ? content.dashboard.agreement.perMonth
+                  : content.dashboard.agreement.ongoingFollows}
               </p>
             </section>
           </div>
           <div className="grid items-start gap-5 xl:grid-cols-[1.3fr_1fr]">
             <section className={panelClass}>
-              <h2 className="mb-4 text-base font-medium">What’s included</h2>
+              <h2 className="mb-4 text-base font-medium">{content.dashboard.agreement.whatsIncluded}</h2>
               <ul className="space-y-3">
                 {engagement.scope.map((item) => (
                   <li
@@ -807,11 +759,11 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
               </ul>
               <details className="mt-6 border-t border-[var(--workspace-line)] pt-4">
                 <summary className="cursor-pointer text-xs font-medium">
-                  Exclusions & third-party costs
+                  {content.dashboard.agreement.exclusionsThirdParty}
                 </summary>
                 <p className="mt-3 text-xs leading-relaxed text-[var(--workspace-muted)]">
                   {engagement.exclusions.join(", ") ||
-                    "See your agreement for exclusions."}
+                    content.dashboard.agreement.seeExclusions}
                 </p>
                 <p className="mt-3 text-xs leading-relaxed text-[var(--workspace-muted)]">
                   {engagement.thirdPartyCosts}
@@ -820,16 +772,16 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
             </section>
             <section className={panelClass}>
               <h2 className="mb-5 text-base font-medium">
-                Verification & billing
+                {content.dashboard.agreement.verificationBilling}
               </h2>
               <div className="space-y-4">
                 {[
                   {
-                    label: "Signed agreement",
+                    label: content.dashboard.agreement.signedAgreement,
                     verified: engagement.signedAgreementRef,
                   },
                   {
-                    label: "40% advance",
+                    label: content.dashboard.agreement.fortyPercentAdvance,
                     verified: engagement.advancePaymentRef,
                   },
                 ].map((item) => (
@@ -842,28 +794,27 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
                     <span
                       className={`rounded-full px-2.5 py-1 text-[10px] ${item.verified ? "bg-[var(--workspace-tint)] text-[var(--workspace-muted)]" : "bg-[#f3efdc] text-[#74652b]"}`}
                     >
-                      {item.verified ? "Verified" : "Pending"}
+                      {item.verified ? content.dashboard.overview.verified : content.dashboard.overview.pending}
                     </span>
                   </div>
                 ))}
               </div>
               <dl className="mt-6 space-y-4 border-t border-[var(--workspace-line)] pt-4 text-xs">
                 <div>
-                  <dt className="text-[var(--workspace-muted)]">Billing name</dt>
+                  <dt className="text-[var(--workspace-muted)]">{content.dashboard.agreement.billingName}</dt>
                   <dd className="mt-1.5">
-                    {engagement.legalName || "Not recorded"}
+                    {engagement.legalName || content.dashboard.agreement.notRecorded}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-[var(--workspace-muted)]">Billing email</dt>
+                  <dt className="text-[var(--workspace-muted)]">{content.dashboard.agreement.billingEmail}</dt>
                   <dd className="mt-1.5 break-all">
-                    {engagement.billingEmail || "Not recorded"}
+                    {engagement.billingEmail || content.dashboard.agreement.notRecorded}
                   </dd>
                 </div>
               </dl>
               <p className="mt-5 text-[11px] leading-relaxed text-[var(--workspace-muted)]">
-                Payment status reflects agency verification. This workspace does
-                not collect payments.
+                {content.dashboard.agreement.paymentStatusNote}
               </p>
             </section>
           </div>
@@ -875,17 +826,16 @@ export function AgreementView({ data }: { data: WorkspaceData }) {
           <span className="mb-5 flex size-16 items-center justify-center rounded-2xl bg-[var(--workspace-tint)] text-[var(--workspace-muted)]">
             <FileText size={27} />
           </span>
-          <h2 className="text-xl font-medium">Your agreement comes next.</h2>
+          <h2 className="text-xl font-medium">{content.dashboard.agreement.agreementComesNext}</h2>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-[var(--workspace-muted)]">
-            Once your agency records your engagement, you’ll see the approved
-            scope, fees, billing details, and verification status here.
+            {content.dashboard.agreement.agreementComesNextDesc}
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3 text-[11px] text-[var(--workspace-muted)]">
             <span className="rounded-full bg-[var(--workspace-soft)] px-3 py-2">
-              Agreement awaiting confirmation
+              {content.dashboard.agreement.agreementAwaiting}
             </span>
             <span className="rounded-full bg-[var(--workspace-soft)] px-3 py-2">
-              40% advance awaiting verification
+              {content.dashboard.agreement.advanceAwaiting}
             </span>
           </div>
         </section>

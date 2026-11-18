@@ -1,4 +1,5 @@
 import { SkeletonBlock } from "./loading";
+import { content } from "@/context/content";
 
 export function RootSkeleton() {
   return (
@@ -8,7 +9,7 @@ export function RootSkeleton() {
       aria-busy="true"
       className="flex min-h-svh flex-col bg-background"
     >
-      <span className="sr-only">Loading Starter Shifter</span>
+      <span className="sr-only">{content.common.loading.site}</span>
       <div aria-hidden="true" className="mx-auto w-full max-w-6xl flex-1 px-6 py-6">
         <div className="flex items-center justify-between gap-6">
           <SkeletonBlock className="h-9 w-36 rounded-xl" />

@@ -1,8 +1,10 @@
 import { twLanding } from "@/lib/landing-styles";
 import { ArrowUpRight, ArrowDown, Globe2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { content } from "@/context/content";
 
 export function HeroSection() {
+  const { hero } = content.landing;
   return (
     <section aria-labelledby="hero-heading" className={twLanding("hero-section")}>
       <div className={twLanding("commerce-hero")}>
@@ -18,33 +20,30 @@ export function HeroSection() {
         </div>
         <div className={twLanding("commerce-copy")}>
           <p className={twLanding("commerce-eyebrow")}>
-            <span /> Your e‑commerce & digital growth agency
+            <span /> {hero.eyebrow}
           </p>
           <h1 id="hero-heading">
-            Your next chapter
+            {hero.titleLines[0]}
             <br />
-            starts with a better store.
+            {hero.titleLines[1]}
           </h1>
           <p className={twLanding("commerce-description")}>
-            From your first online store to the systems behind it. We bring
-            design, e‑commerce, and connected operations together, built around
-            your business.
+            {hero.description}
           </p>
           <div className={twLanding("commerce-actions")}>
             <a
               href="#contact"
               className={buttonVariants({ variant: "hero", size: "marketing" })}
             >
-              Let’s build your store{" "}
+              {hero.primaryCta}{" "}
               <ArrowUpRight aria-hidden="true" data-icon="inline-end" />
             </a>
             <a href="#services" className={twLanding("commerce-explore")}>
-              Explore our services <ArrowDown aria-hidden="true" />
+              {hero.secondaryCta} <ArrowDown aria-hidden="true" />
             </a>
           </div>
           <p className={twLanding("commerce-note")}>
-            <Globe2 aria-hidden="true" /> Your business. Your scope. Wherever
-            you are.
+            <Globe2 aria-hidden="true" /> {hero.note}
           </p>
         </div>
       </div>

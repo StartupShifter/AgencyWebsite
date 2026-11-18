@@ -3,12 +3,13 @@ import { SiteHeader } from "@/components/landing/site-header";
 import { twLanding } from "@/lib/landing-styles";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
+import { content } from "@/context/content";
 
-export function PageSkeleton({ label = "Loading page" }: { label?: string }) {
+export function PageSkeleton({ label = content.common.loadingPage }: { label?: string }) {
   return (
     <div id="top" className="min-h-svh">
       <a className={twLanding("skip-link")} href="#main">
-        Skip to content
+        {content.common.skipToContent}
       </a>
       <SiteHeader />
       <main

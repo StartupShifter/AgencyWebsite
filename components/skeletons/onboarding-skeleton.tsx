@@ -1,6 +1,7 @@
 import { PortalShell } from "@/components/onboarding/portal-shell";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
+import { content } from "@/context/content";
 
 function ChoiceRows() {
   return (
@@ -17,7 +18,7 @@ function ChoiceRows() {
 
 export function OnboardingSkeletonContent() {
   return (
-    <LoadingRegion label="Loading your project brief" className="ob-guided ob-focused">
+    <LoadingRegion label={content.common.loading.projectBrief} className="ob-guided ob-focused">
       <div className="ob-journey-top">
         <div className="space-y-2">
           <SkeletonBlock className="h-5 w-56 max-w-full" />

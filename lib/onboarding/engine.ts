@@ -1,3 +1,4 @@
+import { content } from "../../context/content";
 import type { Answer, Answers, AnswerState, Page, Question, QuestionCondition, ValidationErrors, QuestionnaireDefinition, RoutingCondition } from "./types";
 export type { Answer, Answers, AnswerState, Page, Question, ValidationErrors } from "./types";
 
@@ -15,13 +16,7 @@ export function getAllowedAnswerStates(question: Question): AnswerState[] {
   return question.allowStates ?? (question.id.startsWith("M") || !question.required ? defaultStates : ["unknown", "help"]);
 }
 
-export const ANSWER_STATE_LABELS: Record<AnswerState, string> = {
-  answered: "Answer now",
-  unknown: "Not sure yet",
-  "not-applicable": "Not applicable",
-  deferred: "Provide later",
-  help: "Discuss with us",
-};
+export const ANSWER_STATE_LABELS = content.shared.answerStateLabels as Record<AnswerState, string>;
 
 export function answerValues(answer: Answer | undefined): string[] {
   if (!answer || answer.state !== "answered") return [];
@@ -193,16 +188,16 @@ export function validatePage(page: Page, answers: Answers, options: { privacyRea
 
 
 export function formatAnswer(answer: Answer | undefined, question?: Question): string {
-  if (!answer) return "Not answered";
+  if (!answer) return content.shared.notAnswered;
   if (answer.state !== "answered") return [ANSWER_STATE_LABELS[answer.state], answer.detail].filter(Boolean).join(" — ");
   const value = answer.value;
   const display = (item: string) => question ? getOptionLabel(question, item) : item;
   let result: string;
   if (Array.isArray(value)) result = value.map(display).join(", ");
-  else if (typeof value === "boolean") result = value ? "Confirmed" : "Not confirmed";
+  else if (typeof value === "boolean") result = value ? content.shared.confirmed : content.shared.notConfirmed;
   else if (typeof value === "object") result = Object.entries(value).filter(([, item]) => item.trim()).map(([key, item]) => `${question?.fields?.find(field => field.id === key)?.label ?? display(key)}: ${item}`).join("; ");
   else result = display(String(value));
-  return [result, answer.priority ? `First priority: ${display(answer.priority)}` : "", answer.detail].filter(Boolean).join(" — ");
+  return [result, answer.priority ? `${content.shared.firstPriorityPrefix}${display(answer.priority)}` : "", answer.detail].filter(Boolean).join(" — ");
 }
 
 /** Bind all routing and submission checks to one immutable backend definition. */

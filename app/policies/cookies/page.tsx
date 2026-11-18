@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
 import { InformationPage } from "@/components/landing/information-page";
+import { content } from "@/context/content";
 
-export const metadata: Metadata = { title: "Cookie information — Starter Shifter", robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: content.metadata.cookies.title, robots: { index: false, follow: true } };
 
 export default function CookiesPage() {
-  return <InformationPage policy title="Cookie information." description="The cookie policy is awaiting approval. A complete notice will be added after the live hosting environment and any tracking tools have been reviewed.">
-    <section><h2>Current website features</h2><p>No optional analytics or advertising integration is configured in this website. The current project brief feature creates a local download without submitting your details.</p></section>
-    <section><h2>Future changes</h2><p>If analytics, advertising, or other optional tracking features are introduced, this information will need to be updated for the actual tools and data involved.</p></section>
+  const page = content.pages.policies.cookies;
+  return <InformationPage policy title={page.title} description={page.description}>
+    {page.sections.map((section) => (
+      <section key={section.heading}>
+        <h2>{section.heading}</h2>
+        <p>{section.paragraph}</p>
+      </section>
+    ))}
   </InformationPage>;
 }

@@ -22,6 +22,7 @@ import { DashboardShell } from "./dashboard-shell";
 import { DashboardOverview } from "./dashboard-overview";
 import { BriefView, type BriefFilter } from "./project-brief";
 import { AgreementView, JourneyView, ResourcesView } from "./dashboard-details";
+import { content } from "@/context/content";
 
 export function ClientWorkspace({
   data,
@@ -169,9 +170,9 @@ export function ClientWorkspace({
       {view === "agreement" && <AgreementView data={data} />}
       <Dialog open={updatesOpen} onOpenChange={setUpdatesOpen}>
         <DialogContent className="workspace-theme max-h-[85svh] overflow-y-auto sm:max-w-lg">
-          <DialogTitle>Updates & follow-ups</DialogTitle>
+          <DialogTitle>{content.dashboard.updates.title}</DialogTitle>
           <DialogDescription>
-            Your latest saved progress and details to revisit.
+            {content.dashboard.updates.description}
           </DialogDescription>
           <div className="space-y-4">
             {model.activity.map((item) => (
@@ -208,12 +209,12 @@ export function ClientWorkspace({
             ))}
             {!model.activity.length && (
               <p className="rounded-xl bg-[var(--workspace-tint)] p-4 text-sm text-[var(--workspace-muted)]">
-                Start your project brief to see your updates here.
+                {content.dashboard.updates.empty}
               </p>
             )}
           </div>
           <h2 className="mt-3 text-sm font-medium">
-            Open questions ({model.openItems.length})
+            {content.dashboard.updates.openQuestionsPrefix}{model.openItems.length}{content.dashboard.updates.openQuestionsSuffix}
           </h2>
           {model.openItems.length ? (
             <div className="space-y-2">
@@ -230,7 +231,7 @@ export function ClientWorkspace({
                   <div>
                     <p className="text-xs leading-relaxed">{item.label}</p>
                     <p className="mt-1 text-[11px] text-[var(--workspace-subtle)]">
-                      {item.detail || "Revisit this answer with your agency."}
+                      {item.detail || content.dashboard.updates.revisitDefault}
                     </p>
                   </div>
                 </button>
@@ -238,7 +239,7 @@ export function ClientWorkspace({
             </div>
           ) : (
             <p className="text-xs text-[var(--workspace-muted)]">
-              No follow-ups flagged in your brief.
+              {content.dashboard.updates.noFollowups}
             </p>
           )}
           <Button
@@ -248,13 +249,13 @@ export function ClientWorkspace({
               navigate("journey");
             }}
           >
-            View project journey
+            {content.dashboard.updates.viewProjectJourney}
           </Button>
           <Link
             href={onboardingHref}
             className="text-center text-xs text-[var(--workspace-muted)]"
           >
-            {data.draft ? "Update my brief" : "Start my brief"}
+            {data.draft ? content.dashboard.updates.updateBrief : content.dashboard.updates.startBrief}
           </Link>
         </DialogContent>
       </Dialog>

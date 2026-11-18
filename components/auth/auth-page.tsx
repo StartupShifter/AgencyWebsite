@@ -9,6 +9,7 @@ import { safeAuthRedirect } from "@/lib/auth-redirect";
 import { AuthShell } from "./auth-shell";
 import { AuthForm } from "./auth-form";
 import { AuthSkeleton } from "@/components/skeletons/auth-skeleton";
+import { content } from "@/context/content";
 
 export type AuthSearchParams = Promise<{ error?: string; next?: string }>;
 
@@ -23,7 +24,7 @@ async function AuthPageContent({ searchParams }: { searchParams: AuthSearchParam
   ]);
   const redirectTo = safeAuthRedirect(params.next);
   if (user) redirect(redirectTo);
-  return <AuthShell><AuthForm {...options} redirectTo={redirectTo} initialError={params.error ? "Social sign-in was unsuccessful. Try again or continue with email." : undefined} /></AuthShell>;
+  return <AuthShell><AuthForm {...options} redirectTo={redirectTo} initialError={params.error ? content.auth.socialSignInError : undefined} /></AuthShell>;
 }
 
 export function AuthPage(props: { searchParams: AuthSearchParams }) {

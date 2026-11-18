@@ -8,11 +8,12 @@ import { ProcessSection } from "@/components/landing/process-section";
 import { PricingSection } from "@/components/landing/pricing-section";
 import { FaqSection } from "@/components/landing/faq-section";
 import { SiteFooter } from "@/components/landing/site-footer";
+import { content } from "@/context/content";
 export default function Home() {
   return (
     <div id="top">
       <a className={twLanding("skip-link")} href="#main">
-        Skip to content
+        {content.common.skipToContent}
       </a>
       <SiteHeader />
       <main id="main">

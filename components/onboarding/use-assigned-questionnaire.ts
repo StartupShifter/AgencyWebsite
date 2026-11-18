@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation } from "convex/react";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { api } from "@/convex/_generated/api";
+import { content } from "@/context/content";
 
 /** Pin a version before interaction, including clients who have not saved answers yet. */
 export function useAssignedQuestionnaire(enabled: boolean, previewSessionId?: SessionId) {
@@ -15,7 +16,7 @@ export function useAssignedQuestionnaire(enabled: boolean, previewSessionId?: Se
     let active = true;
     const request = previewSessionId ? ensurePreview({ sessionId: previewSessionId }) : ensure({});
     void request.then(() => { if (active) { setReady(true); setError(""); } }).catch(() => {
-      if (active) setError("We could not load your assigned questionnaire. Reload to try again, or contact the agency if the problem continues.");
+      if (active) setError(content.onboarding.wizard.errors.loadQuestionnaire);
     });
     return () => { active = false; };
   }, [enabled, previewSessionId, ensure, ensurePreview]);

@@ -22,6 +22,7 @@ import type {
   WorkspaceData,
   WorkspaceView,
 } from "@/lib/onboarding/dashboard";
+import { content } from "@/context/content";
 
 export const panelClass =
   "min-w-0 rounded-[20px] border border-[var(--workspace-line)] bg-white p-5 sm:p-6";
@@ -34,7 +35,7 @@ export function ProgressRing({ percent }: { percent: number }) {
       viewBox="0 0 76 76"
       className="size-[82px] shrink-0"
       role="img"
-      aria-label={`${percent}% of questions complete`}
+      aria-label={`${percent}% ${content.dashboard.overview.questionsComplete}`}
     >
       <circle
         cx="38"
@@ -95,27 +96,14 @@ export function DashboardOverview({
     model;
   const verified = prerequisites.filter((item) => item.verified).length;
   const selected = topics.filter((topic) => topic.kind === "module");
-  const sections = [
-    {
-      label: "Business",
-      ids: ["P01", "P02", "P03", "P04", "P05"],
-      color: "var(--commerce-deep)",
-    },
-    { label: "Goals", ids: ["P06", "P07", "P08", "P09"], color: "#439574" },
-    {
-      label: "Requirements",
-      ids: ["P10", "P11", "P12", ...selected.map((topic) => topic.id)],
-      color: "var(--commerce-mint)",
-    },
-    {
-      label: "Confirmation",
-      ids: ["P13", "P14", "P15", "P16"],
-      color: "#b4ae97",
-    },
-  ].map((section) => {
-    const rows = topics.filter((topic) => section.ids.includes(topic.id));
+  const sections = content.dashboard.overview.topicSections.map((section) => {
+    const ids = section.label === "Requirements"
+      ? [...section.ids, ...selected.map((topic) => topic.id)]
+      : section.ids;
+    const rows = topics.filter((topic) => ids.includes(topic.id));
     return {
       ...section,
+      ids,
       complete: rows.reduce((sum, topic) => sum + topic.completed, 0),
       total: rows.reduce((sum, topic) => sum + topic.total, 0),
     };
@@ -124,31 +112,31 @@ export function DashboardOverview({
   const nextTitle =
     project?.nextStepTitle ||
     (!submitted
-      ? "One small phase at a time."
+      ? content.dashboard.overview.nextStepFallbacks.oneSmallPhase
       : model.workspaceReady
-        ? "Ready for your next chapter."
-        : "Let’s get your project ready.");
+        ? content.dashboard.overview.nextStepFallbacks.readyNextChapter
+        : content.dashboard.overview.nextStepFallbacks.getReady);
   const nextDescription =
     project?.nextStepDetail ||
     (!submitted
-      ? "Answer up to five questions, then return here. You can pause between every phase."
+      ? content.dashboard.overview.nextStepFallbacks.answerUpToFive
       : model.workspaceReady
-        ? "Your brief and prerequisites are verified. Your agency can now arrange the agreed next steps."
+        ? content.dashboard.overview.nextStepFallbacks.briefVerified
         : missingPrerequisite?.detail ||
-          "Your agency will confirm the remaining prerequisites.");
+          content.dashboard.overview.nextStepFallbacks.confirmRemaining);
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="mb-1 text-xs text-[var(--workspace-muted)]">
-            A little clarity. A lot of possibility.
+            {content.dashboard.overview.eyebrow}
           </p>
           <h1 className="text-[28px] font-medium leading-tight tracking-[-1.2px] sm:text-[34px]">
-            Welcome back{name ? `, ${name.split(" ")[0]}` : ""}
+            {content.dashboard.overview.welcomeBack}{name ? `, ${name.split(" ")[0]}` : ""}
             <span className="text-[var(--workspace-muted)]">.</span>
           </h1>
           <p className="mt-2 text-[13px] text-[var(--workspace-muted)]">
-            Your project, at a glance. Everything you need to move forward.
+            {content.dashboard.overview.projectAtAGlance}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -157,7 +145,7 @@ export function DashboardOverview({
               onClick={() => onNavigate("brief")}
               className="inline-flex items-center gap-2 rounded-full bg-[var(--commerce-green)] px-4 py-2.5 text-xs font-medium text-white transition-colors hover:bg-[var(--commerce-deep)] xl:hidden"
             >
-              View project brief
+              {content.dashboard.overview.viewProjectBrief}
               <ArrowUpRight size={14} />
             </button>
           )}
@@ -173,7 +161,7 @@ export function DashboardOverview({
               {exportStatus === "preparing" ? (
                 <LoaderCircle size={14} className="animate-spin motion-reduce:animate-none" />
               ) : <ArrowDownToLine size={14} />}
-              {exportStatus === "preparing" ? "Preparing PDF…" : "Export PDF report"}
+              {exportStatus === "preparing" ? content.dashboard.overview.preparingPdf : content.dashboard.overview.exportPdf}
             </Button>
             <p
               id="project-export-status"
@@ -181,12 +169,12 @@ export function DashboardOverview({
               className={`mt-2 text-[11px] leading-relaxed ${exportStatus === "error" ? "text-red-700" : "text-[var(--workspace-muted)]"}`}
             >
               {exportStatus === "error"
-                ? "The PDF could not be created. Please try exporting again."
+                ? content.dashboard.overview.pdfError
                 : exportStatus === "downloaded"
-                  ? "Your PDF is ready. Check your browser downloads."
+                  ? content.dashboard.overview.pdfDownloaded
                   : exportStatus === "preparing"
-                    ? "Adding your answers, charts, and project updates."
-                    : "Answers, requirements, and delivery progress."}
+                    ? content.dashboard.overview.pdfPreparing
+                    : content.dashboard.overview.pdfIdle}
             </p>
           </div>
         </div>
@@ -200,7 +188,7 @@ export function DashboardOverview({
           <div className="flex items-center justify-between text-xs text-[var(--workspace-muted)]">
             <span className="flex items-center gap-2">
               <ClipboardList size={16} />
-              Your project brief
+              {content.dashboard.overview.yourProjectBrief}
             </span>
             <ArrowUpRight size={15} />
           </div>
@@ -210,14 +198,14 @@ export function DashboardOverview({
                 {model.completedPhases}
               </p>
               <p className="mt-2 text-[11px] text-[var(--workspace-muted)]">
-                Phases complete
+                {content.dashboard.overview.phasesComplete}
               </p>
               <span className="mt-3 inline-flex rounded-full bg-white/60 px-2.5 py-1 text-[10px] font-medium">
                 {submitted
-                  ? "Submitted for review"
+                  ? content.dashboard.overview.submittedForReview
                   : data.draft
-                    ? "Continue where you left off"
-                    : "Your story starts here"}
+                    ? content.dashboard.overview.continueWhereLeftOff
+                    : content.dashboard.overview.storyStartsHere}
               </span>
             </div>
             <ProgressRing percent={progress.percent} />
@@ -230,7 +218,7 @@ export function DashboardOverview({
           <div className="flex items-center justify-between text-xs text-[var(--workspace-muted)]">
             <span className="flex items-center gap-2">
               <FileCheck2 size={16} />
-              Project readiness
+              {content.dashboard.overview.projectReadiness}
             </span>
             <ArrowUpRight size={15} />
           </div>
@@ -251,8 +239,8 @@ export function DashboardOverview({
           </div>
           <p className="mt-3 text-[11px] text-[var(--workspace-muted)]">
             {model.workspaceReady
-              ? "Prerequisites verified"
-              : "Prerequisites before activation"}
+              ? content.dashboard.overview.prerequisitesVerified
+              : content.dashboard.overview.prerequisitesBefore}
           </p>
         </button>
         <button
@@ -262,7 +250,7 @@ export function DashboardOverview({
           <div className="flex items-center justify-between text-xs text-[var(--workspace-muted)]">
             <span className="flex items-center gap-2">
               <Layers3 size={16} />
-              Project delivery
+              {content.dashboard.overview.projectDelivery}
             </span>
             <ArrowUpRight size={15} />
           </div>
@@ -274,11 +262,11 @@ export function DashboardOverview({
               <Layers3 size={15} />
             </span>
             <span className="min-w-0 flex-1 truncate px-1 text-[11px] text-[var(--workspace-muted)]">
-              {project ? project.currentStage.replaceAll("-", " ") : "Awaiting project update"}
+              {project ? project.currentStage.replaceAll("-", " ") : content.dashboard.overview.awaitingProjectUpdate}
             </span>
           </div>
           <p className="mt-3 text-[11px] text-[var(--workspace-muted)]">
-            {project ? "Latest progress from your agency" : "Your agency’s delivery progress appears here"}
+            {project ? content.dashboard.overview.latestProgress : content.dashboard.overview.deliveryProgressHere}
           </p>
         </button>
         <button
@@ -288,7 +276,7 @@ export function DashboardOverview({
           <div className="flex items-center justify-between text-xs text-[var(--workspace-muted)]">
             <span className="flex items-center gap-2">
               <Flag size={16} />
-              Open questions
+              {content.dashboard.overview.openQuestions}
             </span>
             <ArrowUpRight size={15} />
           </div>
@@ -297,11 +285,11 @@ export function DashboardOverview({
           </p>
           <div className="mt-4 inline-flex min-h-7 items-center self-start rounded-full bg-white/65 px-2.5 py-1 text-[10px] font-medium text-[var(--workspace-muted)]">
             {openItems.length
-              ? "Let’s work through these"
-              : "No follow-ups flagged"}
+              ? content.dashboard.overview.workThroughThese
+              : content.dashboard.overview.noFollowups}
           </div>
           <p className="mt-3 text-[11px] text-[var(--workspace-muted)]">
-            Details to revisit together
+            {content.dashboard.overview.detailsToRevisit}
           </p>
         </button>
       </div>
@@ -311,19 +299,19 @@ export function DashboardOverview({
             <div className="mb-5 flex items-start justify-between gap-2">
               <div>
                 <h2 className="text-base font-medium tracking-[-.4px]">
-                  A clearer picture of your project
+                  {content.dashboard.overview.clearerPicture}
                 </h2>
                 <p className="mt-1 text-xs text-[var(--workspace-muted)]">
-                  Your brief completion, broken down by topic.
+                  {content.dashboard.overview.briefBreakdown}
                 </p>
               </div>
               <span className="rounded-full bg-[var(--workspace-soft)] px-2.5 py-1 text-[10px] text-[var(--workspace-muted)]">
-                {progress.percent}% of questions complete
+                {progress.percent}% {content.dashboard.overview.questionsComplete}
               </span>
             </div>
             <div
               className="flex h-9 overflow-hidden rounded-lg bg-[var(--workspace-soft)]"
-              aria-label="Question completion by category"
+              aria-label={content.dashboard.overview.completionByCategory}
             >
               {sections.map((section) => (
                 <div
@@ -368,18 +356,18 @@ export function DashboardOverview({
           <section className={panelClass}>
             <div className="mb-2 flex items-center justify-between">
               <h2 className="text-base font-medium tracking-[-.4px]">
-                Inside your brief
+                {content.dashboard.overview.insideYourBrief}
               </h2>
               <button
                 className={subtleButton}
                 onClick={() => onNavigate("brief")}
               >
-                View all
+                {content.dashboard.overview.viewAll}
                 <ArrowUpRight size={14} />
               </button>
             </div>
             <p className="mb-4 text-xs text-[var(--workspace-muted)]">
-              Your details, organized. Open a topic to take a closer look.
+              {content.dashboard.overview.detailsOrganized}
             </p>
             <div className="divide-y divide-[var(--workspace-line)]">
               {topics
@@ -409,14 +397,14 @@ export function DashboardOverview({
                       <p className="text-xs font-medium">{topic.title}</p>
                       <p className="mt-1 text-[10px] text-[var(--workspace-subtle)]">
                         {topic.recorded
-                          ? `${topic.recorded} answers recorded`
-                          : "Ready for your input"}
+                          ? `${topic.recorded} ${content.dashboard.overview.answersRecorded}`
+                          : content.dashboard.overview.readyForInput}
                       </p>
                     </div>
                     <span
                       className={`hidden rounded-full px-2.5 py-1 text-[10px] sm:block ${topic.percent === 100 ? "bg-[var(--workspace-tint)] text-[var(--commerce-green)]" : "bg-[var(--workspace-soft)] text-[var(--workspace-muted)]"}`}
                     >
-                      {topic.percent === 100 ? "Complete" : `${topic.percent}%`}
+                      {topic.percent === 100 ? content.dashboard.overview.complete : `${topic.percent}%`}
                     </span>
                     <ChevronRight
                       size={15}
@@ -431,7 +419,7 @@ export function DashboardOverview({
           <section className="workspace-next-step relative overflow-hidden rounded-[20px] p-6 text-white">
             <span className="mb-6 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-[10px] text-white">
               <span className="size-1 rounded-full bg-white" />
-              Your next step
+              {content.dashboard.overview.yourNextStep}
             </span>
             <h2 className="relative z-10 max-w-[230px] text-[25px] font-medium leading-[1.2] tracking-[-.7px]">
               {nextTitle}
@@ -444,7 +432,7 @@ export function DashboardOverview({
                 onClick={() => onNavigate("brief")}
                 className="relative z-10 inline-flex items-center gap-3 rounded-full bg-white px-4 py-2.5 text-xs font-semibold text-[var(--commerce-deep)] transition-colors hover:bg-[var(--commerce-soft)]"
               >
-                {progress.percent === 100 ? "Review project brief" : "Complete project brief"}
+                {progress.percent === 100 ? content.dashboard.overview.reviewProjectBrief : content.dashboard.overview.completeProjectBrief}
                 <ArrowRight size={15} />
               </button>
             ) : (
@@ -453,7 +441,7 @@ export function DashboardOverview({
                 className="relative z-10 rounded-full text-xs"
                 onClick={() => onNavigate("journey")}
               >
-                View next steps
+                {content.dashboard.overview.viewNextSteps}
                 <ArrowRight size={15} />
               </Button>
             )}
@@ -487,10 +475,10 @@ export function DashboardOverview({
           <section className={panelClass}>
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-base font-medium tracking-[-.4px]">
-                Before we begin
+                {content.dashboard.overview.beforeWeBegin}
               </h2>
               <button
-                aria-label="View all activation prerequisites"
+                aria-label={content.dashboard.overview.viewAllPrereqsLabel}
                 className={subtleButton}
                 onClick={() => onNavigate("journey")}
               >
@@ -518,10 +506,10 @@ export function DashboardOverview({
                     className={`text-[10px] ${item.verified ? "text-[var(--commerce-green)]" : "text-[var(--workspace-subtle)]"}`}
                   >
                     {item.verified
-                      ? "Verified"
+                      ? content.dashboard.overview.verified
                       : item.id === "brief"
-                        ? "In progress"
-                        : "Pending"}
+                        ? content.dashboard.overview.inProgress
+                        : content.dashboard.overview.pending}
                   </span>
                 </div>
               ))}
@@ -535,16 +523,16 @@ export function DashboardOverview({
         </span>
         <div className="min-w-0 flex-1">
           <h2 className="text-xs font-medium">
-            {model.activity[0]?.title ?? "Your workspace is ready for you"}
+            {model.activity[0]?.title ?? content.dashboard.overview.workspaceReadyForYou}
           </h2>
           <p className="mt-1 text-[11px] text-[var(--workspace-muted)]">
             {model.activity[0]
               ? `${new Date(model.activity[0].time).toLocaleDateString("en", { month: "short", day: "numeric" })} · ${model.activity[0].detail}`
-              : "Start your brief to see your saved details and progress here."}
+              : content.dashboard.overview.startBriefToSee}
           </p>
         </div>
         <button className={subtleButton} onClick={() => onNavigate("journey")}>
-          View journey
+          {content.dashboard.overview.viewJourney}
           <ArrowUpRight size={14} />
         </button>
       </section>

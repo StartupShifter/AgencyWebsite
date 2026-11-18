@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Brand } from "./brand";
 import { ContactSection } from "./contact-section";
 import { FooterShader } from "./footer-shader";
+import { content } from "@/context/content";
 import "./site-footer.css";
 
 export type FooterSocialLink = {
@@ -11,45 +12,7 @@ export type FooterSocialLink = {
   platform: "instagram" | "linkedin" | "website";
 };
 
-const navigation = [
-  {
-    title: "Company",
-    links: [
-      ["About us", "/about"],
-      ["How we work", "/how-we-work"],
-      ["Products & Templates", "/products"],
-      ["Plans & pricing", "/#pricing"],
-    ],
-  },
-  {
-    title: "Services",
-    links: [
-      ["Web applications", "/#services"],
-      ["Social media", "/#services"],
-      ["AI workflows", "/#services"],
-      ["Connected operations", "/#process"],
-      ["Maintenance & growth", "/#pricing"],
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      ["Client login", "/login"],
-      ["How we work", "/how-we-work"],
-      ["FAQs", "/faq"],
-      ["Project brief", "/project-brief"],
-      ["Support & care", "/support"],
-    ],
-  },
-  {
-    title: "Information",
-    links: [
-      ["Privacy", "/policies/privacy"],
-      ["Cookies", "/policies/cookies"],
-      ["Service terms", "/policies/terms"],
-    ],
-  },
-];
+const navigation = content.footer.navigation;
 
 export function SiteFooter({
   socialLinks = [],
@@ -59,7 +22,7 @@ export function SiteFooter({
   contactEmail?: string;
 }) {
   return (
-    <footer id="footer" className="agencyFooter" aria-label="Starter Shifter footer">
+    <footer id="footer" className="agencyFooter" aria-label={content.footer.ariaLabel}>
       <div className="agencyFooter-contact">
         <FooterShader />
         <div className="agencyFooter-shell">
@@ -70,19 +33,19 @@ export function SiteFooter({
         <div className="agencyFooter-navigation">
           <div className="agencyFooter-brand">
             <Brand />
-            <p>From your first online store to the workflows behind it. Built around your business.</p>
+            <p>{content.brand.footerNote}</p>
             <span className="agencyFooter-worldwide">
-              <Globe2 aria-hidden="true" /> Working with businesses worldwide.
+              <Globe2 aria-hidden="true" /> {content.brand.footerWorldwide}
             </span>
             {socialLinks.length > 0 && (
-              <nav className="agencyFooter-social" aria-label="Social profiles">
+              <nav className="agencyFooter-social" aria-label={content.footer.socialProfilesLabel}>
                 {socialLinks.map((social) => (
                   <a
                     key={social.href}
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label={`${social.label} (opens in a new tab)`}
+                    aria-label={`${social.label} (${content.common.opensInNewTab})`}
                   >
                     {social.label}<ArrowUpRight aria-hidden="true" />
                   </a>
@@ -99,14 +62,14 @@ export function SiteFooter({
                 ))}
               </ul>
               {group.title === "Information" && (
-                <p className="agencyFooter-policyNote">Policy status and current information.</p>
+                <p className="agencyFooter-policyNote">{content.footer.policyNote}</p>
               )}
             </nav>
           ))}
         </div>
         {/* Footer signature */}
         <div className="agencyFooter-signature" aria-hidden="true">
-          <p>starter shifter</p>
+          <p>{content.brand.footerSignature}</p>
         </div>
       </div>
     </footer>

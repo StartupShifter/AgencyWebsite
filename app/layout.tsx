@@ -5,6 +5,7 @@ import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { RootSkeleton } from "@/components/skeletons/root-skeleton";
 import { getToken } from "@/lib/auth-server";
 import { isConvexConfigured } from "@/lib/convex-config";
+import { content } from "@/context/content";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -17,11 +18,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Starter Shifter — Your business, connected",
-  description:
-    "Ecommerce, creative direction, automation, and connected operations. Starter Shifter helps businesses build their next chapter online, with a scope shaped around their needs.",
-};
+export const metadata: Metadata = content.metadata.home;
 
 async function AuthProvider({ children }: { children: ReactNode }) {
   // Public pages must still render when a deployment does not have Convex

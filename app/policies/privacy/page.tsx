@@ -1,12 +1,25 @@
 import type { Metadata } from "next";
 import { InformationPage } from "@/components/landing/information-page";
+import { content } from "@/context/content";
 
-export const metadata: Metadata = { title: "Privacy information — Starter Shifter", robots: { index: false, follow: true } };
+export const metadata: Metadata = { title: content.metadata.privacy.title, robots: { index: false, follow: true } };
 
 export default function PrivacyPage() {
-  return <InformationPage policy title="Privacy information." description="Starter Shifter’s full privacy policy is awaiting approval. The information below describes the current project brief feature; it is not a complete privacy policy.">
-    <section><h2>Your project brief</h2><p>Your brief is saved to your client account so you can pause, return, and update your answers. It is not shared with other client accounts. Uploaded project files are stored with your workspace and are available to you and Starter Shifter. You can remove your own uploaded files from the workspace.</p></section>
-    <section><h2>Client accounts and onboarding</h2><p>Your client account lets you save your project information and return to it later. Its separate <a href="/policies/onboarding-privacy">onboarding privacy information</a> explains how project details are used. You accept that notice before starting the questions.</p></section>
-    <section><h2>Further information</h2><p>Information about hosting data, any future enquiry service, retention, and privacy requests will be added when the full policy and contact details are approved.</p></section>
+  const page = content.pages.policies.privacy;
+  return <InformationPage policy title={page.title} description={page.description}>
+    {page.sections.map((section) => (
+      <section key={section.heading}>
+        <h2>{section.heading}</h2>
+        {"paragraph" in section ? (
+          <p>{section.paragraph}</p>
+        ) : (
+          <p>
+            {section.paragraphBefore}
+            <a href={section.linkHref}>{section.linkLabel}</a>
+            {section.paragraphAfter}
+          </p>
+        )}
+      </section>
+    ))}
   </InformationPage>;
 }

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Project } from "@/lib/projects";
+import type { Project } from "@/context/content";
 
 export function ProjectPreview({ project, featured = false }: { project: Project; featured?: boolean }) {
   return (
