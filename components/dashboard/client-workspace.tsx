@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { OnboardingPhases } from "./onboarding-phases";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowUpRight, Check, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,6 @@ import {
   type WorkspaceData,
   type WorkspaceView,
 } from "@/lib/onboarding/dashboard";
-import { formatAnswer } from "@/lib/onboarding/engine";
 import { DashboardShell } from "./dashboard-shell";
 import { DashboardOverview } from "./dashboard-overview";
 import { BriefView, type BriefFilter } from "./project-brief";
@@ -55,6 +54,8 @@ export function ClientWorkspace({
       : "all";
   const [query, setQuery] = useState("");
   const [updatesOpen, setUpdatesOpen] = useState(false);
+  const [exportStatus, setExportStatus] = useState<"idle" | "preparing" | "downloaded" | "error">("idle");
+  const exportInFlight = useRef(false);
   const model = getDashboardModel(data);
   const displayName = name || answerText(model.answers, "P01.1");
   const onboardingBase = preview ? "/onboarding/preview" : "/onboarding";
@@ -91,33 +92,19 @@ export function ClientWorkspace({
     setQuery(value);
     if (view !== "brief" || briefFilter !== "all") updateLocation("brief");
   }
-  function exportBrief() {
-    if (!data.draft) return;
-    const brief = {
-      business: model.businessName,
-      status: data.draft.status,
-      lastSaved: new Date(data.draft.updatedAt).toISOString(),
-      submittedAt: data.draft.submittedAt
-        ? new Date(data.draft.submittedAt).toISOString()
-        : null,
-      topics: model.topics.map((topic) => ({
-        title: topic.title,
-        answers: topic.questions.map((question) => ({
-          question: question.label,
-          answer: formatAnswer(model.answers[question.id], question),
-        })),
-      })),
-    };
-    const url = URL.createObjectURL(
-      new Blob([JSON.stringify(brief, null, 2)], { type: "application/json" }),
-    );
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "starter-shifter-project-brief.json";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+  async function exportReport() {
+    if (exportInFlight.current) return;
+    exportInFlight.current = true;
+    setExportStatus("preparing");
+    try {
+      const { downloadProjectReport } = await import("@/lib/onboarding/project-report-pdf");
+      await downloadProjectReport(data);
+      setExportStatus("downloaded");
+    } catch {
+      setExportStatus("error");
+    } finally {
+      exportInFlight.current = false;
+    }
   }
   return (
     <DashboardShell
@@ -144,7 +131,8 @@ export function ClientWorkspace({
           name={displayName}
           onNavigate={navigate}
           onTopic={openTopic}
-          onExport={exportBrief}
+          onExport={exportReport}
+          exportStatus={exportStatus}
           onFollowups={() => {
             setQuery("");
             updateLocation("brief", undefined, "follow-ups");

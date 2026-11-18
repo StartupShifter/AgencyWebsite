@@ -13,6 +13,7 @@ import {
   FileCheck2,
   Flag,
   Layers3,
+  LoaderCircle,
   Route,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -77,6 +78,7 @@ export function DashboardOverview({
   onNavigate,
   onTopic,
   onExport,
+  exportStatus,
   onFollowups,
 }: {
   phasePanel: ReactNode;
@@ -86,6 +88,7 @@ export function DashboardOverview({
   onNavigate: (view: WorkspaceView) => void;
   onTopic: (id: string) => void;
   onExport: () => void;
+  exportStatus: "idle" | "preparing" | "downloaded" | "error";
   onFollowups: () => void;
 }) {
   const { briefProgress: progress, prerequisites, topics, submitted, openItems, project } =
@@ -158,15 +161,34 @@ export function DashboardOverview({
               <ArrowUpRight size={14} />
             </button>
           )}
-          <Button
-            variant="outline"
-            className="rounded-full bg-white text-xs"
-            onClick={onExport}
-            disabled={!data.draft}
-          >
-            <ArrowDownToLine size={14} />
-            Export brief
-          </Button>
+          <div className="max-w-[280px]">
+            <Button
+              variant="outline"
+              className="rounded-full bg-white text-xs"
+              onClick={onExport}
+              disabled={exportStatus === "preparing"}
+              aria-busy={exportStatus === "preparing"}
+              aria-describedby="project-export-status"
+            >
+              {exportStatus === "preparing" ? (
+                <LoaderCircle size={14} className="animate-spin motion-reduce:animate-none" />
+              ) : <ArrowDownToLine size={14} />}
+              {exportStatus === "preparing" ? "Preparing PDF…" : "Export PDF report"}
+            </Button>
+            <p
+              id="project-export-status"
+              role={exportStatus === "error" ? "alert" : "status"}
+              className={`mt-2 text-[11px] leading-relaxed ${exportStatus === "error" ? "text-red-700" : "text-[var(--workspace-muted)]"}`}
+            >
+              {exportStatus === "error"
+                ? "The PDF could not be created. Please try exporting again."
+                : exportStatus === "downloaded"
+                  ? "Your PDF is ready. Check your browser downloads."
+                  : exportStatus === "preparing"
+                    ? "Adding your answers, charts, and project updates."
+                    : "Answers, requirements, and delivery progress."}
+            </p>
+          </div>
         </div>
       </div>
       {phasePanel}
