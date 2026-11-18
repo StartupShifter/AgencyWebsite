@@ -273,7 +273,7 @@ export function DashboardOverview({
             <span className="rounded-md bg-white/60 p-1.5">
               <Layers3 size={15} />
             </span>
-            <span className="flex items-center px-1 text-[11px] text-[var(--workspace-muted)]">
+            <span className="min-w-0 flex-1 truncate px-1 text-[11px] text-[var(--workspace-muted)]">
               {project ? project.currentStage.replaceAll("-", " ") : "Awaiting project update"}
             </span>
           </div>

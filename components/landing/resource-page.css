@@ -928,6 +928,10 @@
   .resourceHero-actions > * {
     width: 100%;
   }
+
+  .resourceHero h1 {
+    font-size: clamp(2.4rem, 11vw, 2.8rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

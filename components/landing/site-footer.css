@@ -46,7 +46,7 @@
 .agencyFooter-signature p { text-align: center; font-size: clamp(50px, 14.1vw, 208px); font-weight: 600; line-height: .9; letter-spacing: -.075em; white-space: nowrap; }
 
 /* The liquid field is clipped to the inset CTA panel; the footer below stays plain. */
-.agencyFooter-shader { position: absolute; inset: 0; }
+.agencyFooter-shader { position: absolute; inset: 0; overflow: hidden; }
 .agencyFooter-shader canvas { display: block; width: 100%; height: 100%; opacity: 0; transition: opacity 600ms ease; }
 .agencyFooter-shader[data-ready="true"] canvas { opacity: 1; }
 .agencyFooter-shader::after {
@@ -65,6 +65,7 @@
   .agencyFooter-navigation { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px; padding-top: 60px; }
   .agencyFooter-brand { grid-column: 1 / -1; }
   .agencyFooter-brand > p { max-width: 380px; }
+  .agencyFooter-navigation li a { min-height: 44px; }
 }
 @media (max-width: 700px) {
   .agencyFooter { margin-top: 20px; padding-top: 16px; }
@@ -81,6 +82,11 @@
   .agencyFooter-meta a { margin-left: auto; }
   .agencyFooter-signature { padding-top: 22px; }
   .agencyFooter-signature p { font-size: 12.2vw; }
+}
+@media (max-width: 480px) {
+  .agencyFooter-shell { padding-inline: 18px; }
+  .agencyFooter-contact > .agencyFooter-shell { padding-inline: 16px; }
+  .agencyFooter-navigation { gap: 26px 12px; padding-block: 32px 22px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .agencyFooter a, .agencyFooter-shader canvas { transition: none; }

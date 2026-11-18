@@ -115,6 +115,7 @@
 .workspace-stat-card {
   display: flex;
   flex-direction: column;
+  min-width: 0;
   border: 1px solid rgb(7 92 63 / 6%);
   font-variant-numeric: tabular-nums;
   transition: background-color 160ms ease, box-shadow 160ms ease, transform 120ms ease;
@@ -193,6 +194,13 @@
 
 @media (max-height: 540px) {
   .workspace-nav-button { min-height: 40px; padding-block: 5px; }
+}
+
+@media (max-width: 639px) {
+  .workspace-nav-button {
+    min-height: 44px;
+    padding-block: 7px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
