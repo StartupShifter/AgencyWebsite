@@ -1,14 +1,13 @@
 import type { FunctionReturnType } from "convex/server";
 import type { api } from "@/convex/_generated/api";
-import { getOnboardingPhases } from "./phases";
+import { getOnboardingPhases } from "./phase-engine";
 import { getGuidedProgress, getGuidedSteps } from "./guided-flow";
 import {
   formatAnswer,
-  getOpenItems,
-  getPages,
+  createQuestionnaire,
   isAnswerEmpty,
   isQuestionVisible,
-} from "./questionnaire";
+} from "./engine";
 import { answerText } from "./summary";
 export { answerText } from "./summary";
 
@@ -27,6 +26,7 @@ export const viewNames: Record<WorkspaceView, string> = {
 };
 
 export function getDashboardModel(data: WorkspaceData) {
+  const { getPages, getOpenItems, getPageById } = createQuestionnaire(data.questionnaire.definition);
   const {
     draft,
     engagement,
@@ -64,7 +64,7 @@ export function getDashboardModel(data: WorkspaceData) {
       percent: Math.round((completed / Math.max(1, questions.length)) * 100),
     };
   });
-  const phases = getOnboardingPhases(answers, draft?.extraModules ?? [], true);
+  const phases = getOnboardingPhases(data.questionnaire.definition, answers, draft?.extraModules ?? [], true);
   const nextPhase = phases.find(phase => !phase.complete) ?? phases.find(phase => phase.id === "final");
   const completedPhases = phases.filter(phase => phase.complete && (phase.id !== "final" || draft?.status === "submitted")).length;
   const openItems = getOpenItems(answers, draft?.extraModules ?? []);
@@ -196,7 +196,7 @@ export function getDashboardModel(data: WorkspaceData) {
       "P03.1",
       "A dedicated space for your business, your brief, and everything that comes next.",
     ),
-    selectedWork: formatAnswer(answers["P08.1"]),
+    selectedWork: formatAnswer(answers["P08.1"], getPageById("P08")?.questions.find(question => question.id === "P08.1")),
   };
 }
 

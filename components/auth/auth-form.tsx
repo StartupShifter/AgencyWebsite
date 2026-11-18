@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Eye, EyeOff, Mail } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
@@ -92,7 +91,6 @@ export function AuthForm({ googleEnabled, facebookEnabled, redirectTo, initialEr
 }
 
 function EmailAuthForm({ redirectTo, onBack }: { redirectTo: string; onBack: () => void }) {
-  const router = useRouter();
   const [signup, setSignup] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
@@ -127,8 +125,8 @@ function EmailAuthForm({ redirectTo, onBack }: { redirectTo: string; onBack: () 
         showError(result.error.status === 429 ? "Too many attempts. Please wait a moment and try again." : signup ? "We couldn’t create your account. Try signing in or use another email." : "We couldn’t sign you in. Check your email and password.");
         return;
       }
-      router.replace(redirectTo);
-      router.refresh();
+      // A new document drops cached Convex tokens and route data from the prior account.
+      window.location.replace(redirectTo);
     } catch { showError("We couldn’t connect. Please try again in a moment."); }
     finally { setPending(false); }
   }

@@ -18,8 +18,8 @@ export function OnboardingWelcome({ privacy, name, phaseCount, preview = false, 
     <div className="ob-start-body">
     <p className="ob-start-greeting">{name ? `Welcome, ${name.trim().split(/\s+/)[0]}.` : "Welcome to Starter Shifter."}</p>
     <h1 id="ob-start-heading">Let’s get to know your business.</h1>
-    <p className="ob-start-description">Tell us about your business, one question at a time. We’ll guide you through {phaseCount} short phases, with up to five questions each.</p>
-    <ul className="ob-welcome-promises"><li><PencilLine aria-hidden="true" /><span>See your progress as you go.</span></li><li><Route aria-hidden="true" /><span>Continue smoothly from one phase to the next</span></li><li><Coffee aria-hidden="true" /><span>Save, take a break, come back anytime</span></li></ul>
+    <p className="ob-start-description">Tell us about your business, one question at a time. Your current route has {phaseCount} short phases, with up to five questions each. Relevant follow-ups may appear as you choose the work you need.</p>
+    <ul className="ob-welcome-promises"><li><PencilLine aria-hidden="true" /><span>Estimates are welcome. Ask for help when you need it.</span></li><li><Route aria-hidden="true" /><span>Continue smoothly from one phase to the next</span></li><li><Coffee aria-hidden="true" /><span>Save, take a break, come back anytime</span></li></ul>
     <form onSubmit={event => { event.preventDefault(); if (ready && accepted && !busy) void onStart?.(); }}>
       <div className="ob-start-consent">
         <Checkbox id={consentId} checked={accepted} onCheckedChange={setAccepted} disabled={busy} />

@@ -13,15 +13,16 @@ import { Button } from "@/components/ui/button";
 import { OnboardingMascot } from "./onboarding-mascot";
 import { OnboardingProgress, QuestionStatusMark } from "./onboarding-progress";
 import { getPhaseQuestionProgress, getQuestionStatus, QUESTION_STATUS_LABELS } from "@/lib/onboarding/progress-state";
-import { getOnboardingPhases, getPhaseErrors } from "@/lib/onboarding/phases";
+import { getOnboardingPhases as buildPhases, getPhaseErrors } from "@/lib/onboarding/phase-engine";
 import { OnboardingWelcome } from "./onboarding-welcome";
 import { getGuidedSteps, getResumeStep } from "@/lib/onboarding/guided-flow";
+import { formatAnswer as formatQuestionAnswer } from "@/lib/onboarding/engine";
 import { QuestionField } from "./question-field";
 import { PortalShell } from "./portal-shell";
 import { PrivacyNotice, type PrivacySettings } from "./privacy-notice";
 import { OnboardingSkeleton } from "@/components/skeletons/onboarding-skeleton";
-import { getPages, getSelectedModules, validatePage, validateSubmission, isQuestionVisible, isQuestionRequired, getOpenItems, isAnswerEmpty, getAllowedAnswerStates, ONBOARDING_VERSION } from "@/lib/onboarding/questionnaire";
-import { MODULE_PAGES } from "@/lib/onboarding/module-pages";
+import { createQuestionnaire, getOpenItemsForPages, validatePage, isQuestionVisible, isQuestionRequired, isAnswerEmpty, getAllowedAnswerStates } from "@/lib/onboarding/engine";
+import { useAssignedQuestionnaire } from "./use-assigned-questionnaire";
 import type { Answers, Page, ValidationErrors } from "@/lib/onboarding/types";
 import type { FunctionReturnType } from "convex/server";
 
@@ -36,11 +37,13 @@ export function OnboardingWizard({ user, development = false }: { user: User; de
   const router = useRouter();
   const mine = useQuery(api.onboarding.getMine, isAuthenticated ? {} : "skip");
   const privacy = useQuery(api.onboarding.getPrivacySettings, {});
+  const assignment = useAssignedQuestionnaire(isAuthenticated);
   useEffect(() => { if (!isLoading && !isAuthenticated) router.replace("/login"); }, [isLoading, isAuthenticated, router]);
-  if (mine === undefined || !privacy || isLoading) return <OnboardingSkeleton />;
+  if (assignment.error) return <PortalShell><p className="ob-error" role="alert">{assignment.error}</p><Button type="button" onClick={() => window.location.reload()}>Reload onboarding</Button></PortalShell>;
+  if (!assignment.ready || mine === undefined || !privacy || isLoading) return <OnboardingSkeleton />;
   if (!mine) return <PortalShell><div className="ob-loading">Your session has ended. <Link href="/login">Sign in again</Link>.</div></PortalShell>;
-  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome phaseCount={getOnboardingPhases(mine.draft?.answers, mine.draft?.extraModules).length} privacy={privacy} name={user.name} development={development} /></PortalShell>;
-  return <WizardSession key={`${user.id}:${privacy.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} user={user} initial={mine} privacy={privacy} />;
+  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome phaseCount={buildPhases(mine.questionnaire.definition, mine.draft?.answers, mine.draft?.extraModules).length} privacy={privacy} name={user.name} development={development} /></PortalShell>;
+  return <WizardSession key={`${user.id}:${mine.questionnaire.version}:${privacy.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} user={user} initial={mine} privacy={privacy} />;
 }
 
 export function OnboardingPreview() {
@@ -50,8 +53,11 @@ function StoredOnboardingPreview() {
   const requestedQuestion = useSearchParams().get("question");
   const [sessionId] = useSessionId();
   const draft = useQuery(api.onboardingPreview.getDraft, sessionId ? { sessionId } : "skip");
-  if (!sessionId || draft === undefined) return <OnboardingSkeleton preview />;
-  return <WizardSession key={`${sessionId}:${requestedQuestion}`} requestedQuestion={requestedQuestion} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, engagement: null, pending: [], workspaceReady: false, project: null, stages: [], activityLog: [], documents: [] }} privacy={previewPrivacy} />;
+  const questionnaire = useQuery(api.onboardingPreview.getQuestionnaire, sessionId ? { sessionId } : "skip");
+  const assignment = useAssignedQuestionnaire(Boolean(sessionId), sessionId);
+  if (assignment.error) return <PortalShell preview><p className="ob-error" role="alert">{assignment.error}</p></PortalShell>;
+  if (!assignment.ready || !sessionId || !questionnaire || draft === undefined) return <OnboardingSkeleton preview />;
+  return <WizardSession key={`${sessionId}:${questionnaire.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} preview previewSessionId={sessionId} user={demoUser} initial={{ draft, questionnaire, engagement: null, pending: [], workspaceReady: false, project: null, stages: [], activityLog: [], documents: [] }} privacy={previewPrivacy} />;
 }
 function getBusinessName(answers?: Answers): string | undefined {
   const answer = answers?.["P01.2"];
@@ -70,6 +76,10 @@ function initialAnswers(user: User, mine: Mine, privacy: PrivacySettings): Answe
 }
 function WizardSession({ user, initial, privacy, preview = false, previewSessionId, requestedQuestion }: { requestedQuestion?: string | null; user: User; initial: Mine; privacy: PrivacySettings; preview?: boolean; previewSessionId?: SessionId }) {
   const router = useRouter();
+  const { getPages, getSelectedModules, validateSubmission } = createQuestionnaire(initial.questionnaire.definition);
+  const MODULE_PAGES = initial.questionnaire.definition.pages.filter(page => page.kind === "module");
+  const getOnboardingPhases = (answers: Answers = {}, extras: string[] = [], privacyReady = true) => buildPhases(initial.questionnaire.definition, answers, extras, privacyReady);
+  const questionById = (id: string) => initial.questionnaire.definition.pages.flatMap(page => page.questions).find(question => question.id === id);
   const saveDraft = useMutation(api.onboarding.saveDraft);
   const submit = useMutation(api.onboarding.submit);
   const savePreviewDraft = useMutation(api.onboardingPreview.saveDraft);
@@ -140,7 +150,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   function persist(snapshot = latest.current) {
     setSaveState("Saving…");
     const next = queue.current.catch(() => undefined).then(() => {
-      const payload = { answers: snapshot.answers, extraModules: snapshot.extras, currentPage: snapshot.currentId, currentQuestion: snapshot.currentQuestion };
+      const payload = { questionnaireVersion: initial.questionnaire.version, answers: snapshot.answers, extraModules: snapshot.extras, currentPage: snapshot.currentId, currentQuestion: snapshot.currentQuestion };
       if (preview) {
         if (!previewSessionId) throw new Error("Your draft session is missing. Reload this page to reconnect.");
         return savePreviewDraft({ ...payload, sessionId: previewSessionId });
@@ -205,8 +215,8 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     const projectEmail = nextAnswers["P01.3"]?.value;
     const projectName = nextAnswers["P01.1"]?.value;
     return { ...nextAnswers,
-      ...(typeof projectEmail === "string" && !nextAnswers["P15.1"] ? { "P15.1": { state: "answered" as const, value: projectEmail } } : {}),
-      ...(typeof projectEmail === "string" && projectEmail.trim() && !nextAnswers["P14.2"] ? { "P14.2": { state: "answered" as const, value: { legalName: initial.engagement?.legalName ?? (typeof projectName === "string" ? projectName : ""), billingEmail: initial.engagement?.billingEmail ?? (typeof projectEmail === "string" ? projectEmail : "") } } } : {}),
+      ...(typeof projectEmail === "string" && questionById("P15.1")?.type === "email" && !nextAnswers["P15.1"] ? { "P15.1": { state: "answered" as const, value: projectEmail } } : {}),
+      ...(typeof projectEmail === "string" && projectEmail.trim() && questionById("P14.2")?.type === "budget" && ["legalName", "billingEmail"].every(id => questionById("P14.2")?.fields?.some(field => field.id === id)) && !nextAnswers["P14.2"] ? { "P14.2": { state: "answered" as const, value: { legalName: initial.engagement?.legalName ?? (typeof projectName === "string" ? projectName : ""), billingEmail: initial.engagement?.billingEmail ?? (typeof projectEmail === "string" ? projectEmail : "") } } } : {}),
     };
   }
   async function continueQuestion() {
@@ -215,8 +225,8 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     if (Object.keys(found).length) { setErrors(found); return; }
     let nextAnswers = answers;
     // Explicitly record skipping, so untouched optional questions never inflate progress.
-    if (question && !isQuestionRequired(question, answers) && isAnswerEmpty(answers[question.id]) && getAllowedAnswerStates(question).includes("deferred")) {
-      nextAnswers = { ...answers, [question.id]: { ...answers[question.id], state: "deferred", value: answers[question.id]?.value ?? "" } };
+    if (question && !isQuestionRequired(question, answers) && isAnswerEmpty(answers[question.id]) && getAllowedAnswerStates(question).includes(question.feedback ? "not-applicable" : "deferred")) {
+      nextAnswers = { ...answers, [question.id]: { ...answers[question.id], state: question.feedback ? "not-applicable" : "deferred", value: answers[question.id]?.value ?? "" } };
     }
     nextAnswers = prefillPage(nextAnswers);
     dirty.current = true;
@@ -276,8 +286,8 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     try { await persist({ answers: nextAnswers, extras, currentId, currentQuestion: step.id });
       if (preview) {
         if (!previewSessionId) throw new Error("Your draft session is missing. Reload this page to reconnect.");
-        await submitPreview({ sessionId: previewSessionId }); moveTo("review"); router.push("/dashboard/preview");
-      } else { await submit({ privacyVersion: privacy.version }); router.push("/dashboard"); router.refresh(); } }
+        await submitPreview({ sessionId: previewSessionId, questionnaireVersion: initial.questionnaire.version }); moveTo("review"); router.push("/dashboard/preview");
+      } else { await submit({ privacyVersion: privacy.version, questionnaireVersion: initial.questionnaire.version }); router.push("/dashboard"); router.refresh(); } }
     catch (e) { setFailure(e instanceof Error ? e.message : "Unable to submit."); }
     finally { setBusy(false); }
   }
@@ -309,7 +319,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const nextAnswers: Answers = { ...answers,
         "P16.3": { state: "answered", value: true },
-        "P02.2": answers["P02.2"] ?? { state: "answered", value: { country: "", timezone } },
+        ...(questionById("P02.2")?.type === "country-timezone" ? { "P02.2": answers["P02.2"] ?? { state: "answered" as const, value: { country: "", timezone } } } : {}),
       };
       try {
         await persist({ answers: nextAnswers, extras, currentId, currentQuestion: step.id });
@@ -321,7 +331,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   return <PortalShell focused preview={preview} beforeLeave={persist} businessName={getBusinessName(answers)} userName={user.name}>
     <main className="ob-guided ob-focused">
       {preview && <div className="ob-preview-banner">Preview mode. Use example business details. Your progress is saved for your next visit.</div>}
-      {initial.draft?.version && initial.draft.version !== ONBOARDING_VERSION && <div className="ob-preview-banner">The questionnaire has been updated. Your existing answers are retained; review the current questions before submission.</div>}
+      {initial.questionnaire.customized && <div className="ob-preview-banner">Your agency prepared this questionnaire for your project. Please review any newly requested details.</div>}
       <div className="ob-journey-top">
         <div className="ob-journey-title">One question at a time</div>
         <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={16} aria-hidden="true" />Save and exit</button>
@@ -333,13 +343,14 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
           <span><span className="ob-phase-kicker">Phase {phaseIndex + 1} of {phases.length}</span>{phase.title}</span>
           <span className="ob-question-position">{reviewPhase ? "Phase review" : question ? `Question ${questionIndex + 1} of ${phase.total}` : "Review your answers"}</span>
         </div>
+        {!reviewPhase && page.description && question?.id === page.questions.find(item => isQuestionVisible(item, answers))?.id && <p className="ob-help">{page.description}</p>}
         {!reviewPhase && <div className="ob-question-status" data-status={questionStatus}><QuestionStatusMark status={questionStatus} />{QUESTION_STATUS_LABELS[questionStatus]}{questionStatus === "later" && " · You can answer this before you finish."}</div>}
         {completedPhase && <p className="ob-phase-saved" role="status"><CheckCheck size={16} aria-hidden="true" />{completedPhase} saved. Let’s keep going.</p>}
       {reviewPhase ? <section className="ob-phase-recap" aria-labelledby="ob-guided-heading">
         <span className="ob-phase-kicker">Before the next phase</span>
         <h1 id="ob-guided-heading" tabIndex={-1} ref={headingRef}>{phaseProgress.later.length ? "A few details for later" : "This phase is ready"}</h1>
         <p>You’ve answered {phaseProgress.answered} of {phaseProgress.total} questions in this phase. {phaseProgress.later.length ? "You can fill in these details now, or keep them flagged for your final review." : "Your changes are saved. Continue whenever you’re ready."}</p>
-        <ul>{phaseProgress.later.map(item => <li key={item.id}><QuestionStatusMark status="later" /><span>{item.question!.label}<small>{formatAnswer(answers[item.id])}</small></span><button type="button" disabled={busy} onClick={() => void navigate(item.id, true)}>Answer now<ArrowRight size={14} aria-hidden="true" /></button></li>)}</ul>
+        <ul>{phaseProgress.later.map(item => <li key={item.id}><QuestionStatusMark status="later" /><span>{item.question!.label}<small>{formatAnswer(answers[item.id], item.question)}</small></span><button type="button" disabled={busy} onClick={() => void navigate(item.id, true)}>Answer now<ArrowRight size={14} aria-hidden="true" /></button></li>)}</ul>
         {failure && <p className="ob-error" role="alert">{failure}</p>}
         <div className="ob-guided-actions"><Button type="button" variant="ghost" disabled={busy} onClick={() => setReviewPhase(false)}><ArrowLeft data-icon="inline-start" />Back</Button><Button type="button" disabled={busy} onClick={() => void finishPhase()}>{busy ? "Saving…" : phaseProgress.later.length ? `Continue with ${phaseProgress.later.length} for later` : "Continue to next phase"}<ArrowRight data-icon="inline-end" /></Button></div>
       </section> : <section className="ob-guided-stage" aria-labelledby="ob-guided-heading">
@@ -381,14 +392,14 @@ export function EngagementSummary({ engagement }: { engagement: Mine["engagement
   if (!engagement) return <div className="ob-context-box"><h2>No approved engagement recorded yet</h2><p>Your project agreement, scope, fees, and billing record will appear here once the agency records them. You can still submit a brief for review.</p><p>Agreement: awaiting confirmation · 40% advance: awaiting verification</p></div>;
   return <div className="ob-context-box"><h2>{engagement.plan} · Approved project record</h2><p>{engagement.summary}</p><p>Setup: {engagement.currency} {engagement.setupFee.toLocaleString()}{engagement.recurringFee !== undefined ? ` · Recurring: ${engagement.currency} ${engagement.recurringFee.toLocaleString()} / month` : ""}</p><p>Scope: {engagement.scope.join(", ")}</p><p>Exclusions: {engagement.exclusions.join(", ") || "See your agreement"}</p><p>Third-party costs: {engagement.thirdPartyCosts}</p><p>Agreement: {engagement.signedAgreementRef ? "Verified" : "Awaiting confirmation"} · 40% advance: {engagement.advancePaymentRef ? "Verified" : "Awaiting verification"}</p></div>;
 }
-export function formatAnswer(answer?: Answers[string]): string {
-  if (!answer) return "Not provided";
-  if (answer.state !== "answered") return { unknown: "Not sure yet", "not-applicable": "Not applicable", deferred: "Provide later", help: "Guidance requested" }[answer.state] + (answer.detail ? ` · ${answer.detail}` : "");
-  const value = Array.isArray(answer.value) ? answer.value.join(", ") : typeof answer.value === "object" ? Object.entries(answer.value).filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join(" · ") : typeof answer.value === "boolean" ? answer.value ? "Confirmed" : "Not confirmed" : String(answer.value);
-  return (value || "Not provided") + (answer.priority ? ` · First priority: ${answer.priority}` : "") + (answer.detail ? ` · ${answer.detail}` : "");
+export function formatAnswer(answer?: Answers[string], question?: import("@/lib/onboarding/types").Question): string {
+  return formatQuestionAnswer(answer, question);
 }
 export function ReviewSummary({ pages, answers, onEdit, editHref = "/onboarding" }: { pages: Page[]; answers: Answers; onEdit?: (id: string) => void; editHref?: string }) {
-  const groups = [ { title: "Business and contact", ids: ["P01", "P02", "P03", "P04", "P05"] }, { title: "Goals and current process", ids: ["P06", "P07", "P09"] }, { title: "Selected work and requirements", ids: ["P08", "P10", "P11", "P12", ...pages.filter(p => p.kind === "module").map(p => p.id)] }, { title: "Responsibilities and engagement", ids: ["P13", "P14", "P15"] } ];
-  const openItems = getOpenItems(answers, pages.filter(page => page.kind === "module").map(page => page.id));
-  return <div className="ob-review">{groups.map(group => <details key={group.title}><summary><span>{group.title}<small>{pages.filter(p => group.ids.includes(p.id)).length} topics to review</small></span><ChevronDown size={16} aria-hidden="true" /></summary>{pages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>Edit</button> : <Link href={editHref}>Edit brief</Link>}</div><dl>{p.questions.filter(q => isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`Edit answer: ${q.label}`} onClick={() => onEdit(q.id)}>Edit</button>}</dt><dd>{formatAnswer(answers[q.id])}</dd></div>)}</dl></section>)}</details>)}<details><summary>Open questions and follow-ups<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">No follow-up flags recorded. Optional unanswered details can be supplied later.</p>}</details></div>;
+  const groups = [ { title: "Business and contact", ids: ["P01", "P02", "P03", "P04", "P05"] }, { title: "Goals and current process", ids: ["P06", "P07", "P09"] }, { title: "Selected work and requirements", ids: ["P08", "P10", "P11", "P12", ...pages.filter(p => p.kind === "module").map(p => p.id)] }, { title: "Responsibilities and engagement", ids: ["P13", "P14", "P15"] }, { title: "Final notes and onboarding feedback", ids: ["P16"] } ];
+  const mapped = new Set(groups.flatMap(group => group.ids));
+  const additional = pages.filter(page => !mapped.has(page.id)).map(page => page.id);
+  if (additional.length) groups.push({ title: "Additional project details", ids: additional });
+  const openItems = getOpenItemsForPages(answers, pages);
+  return <div className="ob-review">{groups.map(group => <details key={group.title}><summary><span>{group.title}<small>{pages.filter(p => group.ids.includes(p.id)).length} topics to review</small></span><ChevronDown size={16} aria-hidden="true" /></summary>{pages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>Edit</button> : <Link href={editHref}>Edit brief</Link>}</div><dl>{p.questions.filter(q => !q.acknowledgement && isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`Edit answer: ${q.label}`} onClick={() => onEdit(q.id)}>Edit</button>}</dt><dd>{formatAnswer(answers[q.id], q)}</dd></div>)}</dl></section>)}</details>)}<details><summary>Open questions and follow-ups<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">No follow-up flags recorded. Optional unanswered details can be supplied later.</p>}</details></div>;
 }

@@ -1,3 +1,4 @@
+import { resolveQuestionnaire } from "./questionnaireStore";
 import { ConvexError, v } from "convex/values";
 import { internalQuery, type QueryCtx } from "./_generated/server";
 import { authComponent } from "./auth";
@@ -139,6 +140,7 @@ export const listClients = internalQuery({
           .sort((a, b) => b.uploadedAt - a.uploadedAt)[0];
         const summary = draft
           ? getClientSummary({
+          definition: (await resolveQuestionnaire(ctx, "client", authUserId, draft.version)).definition,
               answers: draft.answers,
               extraModules: draft.extraModules,
               status: draft.status,

@@ -27,7 +27,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   ANSWER_STATE_LABELS,
   formatAnswer,
-} from "@/lib/onboarding/questionnaire";
+} from "@/lib/onboarding/engine";
 import {
   DOCUMENT_CATEGORIES,
   MAX_DOCUMENT_BYTES,
@@ -95,7 +95,7 @@ export function BriefView({
           topic.title,
           ...topic.questions.flatMap((question) => [
             question.label,
-            formatAnswer(model.answers[question.id]),
+            formatAnswer(model.answers[question.id], question),
           ]),
         ].some((text) => text.toLowerCase().includes(normalized))),
   );
@@ -106,7 +106,7 @@ export function BriefView({
       (question) =>
         !normalized ||
         active.title.toLowerCase().includes(normalized) ||
-        [question.label, formatAnswer(model.answers[question.id])].some(
+        [question.label, formatAnswer(model.answers[question.id], question)].some(
           (text) => text.toLowerCase().includes(normalized),
         ),
     ) ?? [];
@@ -256,7 +256,7 @@ export function BriefView({
                       <dd
                         className={`break-words whitespace-pre-wrap text-sm leading-relaxed ${!answer ? "text-[var(--workspace-subtle)]" : "text-[var(--workspace-ink)]"}`}
                       >
-                        {formatAnswer(answer)}
+                        {formatAnswer(answer, question)}
                       </dd>
                       {answer &&
                         answer.state !== "answered" &&

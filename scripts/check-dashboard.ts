@@ -1,3 +1,4 @@
+import { DEFAULT_DEFINITION } from "../lib/onboarding/default-definition";
 import assert from "node:assert/strict";
 import {
   getDashboardModel,
@@ -6,6 +7,7 @@ import {
 import type { Answers } from "../lib/onboarding/types";
 
 const empty: WorkspaceData = {
+  questionnaire: { version: "test", title: "Test questionnaire", definition: DEFAULT_DEFINITION, customized: false },
   draft: null,
   engagement: null,
   pending: [
@@ -100,6 +102,7 @@ const engagement: NonNullable<WorkspaceData["engagement"]> = {
   updatedAt: 300,
 };
 const activated = getDashboardModel({
+  questionnaire: empty.questionnaire,
   draft: { ...draft, status: "submitted", submittedAt: 200 },
   engagement,
   pending: [],

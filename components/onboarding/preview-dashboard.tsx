@@ -1,5 +1,6 @@
 "use client";
 
+import { useAssignedQuestionnaire } from "./use-assigned-questionnaire";
 import { Suspense } from "react";
 import { useQuery } from "convex/react";
 import { useSessionId } from "convex-helpers/react/sessions";
@@ -19,17 +20,21 @@ export function PreviewDashboard() {
 
 function SavedPreviewDashboard() {
   const [sessionId] = useSessionId();
+  const assignment = useAssignedQuestionnaire(Boolean(sessionId), sessionId);
+  const questionnaire = useQuery(api.onboardingPreview.getQuestionnaire, sessionId ? { sessionId } : "skip");
   const draft = useQuery(
     api.onboardingPreview.getDraft,
     sessionId ? { sessionId } : "skip",
   );
-  if (!sessionId || draft === undefined) return <DashboardLoading preview />;
+  if (assignment.error) return <p role="alert">{assignment.error}</p>;
+  if (!assignment.ready || !questionnaire || !sessionId || draft === undefined) return <DashboardLoading preview />;
   return (
     <ClientWorkspace
       preview
       name={answerText(draft?.answers ?? {}, "P01.1")}
       data={{
         draft,
+        questionnaire,
         engagement: null,
         workspaceReady: false,
         pending: [

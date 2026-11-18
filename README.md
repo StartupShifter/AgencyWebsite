@@ -37,6 +37,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ## Client portal
 
-Login and signup use Better Auth + Convex. The onboarding library covers all 42 topics and 127 questions from the parent `onboarding.md`, with conditional routes, interactive answers, saved drafts, review, and a client dashboard.
+Login and signup use Better Auth + Convex. The onboarding library covers 42 topics and 141 questions, preserving the original 127 question IDs, with conditional routes, interactive answers, saved drafts, review, and a client dashboard.
 
 Read [authentication setup](docs/authentication.md) and [onboarding setup and verification](docs/onboarding.md). Run `bun run dev:backend` alongside `bun run dev`. Google/Facebook require OAuth credentials. Live onboarding starts after the client accepts the versioned project-use notice; `http://localhost:3000/onboarding/preview` is a development-only preview with persistent local Convex drafts and a workspace at `/dashboard/preview`.
+
+The [questionnaire review](docs/onboarding-review.md) records research, every original question’s revision, evidence verification, and the proposed satisfaction measurement plan. `docs/onboarding-questions.json` is the bootstrap reference; current live content can be exported from the admin editor.
+
+Live onboarding definitions are now managed in the separate admin dashboard at `/dashboard/questionnaires`. Published snapshots are pinned per client, so global edits affect new entrants only. Read [versioning, setup and migration](docs/onboarding-versioning.md). The JSON and source question files are bootstrap references; use the admin editor for live changes.

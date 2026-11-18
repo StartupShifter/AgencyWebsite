@@ -3,7 +3,9 @@ import { SessionIdArg } from "convex-helpers/server/sessions";
 import { query, mutation, internalMutation } from "./_generated/server";
 import { answersValidator, draftValidator } from "./onboardingValidators";
 import { validateDraftInput } from "./validateOnboardingDraft";
-import { ONBOARDING_VERSION, validateSubmission } from "../lib/onboarding/questionnaire";
+import { createQuestionnaire } from "../lib/onboarding/engine";
+import { ensureAssignment, resolveQuestionnaire, questionnaireView, requireAssignedVersion } from "./questionnaireStore";
+import { assignedQuestionnaireValidator } from "./questionnaireValidators";
 
 const noticeVersion = "development-preview.v1";
 function requireLocalPreview(sessionId: string) {
@@ -12,6 +14,22 @@ function requireLocalPreview(sessionId: string) {
   // The random browser session is the bearer credential for this draft.
   if (!/^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(sessionId)) throw new ConvexError("Invalid preview session.");
 }
+export const getQuestionnaire = query({
+  args: { ...SessionIdArg }, returns: assignedQuestionnaireValidator,
+  handler: async (ctx, { sessionId }) => {
+    requireLocalPreview(sessionId);
+    const draft = await ctx.db.query("onboardingPreviewDrafts").withIndex("by_sessionId", q => q.eq("sessionId", sessionId)).unique();
+    return questionnaireView(await resolveQuestionnaire(ctx, "preview", sessionId, draft?.version));
+  },
+});
+export const ensureQuestionnaire = mutation({
+  args: { ...SessionIdArg }, returns: v.string(),
+  handler: async (ctx, { sessionId }) => {
+    requireLocalPreview(sessionId);
+    const draft = await ctx.db.query("onboardingPreviewDrafts").withIndex("by_sessionId", q => q.eq("sessionId", sessionId)).unique();
+    return (await ensureAssignment(ctx, "preview", sessionId, draft?.version)).version;
+  },
+});
 export const getDraft = query({
   args: { ...SessionIdArg },
   returns: v.union(v.null(), draftValidator),
@@ -22,28 +40,34 @@ export const getDraft = query({
   },
 });
 export const saveDraft = mutation({
-  args: { ...SessionIdArg, answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), currentQuestion: v.optional(v.string()) },
+  args: { ...SessionIdArg, answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), currentQuestion: v.optional(v.string()), questionnaireVersion: v.string() },
   returns: v.number(),
   handler: async (ctx, args) => {
     requireLocalPreview(args.sessionId);
-    validateDraftInput(args);
     const existing = await ctx.db.query("onboardingPreviewDrafts").withIndex("by_sessionId", q => q.eq("sessionId", args.sessionId)).unique();
-    const unchanged = existing?.version === ONBOARDING_VERSION && JSON.stringify(existing.answers) === JSON.stringify(args.answers) && JSON.stringify(existing.extraModules) === JSON.stringify(args.extraModules);
+    const questionnaire = await ensureAssignment(ctx, "preview", args.sessionId, existing?.version);
+    requireAssignedVersion(questionnaire.version, args.questionnaireVersion);
+    validateDraftInput(args, questionnaire.definition);
+    const draftArgs = { sessionId: args.sessionId, answers: args.answers, extraModules: args.extraModules, currentPage: args.currentPage };
+    const unchanged = existing?.version === questionnaire.version && JSON.stringify(existing.answers) === JSON.stringify(args.answers) && JSON.stringify(existing.extraModules) === JSON.stringify(args.extraModules);
     const updatedAt = Date.now();
-    const value = { ...args, extraModules: [...new Set(args.extraModules)], currentQuestion: args.currentQuestion ?? null, version: ONBOARDING_VERSION, privacyVersion: noticeVersion, status: unchanged && existing?.status === "submitted" ? "submitted" as const : "draft" as const, updatedAt };
+    const value = { ...draftArgs, extraModules: [...new Set(args.extraModules)], currentQuestion: args.currentQuestion ?? null, version: questionnaire.version, privacyVersion: noticeVersion, status: unchanged && existing?.status === "submitted" ? "submitted" as const : "draft" as const, updatedAt };
     if (existing) await ctx.db.patch(existing._id, value);
     else await ctx.db.insert("onboardingPreviewDrafts", value);
     return updatedAt;
   },
 });
 export const submit = mutation({
-  args: { ...SessionIdArg },
+  args: { ...SessionIdArg, questionnaireVersion: v.string() },
   returns: v.null(),
-  handler: async (ctx, { sessionId }) => {
+  handler: async (ctx, { sessionId, questionnaireVersion }) => {
     requireLocalPreview(sessionId);
     const draft = await ctx.db.query("onboardingPreviewDrafts").withIndex("by_sessionId", q => q.eq("sessionId", sessionId)).unique();
     if (!draft) throw new ConvexError("Save your details before submitting.");
-    if (draft.version !== ONBOARDING_VERSION || draft.privacyVersion !== noticeVersion) throw new ConvexError("Review and save the current questionnaire before submitting.");
+    const questionnaire = await ensureAssignment(ctx, "preview", sessionId, draft.version);
+    requireAssignedVersion(questionnaire.version, questionnaireVersion);
+    const { validateSubmission } = createQuestionnaire(questionnaire.definition);
+    if (draft.privacyVersion !== noticeVersion) throw new ConvexError("Review and save the current questionnaire before submitting.");
     const errors = validateSubmission(draft.answers, draft.extraModules, { privacyReady: true });
     if (Object.keys(errors).length) throw new ConvexError({ message: "Complete the highlighted answers.", errors });
     const now = Date.now();
@@ -58,6 +82,8 @@ export const cleanupFixture = internalMutation({
     requireLocalPreview(sessionId);
     const draft = await ctx.db.query("onboardingPreviewDrafts").withIndex("by_sessionId", q => q.eq("sessionId", sessionId)).unique();
     if (draft) await ctx.db.delete(draft._id);
+    const assignment = await ctx.db.query("questionnaireAssignments").withIndex("by_owner", q => q.eq("ownerKind", "preview").eq("ownerId", sessionId)).unique();
+    if (assignment) await ctx.db.delete(assignment._id);
     return null;
   },
 });

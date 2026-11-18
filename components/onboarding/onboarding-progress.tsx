@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, CircleAlert } from "lucide-react";
-import type { OnboardingPhase } from "@/lib/onboarding/phases";
+import type { OnboardingPhase } from "@/lib/onboarding/phase-engine";
 import type { Answers } from "@/lib/onboarding/types";
 import { getPhaseQuestionProgress, getQuestionStatus, QUESTION_STATUS_LABELS, type QuestionStatus } from "@/lib/onboarding/progress-state";
 

@@ -17,6 +17,7 @@ This repository is currently a Next.js starter, not a published description of t
 | Company facts, positioning, site structure, service pricing, or delivery process | [docs/company-context.md](docs/company-context.md) |
 | Any service page, scope, deliverable, integration, or support claim | [docs/services.md](docs/services.md) |
 | Unresolved business decisions or owner answers | [docs/questions.md](docs/questions.md) |
+| Onboarding questions, version assignment, or admin editing | [docs/onboarding-versioning.md](docs/onboarding-versioning.md); published snapshots are immutable and global releases must not change existing client assignments. |
 | Application setup and scripts | [README.md](README.md), [package.json](package.json), and the relevant guide in `node_modules/next/dist/docs/` before writing code |
 | UI components or styling | [components.json](components.json), `components/ui/`, `app/globals.css`, and the relevant `.agents/skills/` guidance when applicable |
 

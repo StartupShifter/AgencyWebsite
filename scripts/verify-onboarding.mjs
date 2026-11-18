@@ -18,7 +18,7 @@ const originals = new Map();
 const clients = [];
 const revision = `local-smoke-${randomBytes(6).toString("hex")}`;
 const references = Object.fromEntries([
-  "getMine", "saveDraft", "submit", "getPrivacySettings", "recordEngagement",
+  "getMine", "ensureQuestionnaire", "saveDraft", "submit", "getPrivacySettings", "recordEngagement",
   "documents:generateUploadUrl", "documents:saveUpload", "documents:listMine", "documents:removeMine",
 ].map(name => [name, makeFunctionReference(name.includes(":") ? name : `onboarding:${name}`)]));
 const anonymous = new ConvexHttpClient(convexUrl);
@@ -57,10 +57,11 @@ async function createClient(number) {
 const answered = value => ({ state: "answered", value });
 
 async function save(client, answers, extraModules = [], currentPage = "P01", privacyVersion = revision, currentQuestion) {
-  return client.convex.mutation(references.saveDraft, { answers, extraModules, currentPage, privacyVersion, ...(currentQuestion !== undefined ? { currentQuestion } : {}) });
+  const questionnaireVersion = await client.convex.mutation(references.ensureQuestionnaire, {});
+  return client.convex.mutation(references.saveDraft, { questionnaireVersion, answers, extraModules, currentPage, privacyVersion, ...(currentQuestion !== undefined ? { currentQuestion } : {}) });
 }
 const read = client => client.convex.query(references.getMine, {});
-const submit = client => client.convex.mutation(references.submit, { privacyVersion: revision });
+const submit = async client => client.convex.mutation(references.submit, { privacyVersion: revision, questionnaireVersion: (await read(client)).questionnaire.version });
 function engagement(client, additional = {}) {
   return { authUserId: client.userId, summary: "Local fixture only", scope: ["Website discovery"], plan: "Basic", currency: "USD", setupFee: 1000, exclusions: ["Ongoing maintenance"], thirdPartyCosts: "Separately agreed", legalName: client.name, billingEmail: client.email, dependencies: [], updatedAt: Date.now(), ...additional };
 }
@@ -88,13 +89,13 @@ try {
   assert.equal(acceptedDraft.answers["P16.3"].value, true);
   assert.equal(acceptedDraft.privacyVersion, defaultPrivacy.version);
   assert.equal(acceptedDraft.currentQuestion, "P01.1");
-  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: defaultPrivacy.version }), /highlighted|complete/i);
+  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: defaultPrivacy.version, questionnaireVersion: "2026-11-18.v2" }), /highlighted|complete/i);
   console.log("PASS default notice permits authenticated acceptance and saves first-question progress without optional settings");
 
   cli(["env", "set", "ONBOARDING_PRIVACY_APPROVED", "false"]);
   assert.equal((await anonymous.query(references.getPrivacySettings, {})).approved, false);
   await assert.rejects(() => save(first, {}, [], "P01", defaultPrivacy.version), /privacy/i);
-  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: defaultPrivacy.version }), /privacy/i);
+  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: defaultPrivacy.version, questionnaireVersion: "2026-11-18.v2" }), /privacy/i);
   console.log("PASS explicit agency pause still blocks storage and submission");
 
   const temporary = { APPROVED: "true", TEXT: "LOCAL TEST NOTICE ONLY; immediately restored after this suite.", CONTACT: "privacy@example.test", RETENTION: "Local fixture deleted after test", VERSION: revision };
@@ -184,7 +185,7 @@ try {
   assert.equal((await read(first)).workspaceReady, false);
   assert.equal((await read(first)).draft.privacyVersion, revision);
   await assert.rejects(() => submit(first), /privacy/i);
-  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: `${revision}-revised` }), /current questionnaire and privacy/i);
+  await assert.rejects(() => first.convex.mutation(references.submit, { privacyVersion: `${revision}-revised`, questionnaireVersion: "2026-11-18.v2" }), /current questionnaire and privacy/i);
   cli(["env", "set", "ONBOARDING_PRIVACY_VERSION", revision]);
   assert.equal((await read(first)).workspaceReady, true);
   cli(["env", "set", "ONBOARDING_PRIVACY_APPROVED", "false"]);

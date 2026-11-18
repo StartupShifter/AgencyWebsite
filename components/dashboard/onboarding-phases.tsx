@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, Coffee } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { getPhaseHref } from "@/lib/onboarding/phases";
+import { getPhaseHref } from "@/lib/onboarding/phase-engine";
 import type { DashboardModel } from "@/lib/onboarding/dashboard";
 
 export function OnboardingPhases({ model, baseHref, completedId }: { model: DashboardModel; baseHref: string; completedId: string | null }) {

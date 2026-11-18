@@ -1,7 +1,7 @@
 import type { Page } from "./types";
 
-// Stable source IDs and verbatim question wording from onboarding.md.
-// A module requirement applies only while that module is in the client’s route.
+// Stable IDs and option values preserve saved client answers.
+// Reviewable export: docs/onboarding-questions.json (bun run scripts/export-onboarding.ts).
 export const MODULE_PAGES: Page[] = [
   {
     "id": "M01",
@@ -10,7 +10,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M01.1",
-        "label": "Are we creating something new, improving what you have, or replacing it?",
+        "label": "Are we building a new site or changing an existing one?",
         "type": "select",
         "required": true,
         "options": [
@@ -19,11 +19,12 @@ export const MODULE_PAGES: Page[] = [
           "Replace what we have",
           "Please recommend"
         ],
-        "help": "We can reuse the existing website link you shared earlier."
+        "help": "Choose the closest match; we will reuse the links you already shared.",
+        "why": "A new build, improvement, or replacement needs a different plan for content, access, and continuity."
       },
       {
         "id": "M01.2",
-        "label": "What information or features must visitors find before taking the main action you selected?",
+        "label": "What do visitors need before they can take the main action?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -38,11 +39,25 @@ export const MODULE_PAGES: Page[] = [
           "Account",
           "Status tracking",
           "Need guidance"
+        ],
+        "help": "Choose the information or tools that help them decide and continue.",
+        "why": "This shapes page content and navigation around the customer’s task.",
+        "optionLabels": {
+          "Offer details": "Product or service details",
+          "Examples": "Examples or customer proof",
+          "FAQs": "Answers to common questions",
+          "Location": "Location or service area",
+          "Search/filtering": "Search and product filters",
+          "Account": "Customer account",
+          "Status tracking": "Order or request status"
+        },
+        "exclusiveOptions": [
+          "Need guidance"
         ]
       },
       {
         "id": "M01.3",
-        "label": "Do you have a platform preference or an existing platform we must keep?",
+        "label": "Is there a website platform we should use or keep?",
         "type": "select",
         "required": false,
         "allowOther": true,
@@ -52,10 +67,23 @@ export const MODULE_PAGES: Page[] = [
           "Another platform",
           "No preference"
         ],
-        "help": "Add the plan name or any reason we must keep a platform, if known."
+        "help": "Choose a preference, or ask for a recommendation; add the current plan if known.",
+        "why": "We check fit, existing investments, and platform limits before recommending a solution."
+      },
+      {
+        "id": "M01.4",
+        "label": "Which task is hardest for customers on your current site?",
+        "type": "textarea",
+        "required": false,
+        "help": "Give one example or page link, including the device if known.",
+        "why": "A real problem helps us prioritize the redesign and define a task to check before launch.",
+        "presets": [
+          "No existing site",
+          "We need help investigating"
+        ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M02",
@@ -64,7 +92,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M02.1",
-        "label": "Do you already own the domain and website/hosting accounts?",
+        "label": "Who controls your domain, website, and hosting accounts?",
         "type": "select",
         "required": true,
         "options": [
@@ -74,22 +102,30 @@ export const MODULE_PAGES: Page[] = [
           "Need to create",
           "Not sure"
         ],
-        "help": "Add the provider and account owner if known. Never share passwords or credentials here."
+        "help": "Name the provider and owner if known; do not share login details.",
+        "why": "Account ownership and access can affect setup, migration, and handover.",
+        "optionLabels": {
+          "Owned and accessible": "We own the accounts and can access them",
+          "Owned but access uncertain": "We own them but need to check access",
+          "Managed by someone else": "Someone else manages them",
+          "Need to create": "We need new accounts"
+        }
       },
       {
         "id": "M02.2",
-        "label": "Which pages or content must be ready at launch?",
+        "label": "Which pages or content need to be ready for launch?",
         "type": "list",
         "required": true,
         "placeholder": "For example: Home — ready, Services — needs writing",
-        "help": "Add your priority launch pages or a link to an existing sitemap. Mark content as ready, needs writing, or needs review.",
+        "help": "List priorities or link an existing page list; mark content ready or needing work.",
         "presets": [
           "Please recommend"
-        ]
+        ],
+        "why": "This defines the launch content and who needs to prepare it."
       },
       {
         "id": "M02.3",
-        "label": "What needs preserving from your existing online presence?",
+        "label": "What should we keep from your current website?",
         "type": "multi-select",
         "required": false,
         "allowOther": true,
@@ -103,10 +139,16 @@ export const MODULE_PAGES: Page[] = [
           "Nothing",
           "Not sure"
         ],
-        "help": "Add anything important to preserve. Content or data that needs moving can be discussed in the migration step."
+        "help": "Choose what matters; add important URLs or connections in a note.",
+        "why": "We identify migration needs and protect useful content, search visibility, and customer access.",
+        "optionLabels": {
+          "URLs/search traffic": "Important page links and search visibility",
+          "Customer access": "Customer accounts and sign-in",
+          "Integrations": "Connections to other tools"
+        }
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M03",
@@ -115,7 +157,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M03.1",
-        "label": "Approximately how many products and variations should launch first?",
+        "label": "How large is your first product catalog?",
         "type": "select",
         "required": true,
         "allowOther": true,
@@ -128,11 +170,12 @@ export const MODULE_PAGES: Page[] = [
           "More than 1,000",
           "Not sure"
         ],
-        "help": "Count products and variations for your first launch. Variations might be size, color, material, or configuration."
+        "help": "Choose a band for products; note the separate variation count if known.",
+        "why": "Ten products with many sizes can involve more setup than ten simple items; rough counts help estimate the work."
       },
       {
         "id": "M03.2",
-        "label": "What must customers choose or provide for a product?",
+        "label": "What choices must a customer make for a product?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -145,21 +188,65 @@ export const MODULE_PAGES: Page[] = [
           "Approval",
           "Nothing"
         ],
-        "help": "You can add one example after choosing the relevant options."
+        "help": "Choose what applies, then add one example if helpful.",
+        "why": "Product choices affect the catalog structure, pricing, fulfillment, and checkout.",
+        "optionLabels": {
+          "Variant": "Size, color, or another version",
+          "Bundle": "A bundle or product set",
+          "Measurements": "Custom measurements",
+          "Text/image personalization": "Personalized text or images",
+          "Approval": "A proof or design approval",
+          "Nothing": "No choices beyond the product itself"
+        },
+        "optionDescriptions": {
+          "Variant": "For example, a shirt available in several sizes and colors.",
+          "Text/image personalization": "For example, a name or uploaded design printed on a product."
+        }
       },
       {
         "id": "M03.3",
-        "label": "Where are the current product details, prices, and images kept?",
+        "label": "Where are your product details, prices, and images kept?",
         "type": "assets",
         "required": true,
-        "help": "Share the current catalog link, document link, or tool name. A full catalog can follow later; use only redacted examples.",
+        "help": "Name the tool or link a catalog; a small redacted example is enough.",
         "presets": [
           "Not prepared yet",
           "A colleague will provide this"
+        ],
+        "why": "We check data readiness, missing details, image rights, and import needs before building the catalog."
+      },
+      {
+        "id": "M03.4",
+        "label": "Which products matter most commercially?",
+        "type": "textarea",
+        "required": false,
+        "help": "Name best sellers or priorities; share price ranges and margin limits only if comfortable.",
+        "why": "This helps us prioritize products and avoid promotions that are unsuitable for your costs or supply.",
+        "presets": [
+          "No sales history yet",
+          "Discuss privately"
         ]
+      },
+      {
+        "id": "M03.5",
+        "label": "How should customers find the right product?",
+        "type": "multi-select",
+        "required": false,
+        "help": "Choose useful browsing methods; add important product facts in a note.",
+        "why": "Your catalog structure and search filters should reflect how people choose, not just how stock is stored.",
+        "options": [
+          "Browse by category",
+          "Search by name or product code",
+          "Filter by size, color, or material",
+          "Compare specifications",
+          "Find compatible products or parts",
+          "Get help choosing",
+          "Not sure"
+        ],
+        "allowOther": true
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M04",
@@ -168,7 +255,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M04.1",
-        "label": "Where do you track stock or availability today?",
+        "label": "Where do you keep stock counts today?",
         "type": "select",
         "required": true,
         "allowOther": true,
@@ -180,19 +267,27 @@ export const MODULE_PAGES: Page[] = [
           "Not tracked",
           "Another process"
         ],
-        "help": "Add the tool name and the person who keeps the source up to date, if known."
+        "help": "Choose the main source; add its name and who updates it.",
+        "why": "We need a trusted stock source before designing synchronization or availability rules.",
+        "optionLabels": {
+          "Inventory system": "Stock management software",
+          "Supplier feeds": "Stock updates from suppliers",
+          "Physical records": "Paper or in-store records",
+          "Not tracked": "We do not track stock yet"
+        }
       },
       {
         "id": "M04.2",
-        "label": "Which locations and sales channels share that stock?",
+        "label": "Which locations and sales channels use the same stock?",
         "type": "list",
         "required": true,
         "placeholder": "For example: 2 stores and an online shop",
-        "help": "An approximate location count and your main sales channels are enough. Mention reservations, batches/expiry, or serial numbers only if relevant."
+        "help": "List your main warehouses, stores, website, and marketplaces.",
+        "why": "Shared stock needs rules to reduce overselling; note batches, expiry, or serial numbers only if relevant."
       },
       {
         "id": "M04.3",
-        "label": "What should happen when availability changes or counts disagree?",
+        "label": "What should happen when an item is unavailable?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -204,10 +299,18 @@ export const MODULE_PAGES: Page[] = [
           "Manual review",
           "Not sure"
         ],
-        "help": "Add who checks exceptions if known. Detailed stock rules can follow later."
+        "help": "Choose the behaviors you need; add an exception owner if known.",
+        "why": "We use this to plan availability messages, backorders, and staff checks.",
+        "optionLabels": {
+          "Stop sales": "Show sold out and stop orders",
+          "Allow backorders": "Accept orders for later delivery",
+          "Waitlist": "Let customers join a waitlist",
+          "Reorder alert": "Alert the team to restock",
+          "Manual review": "Ask a person to check"
+        }
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M05",
@@ -216,7 +319,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M05.1",
-        "label": "How do orders reach customers, and where can you deliver?",
+        "label": "How will orders reach customers?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -227,30 +330,39 @@ export const MODULE_PAGES: Page[] = [
           "Supplier dispatch",
           "Undecided"
         ],
-        "help": "Add your delivery areas and any excluded regions."
+        "help": "Choose delivery methods; add countries or regions you serve and any exclusions.",
+        "why": "Delivery methods and areas determine the shipping and pickup choices customers see.",
+        "optionLabels": {
+          "Courier": "Courier or postal delivery",
+          "Own delivery": "Our own delivery team",
+          "Pickup": "Customer pickup",
+          "Supplier dispatch": "Supplier ships directly"
+        }
       },
       {
         "id": "M05.2",
-        "label": "Which providers and delivery rules do you already use?",
+        "label": "What delivery providers and rules do you use?",
         "type": "textarea",
         "required": false,
-        "help": "An existing document link is welcome. Include providers, rates, packaging constraints, processing time, tracking, and exceptions only if known.",
+        "help": "Link your rules or name providers, charges, processing times, and tracking needs.",
         "presets": [
           "Please help define this"
-        ]
+        ],
+        "why": "We use these details to check checkout rates and fulfillment connections, including packaging or cross-border constraints."
       },
       {
         "id": "M05.3",
-        "label": "Who handles dispatch problems, returns, exchanges, and refunds?",
+        "label": "Who handles delivery issues, returns, and refunds?",
         "type": "textarea",
         "required": true,
-        "help": "Name the responsible person or team and link or summarize your policy. Add who pays return or replacement costs if known.",
+        "help": "Name the team and link or summarize your returns policy.",
         "presets": [
           "Policy not ready"
-        ]
+        ],
+        "why": "Clear ownership and rules help us plan customer messages and exception handling; include return costs if known."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M06",
@@ -259,18 +371,19 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M06.1",
-        "label": "Which suppliers produce or send your products?",
+        "label": "Who makes or dispatches your supplier-made products?",
         "type": "list",
         "required": true,
         "placeholder": "Supplier or production team — name or link",
-        "help": "Add supplier names or links and whether they are selected or still being considered. Include your own production team if relevant.",
+        "help": "Name suppliers or your production team; label undecided suppliers as options.",
         "presets": [
           "Suppliers not selected yet"
-        ]
+        ],
+        "why": "We need to verify production and dispatch capabilities before connecting the order flow."
       },
       {
         "id": "M06.2",
-        "label": "What must be approved before an order enters production?",
+        "label": "What needs approval before production starts?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -282,20 +395,29 @@ export const MODULE_PAGES: Page[] = [
           "Customer proof",
           "Nothing"
         ],
-        "help": "Add whether the quality and timing have already been tested."
+        "help": "Choose the checks needed before an order is made.",
+        "why": "These checks can prevent incorrect or unapproved orders reaching production; note whether samples and timing are tested.",
+        "optionLabels": {
+          "Customer proof": "Customer approval of a preview",
+          "Size/variant availability": "Availability of the selected version",
+          "Artwork": "Artwork or design",
+          "Customization": "Personalization details",
+          "Sample quality": "Quality of a sample"
+        }
       },
       {
         "id": "M06.3",
-        "label": "Who handles supplier failures or remakes, and when must the supplier be paid?",
+        "label": "How do you handle supplier failures and supplier payments?",
         "type": "textarea",
         "required": false,
-        "help": "Add who handles failed production or incorrect personalization, production deadlines, and any payment-before-payout constraints, if known.",
+        "help": "Give the responsible person and key remake, deadline, or payment rules.",
         "presets": [
           "Not sure yet"
-        ]
+        ],
+        "why": "Supplier timing and upfront costs may affect promises, order status, and cash flow."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M07",
@@ -304,14 +426,15 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M07.1",
-        "label": "What can people book, and what limits availability?",
+        "label": "What can customers book?",
         "type": "textarea",
         "required": true,
         "placeholder": "For example: 30-minute online consultations with one adviser",
-        "help": "Start with one service or an existing schedule link. Mention duration, staff or resource, location or online delivery, and capacity if known.",
+        "help": "Give one service example with duration, location, staff, and capacity if known.",
         "presets": [
           "Help us define availability"
-        ]
+        ],
+        "why": "These limits determine available time slots and booking rules."
       },
       {
         "id": "M07.2",
@@ -325,20 +448,28 @@ export const MODULE_PAGES: Page[] = [
           "Waitlist",
           "Not sure"
         ],
-        "help": "Optionally add your calendar and any information needed before booking."
+        "help": "Choose the main approach; add your calendar tool if you have one.",
+        "why": "This determines when we reserve capacity and notify the customer.",
+        "optionLabels": {
+          "Instant": "Confirm immediately",
+          "Staff approval": "Confirm after staff approval",
+          "Consultation first": "Arrange a consultation first",
+          "Waitlist": "Add to a waitlist"
+        }
       },
       {
         "id": "M07.3",
-        "label": "What should happen if someone reschedules, cancels, or does not attend?",
+        "label": "What are your rescheduling, cancellation, and no-show rules?",
         "type": "textarea",
         "required": true,
-        "help": "Link or summarize your policy. Mention deposits and reminders if relevant.",
+        "help": "Link a policy or summarize it; mention deposits and reminders if relevant.",
         "presets": [
           "Help us define the process"
-        ]
+        ],
+        "why": "We need these rules for booking messages, payment requirements, and changes to availability."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M08",
@@ -347,7 +478,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M08.1",
-        "label": "What information do you need to decide whether an inquiry is a good fit?",
+        "label": "What do you need to know before accepting an inquiry?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -358,22 +489,24 @@ export const MODULE_PAGES: Page[] = [
           "Budget range",
           "Target date"
         ],
-        "help": "Choose the information needed to qualify a request. You may also share a sample inquiry form link."
+        "help": "Choose the details that help you assess fit.",
+        "why": "We keep inquiry forms focused on information your team actually uses."
       },
       {
         "id": "M08.2",
-        "label": "How does an inquiry become an approved order or project?",
+        "label": "How does an inquiry become an approved order?",
         "type": "textarea",
         "required": true,
         "placeholder": "Inquiry → quote → approval → project delivery",
-        "help": "A short description or existing template link is enough. Include quotes, approvers, contracts or purchase orders, milestones, and handoffs where relevant.",
+        "help": "Describe the steps or link a quote or order template.",
         "presets": [
           "Help us define the process"
-        ]
+        ],
+        "why": "Quotes, purchase orders, approvals, and handoffs shape the sales workflow."
       },
       {
         "id": "M08.3",
-        "label": "Are there customer-specific prices or purchasing rules?",
+        "label": "Do business customers have special buying rules?",
         "type": "multi-select",
         "required": false,
         "allowOther": true,
@@ -384,10 +517,19 @@ export const MODULE_PAGES: Page[] = [
           "Payment terms",
           "Repeat ordering",
           "None"
-        ]
+        ],
+        "help": "Choose existing rules such as trade pricing, minimum quantities, or payment terms.",
+        "why": "These rules may require different accounts, prices, approvals, or checkout behavior.",
+        "optionLabels": {
+          "Negotiated prices": "Prices agreed for each customer",
+          "Minimum quantities": "Minimum order quantities",
+          "Trade accounts": "Approved business accounts",
+          "Payment terms": "Pay later on agreed terms",
+          "Repeat ordering": "Reorder previous purchases"
+        }
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M09",
@@ -396,7 +538,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M09.1",
-        "label": "What digital content will people receive, and how is it delivered?",
+        "label": "How will customers receive your digital content?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -407,11 +549,18 @@ export const MODULE_PAGES: Page[] = [
           "Live session",
           "License"
         ],
-        "help": "Add the format and how people receive it, if already decided."
+        "help": "Choose delivery methods; add the file or content format if known.",
+        "why": "Delivery format affects hosting, access, and purchase confirmation.",
+        "optionLabels": {
+          "Download": "File download",
+          "Account access": "Access through an account",
+          "Live session": "Live online session",
+          "License": "Licensed content or software"
+        }
       },
       {
         "id": "M09.2",
-        "label": "What controls who can access or use it?",
+        "label": "What limits access to the digital content?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -422,11 +571,18 @@ export const MODULE_PAGES: Page[] = [
           "Prerequisites",
           "Not decided"
         ],
-        "help": "Choose the controls you need and add any known limits."
+        "help": "Choose relevant limits and add any known duration, seat, or license rules.",
+        "why": "We use these rules to plan who gets access and when it ends.",
+        "optionLabels": {
+          "Access duration": "Time-limited access",
+          "Seat limits": "Limit on people or devices",
+          "Prerequisites": "Requirements before joining",
+          "Licenses": "License or permitted-use rules"
+        }
       },
       {
         "id": "M09.3",
-        "label": "What should happen after access is granted?",
+        "label": "What support or features are needed after access starts?",
         "type": "multi-select",
         "required": false,
         "allowOther": true,
@@ -438,10 +594,15 @@ export const MODULE_PAGES: Page[] = [
           "Support",
           "Expiry/revocation",
           "None"
-        ]
+        ],
+        "help": "Choose only what your offer needs.",
+        "why": "Learning, updates, support, and expiry require different follow-up workflows.",
+        "optionLabels": {
+          "Expiry/revocation": "End or remove access"
+        }
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M10",
@@ -450,17 +611,18 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M10.1",
-        "label": "What recurring value does each membership or subscription provide?",
+        "label": "What does a subscription or membership include?",
         "type": "textarea",
         "required": true,
-        "help": "Tell us the ongoing benefit people receive, or share an existing offer link. Add tiers and billing intervals only if defined.",
+        "help": "Summarize the ongoing benefit; link existing tiers and billing periods if available.",
         "presets": [
           "Help us define the offer"
-        ]
+        ],
+        "why": "The recurring offer determines delivery, access, and billing requirements."
       },
       {
         "id": "M10.2",
-        "label": "How should trials, renewals, upgrades, or failed payments work?",
+        "label": "Which subscription billing behaviors do you need?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -474,20 +636,28 @@ export const MODULE_PAGES: Page[] = [
           "Pause access after failed payment",
           "Need guidance"
         ],
-        "help": "These are choices to discuss. Add your existing rules or preferred behavior; never share payment credentials."
+        "help": "Choose trial, renewal, plan-change, and failed-payment behaviors to discuss.",
+        "why": "We check these against your policies and provider capabilities before implementation.",
+        "optionLabels": {
+          "Pause access after failed payment": "Pause access if payment fails"
+        },
+        "exclusiveOptions": [
+          "Need guidance"
+        ]
       },
       {
         "id": "M10.3",
-        "label": "What happens when someone pauses or cancels?",
+        "label": "What happens when a customer pauses or cancels?",
         "type": "textarea",
         "required": true,
-        "help": "Link or summarize your policy. Mention when access ends, outstanding deliveries, refunds, and known reasons people leave.",
+        "help": "Link your rules or explain when access or deliveries end and whether refunds apply.",
         "presets": [
           "Help us define the policy"
-        ]
+        ],
+        "why": "Cancellation behavior affects billing, fulfillment, and customer messages."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M11",
@@ -496,7 +666,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M11.1",
-        "label": "Which groups use the platform, and what does each group need to do?",
+        "label": "Which groups will use the marketplace?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -507,30 +677,33 @@ export const MODULE_PAGES: Page[] = [
           "Reviewers",
           "Administrators"
         ],
-        "help": "Add what each selected group needs to do."
+        "help": "Choose the groups and add the main task each needs to do.",
+        "why": "Each group may need different permissions and screens."
       },
       {
         "id": "M11.2",
-        "label": "How are providers approved and transactions allocated?",
+        "label": "How are providers approved and assigned work or orders?",
         "type": "textarea",
         "required": true,
-        "help": "Include provider quality checks and who supplies the product or performs the service.",
+        "help": "Describe selection, quality checks, and who supplies or performs the work.",
         "presets": [
           "Help us define the process"
-        ]
+        ],
+        "why": "This defines onboarding, matching, and operational responsibilities."
       },
       {
         "id": "M11.3",
         "label": "Who collects money, pays providers, and resolves disputes?",
         "type": "textarea",
         "required": true,
-        "help": "Describe money collection, provider payouts, commissions, refunds, and dispute ownership only where relevant.",
+        "help": "Describe commissions, payouts, refunds, and ownership where relevant.",
         "presets": [
           "Not decided"
-        ]
+        ],
+        "why": "The money flow affects provider feasibility and responsibilities that need specialist review."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M12",
@@ -539,17 +712,18 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M12.1",
-        "label": "Which repeated staff task should we improve first?",
+        "label": "Which repeated team task should we improve first?",
         "type": "textarea",
         "required": true,
-        "help": "Build on the workflow you already described. Add frequency or time spent only if known.",
+        "help": "Reuse your earlier workflow; add frequency or time spent if known.",
         "presets": [
           "Help us choose the priority task"
-        ]
+        ],
+        "why": "We choose a useful first improvement and a baseline for checking its effect."
       },
       {
         "id": "M12.2",
-        "label": "Who should submit, approve, edit, and view that work?",
+        "label": "Which team roles need to submit, approve, edit, or view work?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -560,11 +734,12 @@ export const MODULE_PAGES: Page[] = [
           "External partners",
           "Administrators"
         ],
-        "help": "For each relevant role, add whether they submit, approve, edit, or view work. Mention exceptions and a history of changes if needed."
+        "help": "Choose roles and explain what each can do.",
+        "why": "Permissions and approval steps need to reflect how the team actually works."
       },
       {
         "id": "M12.3",
-        "label": "What would help the team adopt the new process?",
+        "label": "What would help your team use the new process?",
         "type": "multi-select",
         "required": false,
         "allowOther": true,
@@ -574,10 +749,16 @@ export const MODULE_PAGES: Page[] = [
           "Existing sign-in",
           "Gradual rollout",
           "Parallel running"
-        ]
+        ],
+        "help": "Choose support such as training, mobile access, or a gradual rollout.",
+        "why": "A workable rollout matters as much as the tool itself for team adoption.",
+        "optionLabels": {
+          "Existing sign-in": "Use our current sign-in",
+          "Parallel running": "Keep the old process during a trial"
+        }
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M13",
@@ -586,7 +767,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M13.1",
-        "label": "How should your customers pay, and in which currencies?",
+        "label": "How should customers pay you?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -599,30 +780,60 @@ export const MODULE_PAGES: Page[] = [
           "No payment in this flow",
           "Not sure"
         ],
-        "help": "Add the currencies your customers should use. This concerns your customer payments, separate from paying Starter Shifter."
+        "help": "Choose methods; add customer currencies in a note.",
+        "why": "This concerns customer payments, separate from your agency fees, and helps us check provider coverage.",
+        "optionLabels": {
+          "Online payment": "Online card, wallet, or local payment",
+          "Invoice": "Pay an invoice",
+          "Deposit/balance": "Deposit now, balance later",
+          "Cash/pay on delivery": "Cash or payment on delivery"
+        }
       },
       {
         "id": "M13.2",
-        "label": "Do you already have payment and accounting providers?",
+        "label": "Which payment and accounting providers do you use?",
         "type": "list",
         "required": false,
-        "help": "Add provider names and whether the accounts are approved, if known. Mention any invoicing connection. Never share bank or card credentials.",
+        "help": "Name providers and whether accounts are approved; never share bank or card credentials.",
         "presets": [
           "No providers yet"
-        ]
+        ],
+        "why": "Provider readiness and supported connections affect payment setup and reconciliation."
       },
       {
         "id": "M13.3",
-        "label": "What approved pricing, tax, invoice, and refund rules must the flow follow?",
+        "label": "Which approved pricing, tax, invoice, and refund rules apply?",
         "type": "assets",
         "required": true,
-        "help": "Link the approved rules or name the person who will confirm pricing, taxes, invoices, and refunds.",
+        "help": "Link the rules or name the person who will confirm them.",
         "presets": [
           "Needs review"
+        ],
+        "why": "Checkout and invoices must reflect approved business rules; we do not infer tax treatment from a country alone."
+      },
+      {
+        "id": "M13.4",
+        "label": "What does your customer need at checkout?",
+        "type": "multi-select",
+        "required": false,
+        "help": "Choose business needs; we will check platform and payment-provider support.",
+        "why": "Checkout requirements affect conversion, account design, and the steps we need to test before launch.",
+        "options": [
+          "Buy without creating an account",
+          "Use a saved customer account",
+          "Use a fast wallet payment",
+          "Enter company or tax details",
+          "Add a discount or gift card",
+          "Choose pickup or delivery",
+          "Help me choose"
+        ],
+        "allowOther": true,
+        "exclusiveOptions": [
+          "Help me choose"
         ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M14",
@@ -631,7 +842,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M14.1",
-        "label": "Which social channels should we set up or improve first?",
+        "label": "Which social channels matter most for this project?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -644,13 +855,18 @@ export const MODULE_PAGES: Page[] = [
           "TikTok",
           "Pinterest",
           "X",
+          "WhatsApp",
           "Need guidance"
         ],
-        "help": "Choose up to three priorities. Add existing handles, account owner, and access status without sharing logins."
+        "help": "Choose up to three; reuse earlier profile links and note any missing access.",
+        "why": "We focus setup or improvements on relevant channels and verify account ownership separately.",
+        "exclusiveOptions": [
+          "Need guidance"
+        ]
       },
       {
         "id": "M14.2",
-        "label": "What should your social content help people understand or do?",
+        "label": "What should social content help customers do?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -662,11 +878,20 @@ export const MODULE_PAGES: Page[] = [
           "Book",
           "Buy",
           "Return"
-        ]
+        ],
+        "help": "Choose the main actions or messages to support.",
+        "why": "This connects content choices to business goals rather than posting without a purpose.",
+        "optionLabels": {
+          "Understand services": "Understand what we offer",
+          "See products": "Discover products",
+          "Trust expertise": "Build confidence in our expertise",
+          "Inquire": "Ask about a purchase or service",
+          "Return": "Come back or buy again"
+        }
       },
       {
         "id": "M14.3",
-        "label": "Who will create, approve, and publish content?",
+        "label": "Who will create, approve, and publish social content?",
         "type": "select",
         "required": true,
         "options": [
@@ -675,10 +900,28 @@ export const MODULE_PAGES: Page[] = [
           "Shared",
           "Undecided"
         ],
-        "help": "Optionally add available formats and your preferred cadence. Ongoing content production depends on the agreed scope."
+        "help": "Choose the working arrangement; add available formats or capacity in a note.",
+        "why": "We plan responsibilities and approvals around the agreement; ongoing production needs defined coverage.",
+        "optionLabels": {
+          "Client": "Our team",
+          "Agency where agreed": "Starter Shifter, for agreed work",
+          "Shared": "Our team and Starter Shifter together"
+        }
+      },
+      {
+        "id": "M14.4",
+        "label": "Which social content has brought useful results?",
+        "type": "textarea",
+        "required": false,
+        "help": "Link one useful post or redacted report and say what happened and when.",
+        "why": "We distinguish attention from inquiries or sales and learn which topics and formats are worth testing.",
+        "presets": [
+          "No results measured yet",
+          "No social pages yet"
+        ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M15",
@@ -687,17 +930,18 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M15.1",
-        "label": "Which offer and audience should a campaign focus on first?",
+        "label": "Which offer and audience should marketing focus on first?",
         "type": "textarea",
         "required": true,
-        "help": "Use the offer, audience, and goals already shared. Add only the narrower first campaign priority.",
+        "help": "Build on your earlier answers; name the first offer and customer group.",
         "presets": [
           "Help us choose the campaign priority"
-        ]
+        ],
+        "why": "A clear starting point helps us connect campaigns, landing pages, and follow-up."
       },
       {
         "id": "M15.2",
-        "label": "How do people currently find you, and what has worked or failed?",
+        "label": "How do customers currently find you?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -709,24 +953,71 @@ export const MODULE_PAGES: Page[] = [
           "Partnerships",
           "Repeat customers",
           "Offline",
+          "Email or messaging",
           "No history"
         ],
-        "help": "Optionally add what worked or failed and an existing results link."
+        "help": "Choose current sources; add one thing that worked or failed with a dated results link.",
+        "why": "We use past evidence to decide what to retain, test, or investigate rather than guess channel performance.",
+        "optionLabels": {
+          "Search": "Search engines",
+          "Social": "Unpaid social posts",
+          "Ads": "Paid advertising",
+          "Offline": "Offline activity or events",
+          "No history": "We have not started marketing yet"
+        }
       },
       {
         "id": "M15.3",
-        "label": "What limits should guide campaign spending and promotions?",
+        "label": "What spending and promotion limits should marketing follow?",
         "type": "budget",
         "required": true,
-        "fields": [{ "id": "currency", "label": "Currency", "required": true, "placeholder": "For example INR, USD, GBP" }, { "id": "advertising", "label": "Campaign spending limit", "required": true, "placeholder": "Amount or range" }],
-        "help": "Use an amount or range with a currency. Add margin, discounts, and approval limits if known. Advertising spend is separate from agency fees.",
+        "fields": [
+          {
+            "id": "currency",
+            "label": "Currency",
+            "required": true,
+            "placeholder": "For example INR, USD, GBP"
+          },
+          {
+            "id": "advertising",
+            "label": "Campaign spending limit",
+            "required": true,
+            "placeholder": "Amount or range"
+          }
+        ],
+        "help": "Confirm the monthly ad budget already shared; add only promotion limits or changes.",
         "presets": [
           "Discuss first",
           "Use the advertising budget already shared"
+        ],
+        "why": "We reuse your project budget and check commercial limits. Ad spend is client-paid; requests do not authorize campaign spending."
+      },
+      {
+        "id": "M15.4",
+        "label": "Which searches should help people find your business?",
+        "type": "textarea",
+        "required": false,
+        "help": "Give a few phrases a customer might use, or link important search pages.",
+        "why": "We use your language as a research starting point, then verify search demand and intent; rankings are not guaranteed.",
+        "presets": [
+          "Please research this"
+        ]
+      },
+      {
+        "id": "M15.5",
+        "label": "Which marketing accounts and materials can we build on?",
+        "type": "list",
+        "required": false,
+        "help": "Name tools or assets and who manages them; add access status without logins.",
+        "why": "We check analytics, search, ads, email, and creative readiness before planning connections or campaigns.",
+        "placeholder": "For example: Google Search Console — our team owns it; access needs checking",
+        "presets": [
+          "No marketing accounts yet",
+          "Need help checking ownership"
         ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M16",
@@ -735,7 +1026,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M16.1",
-        "label": "What makes an inquiry a qualified lead for your business?",
+        "label": "What makes an inquiry a good fit for your business?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -746,30 +1037,73 @@ export const MODULE_PAGES: Page[] = [
           "Timing",
           "Company type"
         ],
-        "help": "Choose the qualifying criteria and add any limits or cases you cannot serve."
+        "help": "Choose criteria and add any customers or requests you cannot serve.",
+        "why": "We use this to distinguish useful inquiries from volume alone.",
+        "optionLabels": {
+          "Need": "A need we can help with",
+          "Timing": "A suitable buying timeline",
+          "Company type": "A suitable business type"
+        }
       },
       {
         "id": "M16.2",
-        "label": "What should happen when a lead arrives?",
+        "label": "Who follows up when a new inquiry arrives?",
         "type": "textarea",
         "required": true,
-        "help": "Name the owner, destination system, preferred follow-up timing, current capacity, and any appointment or sales handoff.",
+        "help": "Name the owner, destination tool, usual response time, and daily capacity.",
         "presets": [
           "Help us define follow-up"
-        ]
+        ],
+        "why": "A campaign needs a workable handoff so inquiries receive timely follow-up."
       },
       {
         "id": "M16.3",
-        "label": "What should bring people back after the first sale or interaction?",
+        "label": "What encourages customers to buy or use your service again?",
         "type": "textarea",
         "required": false,
-        "help": "Include recurring needs, repeat offers, cancellation reasons, or existing approved communication preferences.",
+        "help": "Describe repeat needs, offers, or reasons people stop returning.",
         "presets": [
           "Help us identify a repeat offer"
+        ],
+        "why": "We use this to plan useful retention messages rather than send promotions without a reason."
+      },
+      {
+        "id": "M16.4",
+        "label": "How have people agreed to receive your marketing messages?",
+        "type": "textarea",
+        "required": false,
+        "help": "Describe signup sources, channels, and where preferences or opt-outs are recorded.",
+        "why": "We need to verify permissions and channel requirements before using a list. Do not upload subscriber details here.",
+        "presets": [
+          "No contact list yet",
+          "Permission needs review"
+        ]
+      },
+      {
+        "id": "M16.5",
+        "label": "Which customer messages would be most useful?",
+        "type": "multi-select",
+        "required": false,
+        "help": "Choose up to three priorities based on customer needs.",
+        "why": "We use this to plan email or messaging flows, timing, and ownership; implementation depends on scope and verified permissions.",
+        "options": [
+          "Welcome after signup",
+          "Help after an unfinished checkout",
+          "Product or service education",
+          "After-purchase guidance",
+          "Review request",
+          "Reorder or renewal reminder",
+          "Bring inactive customers back",
+          "Help me choose"
+        ],
+        "maxSelections": 3,
+        "allowOther": true,
+        "exclusiveOptions": [
+          "Help me choose"
         ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M17",
@@ -778,7 +1112,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M17.1",
-        "label": "Which customer conversations need help, and approximately how many arrive?",
+        "label": "Where do customer questions arrive?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -790,14 +1124,19 @@ export const MODULE_PAGES: Page[] = [
           "Website chat",
           "Dashboard"
         ],
-        "help": "Add the conversation types, approximate volume, and peak periods if known. “Not measured” is a valid answer.",
+        "help": "Choose channels; add rough weekly volume and common topics if known.",
         "presets": [
           "Not measured"
-        ]
+        ],
+        "why": "Volume and channel mix help define staffing, coverage, and workflow needs.",
+        "optionLabels": {
+          "Messaging": "Messaging apps such as WhatsApp",
+          "Dashboard": "Customer portal or workspace"
+        }
       },
       {
         "id": "M17.2",
-        "label": "What may the agency handle, and what requires your approval?",
+        "label": "Which conversations should the agency help handle?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -810,20 +1149,27 @@ export const MODULE_PAGES: Page[] = [
           "Refunds",
           "Exceptions"
         ],
-        "help": "Add which tasks require your approval and any limits before work begins."
+        "help": "Choose tasks and note what needs your approval.",
+        "why": "We clarify responsibilities and authority limits against the agreed scope before handling customers.",
+        "optionLabels": {
+          "FAQs": "Common questions",
+          "Qualifying inquiries": "Checking whether inquiries are a good fit",
+          "Exceptions": "Unusual cases"
+        }
       },
       {
         "id": "M17.3",
-        "label": "Who takes over urgent, sensitive, or unresolved cases?",
+        "label": "Who takes over urgent or unresolved customer issues?",
         "type": "textarea",
         "required": true,
-        "help": "Name the escalation person or role and availability. Requested coverage will be compared with the agreed contract.",
+        "help": "Name a person or role and their availability.",
         "presets": [
           "Need to appoint a contact"
-        ]
+        ],
+        "why": "We need a clear escalation path for complaints, sensitive issues, and exceptions; no coverage hours are assumed."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M18",
@@ -832,7 +1178,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M18.1",
-        "label": "Where should a chatbot help, and which three questions or tasks should it handle first?",
+        "label": "Where should the chatbot help customers?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -844,21 +1190,26 @@ export const MODULE_PAGES: Page[] = [
           "Messaging",
           "Client dashboard"
         ],
-        "help": "Add up to three priority questions or tasks. Channel access and capabilities will be checked for the agreed scope."
+        "help": "Choose channels and add up to three priority questions or tasks.",
+        "why": "We check channel capabilities and access before agreeing what the chatbot can do.",
+        "optionLabels": {
+          "Messaging": "Messaging apps such as WhatsApp"
+        }
       },
       {
         "id": "M18.2",
-        "label": "Which information can it rely on for accurate answers?",
+        "label": "Which approved information can the chatbot use?",
         "type": "assets",
         "required": true,
-        "help": "Share approved FAQs, policies, catalog, or document links. Name who keeps the information current.",
+        "help": "Link FAQs, policies, or catalog pages and name who keeps them updated.",
         "presets": [
           "Needs preparing"
-        ]
+        ],
+        "why": "Reliable sources reduce unsupported answers; private datasets should use an agreed secure process."
       },
       {
         "id": "M18.3",
-        "label": "What language and tone should it use?",
+        "label": "What language and tone should the chatbot use?",
         "type": "multi-select",
         "required": false,
         "allowOther": true,
@@ -870,10 +1221,14 @@ export const MODULE_PAGES: Page[] = [
           "Warm",
           "Formal"
         ],
-        "help": "Add customer languages or tone differences only if they differ from the earlier answers."
+        "help": "Reuse earlier brand preferences unless customer conversations need something different.",
+        "why": "This keeps chatbot responses consistent with your brand and customers’ language needs.",
+        "exclusiveOptions": [
+          "Use the language and tone already shared"
+        ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M19",
@@ -882,7 +1237,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M19.1",
-        "label": "Should it only answer questions, or also take actions?",
+        "label": "What is the chatbot’s main job?",
         "type": "select",
         "required": true,
         "allowOther": true,
@@ -893,11 +1248,18 @@ export const MODULE_PAGES: Page[] = [
           "Check status",
           "Other"
         ],
-        "help": "Account and live-data actions need verified permissions and an agreed scope."
+        "help": "Choose the main job; add other requested actions in a note.",
+        "why": "Action-taking needs verified access and feasibility checks before it enters the scope.",
+        "optionLabels": {
+          "Answer only": "Answer questions only",
+          "Collect inquiries": "Collect details for a person to follow up",
+          "Suggest/book appointments": "Help customers book",
+          "Check status": "Look up an order or request status"
+        }
       },
       {
         "id": "M19.2",
-        "label": "What must it never decide or do without a person?",
+        "label": "What should always need a person’s approval?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -909,11 +1271,19 @@ export const MODULE_PAGES: Page[] = [
           "Unknown answers",
           "Complaints"
         ],
-        "help": "Choose what needs human review and add any other boundaries."
+        "help": "Choose decisions or situations the chatbot should not handle on its own.",
+        "why": "We use these boundaries to define permissions and human review.",
+        "optionLabels": {
+          "Binding quotes": "Final prices or binding quotes",
+          "Sensitive advice": "Sensitive or regulated advice",
+          "Unknown answers": "Questions it cannot answer reliably",
+          "Discounts/refunds": "Discounts or refunds",
+          "Account changes": "Changes to a customer account"
+        }
       },
       {
         "id": "M19.3",
-        "label": "When should it hand over, and who should receive the conversation?",
+        "label": "When should the chatbot hand a conversation to a person?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -924,10 +1294,11 @@ export const MODULE_PAGES: Page[] = [
           "Urgent or sensitive cases",
           "Customer requests a person"
         ],
-        "help": "Add who receives the conversation and any desired volume or usage-cost limit."
+        "help": "Choose handoff situations and name the receiving team in a note.",
+        "why": "We plan escalation and what happens when staff are unavailable; add any usage-cost limit if known."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M20",
@@ -936,18 +1307,19 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M20.1",
-        "label": "Which repetitive task or information transfer should happen automatically?",
+        "label": "Which repeated task should happen automatically?",
         "type": "textarea",
         "required": true,
         "placeholder": "When a quote is accepted, create an invoice.",
-        "help": "Start with one priority from your current workflow.",
+        "help": "Start with one task from the workflow you already described.",
         "presets": [
           "Help us choose the first automation"
-        ]
+        ],
+        "why": "A focused first automation makes it easier to verify value and avoid automating a broken process."
       },
       {
         "id": "M20.2",
-        "label": "Which tools need to be involved?",
+        "label": "Which tools need to work together?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -961,11 +1333,17 @@ export const MODULE_PAGES: Page[] = [
           "Custom tools",
           "Not sure"
         ],
-        "help": "Add tool names, versions, or plans if known."
+        "help": "Choose tool types and add product names or plans if known.",
+        "why": "We verify connectors, permissions, and platform limits before promising a connection.",
+        "optionLabels": {
+          "CRM": "Customer and sales management tools",
+          "ERP": "Tools for wider business operations",
+          "Custom tools": "Custom or in-house tools"
+        }
       },
       {
         "id": "M20.3",
-        "label": "What should trigger the process, and what result should it produce?",
+        "label": "What starts the automation, and what should happen next?",
         "type": "two-lists",
         "required": true,
         "fields": [
@@ -982,13 +1360,14 @@ export const MODULE_PAGES: Page[] = [
             "placeholder": "For example: Create an invoice"
           }
         ],
-        "help": "Describe the trigger and expected result in plain language. Add approximate frequency or record volume only if known.",
+        "help": "Give one trigger and one expected result in everyday words.",
         "presets": [
           "Need guidance"
-        ]
+        ],
+        "why": "This defines the first workflow to validate; add frequency or volume only if known."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M21",
@@ -997,7 +1376,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M21.1",
-        "label": "What information needs to move between the tools, and how quickly?",
+        "label": "What information should move between tools?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1009,30 +1388,36 @@ export const MODULE_PAGES: Page[] = [
           "Files",
           "Other records"
         ],
-        "help": "Add how quickly information should move: instant, scheduled, manual, or undecided. Mention one-way or both ways if known."
+        "help": "Choose records; add timing and whether information moves one way or both.",
+        "why": "Record types, direction, and timing determine connection requirements.",
+        "optionLabels": {
+          "Stock": "Stock counts and availability"
+        }
       },
       {
         "id": "M21.2",
-        "label": "Which system should be trusted if records disagree?",
+        "label": "Which tool has the correct record when tools disagree?",
         "type": "textarea",
         "required": true,
-        "help": "Name the trusted system for important customer, order, stock, or invoice records only where relevant.",
+        "help": "Name the trusted source for customers, orders, stock, or invoices where relevant.",
         "presets": [
           "Need help deciding"
-        ]
+        ],
+        "why": "A trusted source prevents updates from overwriting the wrong information."
       },
       {
         "id": "M21.3",
-        "label": "Who should be alerted when something fails, and how can work continue?",
+        "label": "What should happen if the connection fails?",
         "type": "textarea",
         "required": true,
-        "help": "Name the person who should receive alerts and how the team can continue manually. You may add a technical contact or public documentation link.",
+        "help": "Name the alert recipient and how staff can continue manually.",
         "presets": [
           "Help us define a fallback"
-        ]
+        ],
+        "why": "We plan recovery and exception handling alongside the normal workflow."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M22",
@@ -1041,7 +1426,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M22.1",
-        "label": "What information or content needs to move, and from where?",
+        "label": "What needs to move from your old tools or website?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1054,11 +1439,15 @@ export const MODULE_PAGES: Page[] = [
           "Files",
           "System settings"
         ],
-        "help": "Add where each item comes from, approximate volume if known, and links to redacted examples only."
+        "help": "Choose the information; name each source and rough volume if known.",
+        "why": "We assess export access, migration work, and what needs verification before moving live data.",
+        "optionLabels": {
+          "System settings": "Settings in the current tools"
+        }
       },
       {
         "id": "M22.2",
-        "label": "What problems already exist in that information?",
+        "label": "What problems are already present in that information?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1071,11 +1460,15 @@ export const MODULE_PAGES: Page[] = [
           "None known",
           "Not sure"
         ],
-        "help": "Add who can approve cleanup."
+        "help": "Choose known issues and name who can approve cleanup.",
+        "why": "We avoid carrying known errors into the new system or changing records without an owner.",
+        "optionLabels": {
+          "Access/export limits": "Difficulty accessing or exporting records"
+        }
       },
       {
         "id": "M22.3",
-        "label": "What must keep working while the move happens?",
+        "label": "What must stay available during the move?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1087,10 +1480,15 @@ export const MODULE_PAGES: Page[] = [
           "Connected systems",
           "Backups and rollback"
         ],
-        "help": "Add acceptable interruption and who will verify the result."
+        "help": "Choose critical services; add acceptable interruption and who can check the result.",
+        "why": "We plan redirects, continuity, backups, and rollback around these priorities before switching.",
+        "optionLabels": {
+          "Important URLs": "Important page links and search visibility",
+          "Backups and rollback": "Backups and a way to switch back"
+        }
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M23",
@@ -1099,7 +1497,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M23.1",
-        "label": "What do you currently measure, and where are those reports?",
+        "label": "Which business or website results do you track today?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1114,33 +1512,56 @@ export const MODULE_PAGES: Page[] = [
           "Task time",
           "Errors",
           "System speed",
-          "Nothing yet"
+          "Nothing yet",
+          "Not sure"
         ],
-        "help": "Add existing report links if available. You do not need to disclose revenue."
+        "help": "Choose measures and add a report link or tool name if available.",
+        "why": "We check what evidence exists before proposing reporting or new tracking.",
+        "optionLabels": {
+          "Visits": "Website visits",
+          "Conversion": "Visits that lead to a purchase or inquiry",
+          "Repeat business": "Returning customers",
+          "Task time": "Time spent on a task",
+          "System speed": "Website or tool speed"
+        }
       },
       {
         "id": "M23.2",
-        "label": "What is the current starting point for your main goal?",
+        "label": "What starting numbers do you already have for your main goal?",
         "type": "text",
         "required": false,
         "placeholder": "For example: Approximately 20 inquiries per month, from our CRM",
-        "help": "Add a metric, period, and source if available. Label estimates. We will use the goal you already shared.",
+        "help": "Reuse your earlier baseline; add only new detail with dates and a source.",
         "presets": [
           "Baseline needed"
-        ]
+        ],
+        "why": "Comparable starting numbers help assess progress; estimates are welcome and revenue is optional."
       },
       {
         "id": "M23.3",
-        "label": "What should a useful report help you decide?",
+        "label": "What decisions should your reports help you make?",
         "type": "textarea",
         "required": false,
-        "help": "Add what decisions the report should support, the recipient, and preferred cadence. Mention any known slow or failing user task.",
+        "help": "Name the decision, report reader, and useful review frequency.",
         "presets": [
           "Help us decide what to measure"
+        ],
+        "why": "We focus reporting on actions your team can take, rather than collect metrics without a purpose."
+      },
+      {
+        "id": "M23.4",
+        "label": "Where do people stop before completing a purchase or request?",
+        "type": "textarea",
+        "required": false,
+        "help": "Share a recent step-by-step report or an example; include dates and the source.",
+        "why": "We use the same period and definitions to locate drop-off. Unknown steps become measurement work, not guessed conversion rates.",
+        "placeholder": "For example: October store report — 2,000 visits, 90 checkout starts, 30 orders.",
+        "presets": [
+          "We do not track the steps yet"
         ]
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M24",
@@ -1149,7 +1570,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M24.1",
-        "label": "Which systems and recurring tasks need ongoing help?",
+        "label": "Which recurring tasks need support after launch?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1162,11 +1583,15 @@ export const MODULE_PAGES: Page[] = [
           "Chatbot updates",
           "Performance"
         ],
-        "help": "Choose what you need help with; recurring work follows the agreed scope."
+        "help": "Choose the tasks you want help with.",
+        "why": "We compare requests with the agreed coverage; maintenance and new feature work need clear limits.",
+        "optionLabels": {
+          "Integration monitoring": "Checking connections between tools"
+        }
       },
       {
         "id": "M24.2",
-        "label": "What interruptions would affect your business most?",
+        "label": "Which service interruptions would hurt your business most?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1177,21 +1602,23 @@ export const MODULE_PAGES: Page[] = [
           "Lost or delayed data",
           "Connected systems unavailable"
         ],
-        "help": "Add critical operating periods, acceptable disruption or data loss, and preferred response needs if known. These are requirements to discuss."
+        "help": "Choose critical failures; add busy periods and recovery needs if known.",
+        "why": "These priorities guide a support discussion; they do not create response-time or recovery guarantees."
       },
       {
         "id": "M24.3",
-        "label": "Who should receive alerts and approve maintenance or extra work?",
+        "label": "Who should receive alerts and approve maintenance work?",
         "type": "textarea",
         "required": true,
-        "help": "Reuse an existing contact or name the responsible person or role. Optionally add an update window and who maintains tool subscriptions.",
+        "help": "Reuse a contact or name a responsible role; add a suitable update window.",
         "presets": [
           "Use the primary project contact",
           "Need to appoint a contact"
-        ]
+        ],
+        "why": "We need an owner for access, subscriptions, and approval of disruptive or extra work."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M25",
@@ -1200,7 +1627,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M25.1",
-        "label": "Which roles should be allowed to see or change private information?",
+        "label": "Who should be able to see or change private information?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1212,32 +1639,38 @@ export const MODULE_PAGES: Page[] = [
           "External providers",
           "Agency for agreed work"
         ],
-        "help": "Add what each role may see or change. Use roles and categories, without private records."
+        "help": "Choose roles and describe their access; do not provide real private records.",
+        "why": "We use these boundaries to plan permissions for staff, customers, and providers.",
+        "optionLabels": {
+          "Agency for agreed work": "Starter Shifter, only for agreed work"
+        }
       },
       {
         "id": "M25.2",
-        "label": "Are there requirements for where information is stored, how long it is kept, or when it is deleted?",
+        "label": "What storage, retention, or deletion requirements do you have?",
         "type": "assets",
         "required": true,
-        "help": "Link an existing policy or name a responsible contact. Mention storage locations, retention, deletion, and AI or third-party processing restrictions where relevant.",
+        "help": "Link a policy or name a contact; add AI or third-party processing limits if relevant.",
         "presets": [
           "Needs review",
           "No requirements known"
-        ]
+        ],
+        "why": "These requirements can affect tool selection and data flows and need confirmation by the responsible person."
       },
       {
         "id": "M25.3",
-        "label": "Who can confirm these requirements and help with incidents or access removal?",
+        "label": "Who can confirm data requirements and handle access or incident questions?",
         "type": "textarea",
         "required": true,
-        "help": "Name the responsible person or team. You may link an existing security requirements document. Do not upload sensitive datasets.",
+        "help": "Name the responsible person or team; link an existing requirements document if available.",
         "presets": [
           "Use the primary project contact",
           "Need to appoint a responsible contact"
-        ]
+        ],
+        "why": "A clear owner helps us verify requirements and arrange access removal or incident escalation."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   },
   {
     "id": "M26",
@@ -1246,7 +1679,7 @@ export const MODULE_PAGES: Page[] = [
     "questions": [
       {
         "id": "M26.1",
-        "label": "Which approved policies or industry requirements must the project follow?",
+        "label": "Which approved policies must the project follow?",
         "type": "multi-select",
         "required": true,
         "allowOther": true,
@@ -1260,35 +1693,46 @@ export const MODULE_PAGES: Page[] = [
           "Advertising/claims",
           "Needs review"
         ],
-        "help": "Add links to approved policies or requirements where available."
+        "help": "Choose policy areas and link current approved versions if available.",
+        "why": "We identify missing text, disclosures, and review needs before launch or campaign setup.",
+        "optionLabels": {
+          "Cookies/tracking": "Cookies and marketing tracking",
+          "Advertising/claims": "Advertising and product claims",
+          "Returns/cancellation": "Returns, refunds, and cancellations",
+          "Privacy": "Use and protection of personal information",
+          "Licenses": "Licenses or industry permissions",
+          "Accessibility": "Accessibility requirements"
+        }
       },
       {
         "id": "M26.2",
-        "label": "Who will supply and approve missing policy text, required disclosures, or permissions?",
+        "label": "Who will provide and approve missing policies or permissions?",
         "type": "textarea",
         "required": true,
-        "help": "Name who supplies and approves policies, disclosures, and permissions. Include commercial rights for images, testimonials, designs, and other supplied assets.",
+        "help": "Name an owner for policy text and rights to supplied images, designs, and testimonials.",
         "presets": [
           "Need to arrange"
-        ]
+        ],
+        "why": "We need approved text and usage rights; providing a file alone does not establish permission to publish it."
       },
       {
         "id": "M26.3",
-        "label": "Is there any requirement that could restrict a sale, launch, campaign, or data flow?",
+        "label": "Could any requirement prevent a sale, campaign, launch, or data transfer?",
         "type": "textarea",
         "required": true,
-        "help": "Mention any restriction related to your markets, special requirements, sales, launch, campaigns, or data flow.",
+        "help": "Describe known restrictions or name the person who should review them.",
         "presets": [
           "None known",
           "Needs specialist review"
-        ]
+        ],
+        "why": "This helps us identify a blocking dependency before committing to a proposed implementation."
       }
     ],
-    "description": "Share what you know. You can provide details later or ask us to help."
+    "description": "Answer what you know. Estimates are welcome; you can ask for help or return later."
   }
 ];
 
-// Agency-facing routing reference; do not render its notes as question copy.
+// Agency-facing routing reference; runtime routing lives in questionnaire.ts.
 export const MODULE_ROUTING = [
   {
     "trigger": "Public website, online store, or web application",

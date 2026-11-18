@@ -1,5 +1,6 @@
 "use client";
 
+import { useAssignedQuestionnaire } from "./use-assigned-questionnaire";
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,11 +12,13 @@ import { DashboardLoading } from "@/components/dashboard/dashboard-shell";
 export function ClientDashboard({ name }: { name: string }) {
   const router = useRouter();
   const { isLoading, isAuthenticated } = useConvexAuth();
+  const assignment = useAssignedQuestionnaire(isAuthenticated);
   const mine = useQuery(api.onboarding.getMine, isAuthenticated ? {} : "skip");
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.replace("/login");
   }, [isLoading, isAuthenticated, router]);
-  if (isLoading || mine === undefined) return <DashboardLoading />;
+  if (assignment.error) return <p role="alert">{assignment.error}</p>;
+  if (!assignment.ready || isLoading || mine === undefined) return <DashboardLoading />;
   if (!mine)
     return (
       <div className="workspace-theme flex min-h-svh flex-col items-center justify-center gap-4 bg-[var(--workspace-surface)] p-6 text-[var(--workspace-ink)]">

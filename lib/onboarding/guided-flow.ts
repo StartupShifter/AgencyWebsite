@@ -1,4 +1,4 @@
-import { isAnswerEmpty, isQuestionVisible, validatePage } from "./questionnaire";
+import { isAnswerEmpty, isQuestionVisible, validatePage } from "./engine";
 import type { Answers, Page, Question } from "./types";
 
 export type GuidedStep = { id: string; page: Page; question?: Question };

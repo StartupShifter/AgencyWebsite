@@ -11,7 +11,9 @@ import {
   projectViewValidator,
 } from "./workspaceValidators";
 import { addActivity } from "./projects";
-import { validateSubmission, ONBOARDING_VERSION } from "../lib/onboarding/questionnaire";
+import { createQuestionnaire } from "../lib/onboarding/engine";
+import { ensureAssignment, resolveQuestionnaire, questionnaireView, requireAssignedVersion } from "./questionnaireStore";
+import { assignedQuestionnaireValidator } from "./questionnaireValidators";
 import { ONBOARDING_PRIVACY_NOTICE, ONBOARDING_PRIVACY_VERSION } from "../lib/onboarding/privacy-copy";
 
 import { validateDraftInput } from "./validateOnboardingDraft";
@@ -44,10 +46,19 @@ function prerequisites(user: { emailVerified: boolean; email: string }, engageme
   for (const item of engagement?.dependencies ?? []) if (!item.verified) pending.push(`${item.label} — ${item.owner}`);
   return pending;
 }
+export const ensureQuestionnaire = mutation({
+  args: {}, returns: v.string(),
+  handler: async ctx => {
+    const user = await authComponent.getAuthUser(ctx);
+    const draft = await ctx.db.query("onboarding").withIndex("by_authUserId", q => q.eq("authUserId", user._id)).unique();
+    return (await ensureAssignment(ctx, "client", user._id, draft?.version)).version;
+  },
+});
 export const getMine = query({
   args: {},
   returns: v.union(v.null(), v.object({
     draft: v.union(v.null(), draftValidator),
+    questionnaire: assignedQuestionnaireValidator,
     engagement: v.union(v.null(), engagementValidator),
     pending: v.array(v.string()),
     workspaceReady: v.boolean(),
@@ -67,13 +78,15 @@ export const getMine = query({
       ctx.db.query("projectActivity").withIndex("by_authUserId_createdAt", q => q.eq("authUserId", user._id)).order("desc").take(50),
       ctx.db.query("documents").withIndex("by_authUserId_uploadedAt", q => q.eq("authUserId", user._id)).order("desc").collect(),
     ]);
+    const questionnaire = await resolveQuestionnaire(ctx, "client", user._id, draft?.version);
+    const { validateSubmission } = createQuestionnaire(questionnaire.definition);
     const pending = prerequisites(user, engagement, draft);
     const privacy = privacySettings();
     if (!privacy.approved) pending.push("The agency must approve onboarding privacy information before collecting project answers.");
     else if (draft && draft.privacyVersion !== privacy.version) pending.push("Review the updated onboarding privacy information and resubmit your brief.");
-    if (draft && draft.version !== ONBOARDING_VERSION) pending.push("Review the updated questionnaire and resubmit your brief.");
-    else if (draft?.status === "submitted" && Object.keys(validateSubmission(draft.answers, draft.extraModules)).length > 0) pending.push("Review the required answers in your current questionnaire route.");
+    if (draft?.status === "submitted" && Object.keys(validateSubmission(draft.answers, draft.extraModules)).length > 0) pending.push("Review the required answers in your current questionnaire route.");
     return {
+      questionnaire: questionnaireView(questionnaire),
       draft: draft ? { version: draft.version, answers: draft.answers, extraModules: draft.extraModules, currentPage: draft.currentPage, currentQuestion: draft.currentQuestion ?? null, status: draft.status, updatedAt: draft.updatedAt, submittedAt: draft.submittedAt ?? null, privacyVersion: draft.privacyVersion } : null,
       engagement: engagement ? { authUserId: engagement.authUserId, summary: engagement.summary, scope: engagement.scope, plan: engagement.plan, currency: engagement.currency, setupFee: engagement.setupFee, recurringFee: engagement.recurringFee, exclusions: engagement.exclusions, thirdPartyCosts: engagement.thirdPartyCosts, legalName: engagement.legalName, billingEmail: engagement.billingEmail, signedAgreementRef: engagement.signedAgreementRef, advancePaymentRef: engagement.advancePaymentRef, identityVerificationRef: engagement.identityVerificationRef, verifiedEmails: engagement.verifiedEmails, dependencies: engagement.dependencies, updatedAt: engagement.updatedAt } : null,
       pending,
@@ -121,16 +134,19 @@ export const getMine = query({
   },
 });
 export const saveDraft = mutation({
-  args: { answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), currentQuestion: v.optional(v.string()), privacyVersion: v.string() },
+  args: { answers: answersValidator, extraModules: v.array(v.string()), currentPage: v.string(), currentQuestion: v.optional(v.string()), privacyVersion: v.string(), questionnaireVersion: v.string() },
   returns: v.number(),
   handler: async (ctx, args) => {
     const user = await authComponent.getAuthUser(ctx);
     const privacy = privacySettings();
     if (!privacy.approved || args.privacyVersion !== privacy.version) throw new ConvexError("The approved privacy notice must be available before saving details. Refresh the page.");
-    validateDraftInput(args);
     const existing = await ctx.db.query("onboarding").withIndex("by_authUserId", q => q.eq("authUserId", user._id)).unique();
+    const questionnaire = await ensureAssignment(ctx, "client", user._id, existing?.version);
+    requireAssignedVersion(questionnaire.version, args.questionnaireVersion);
+    validateDraftInput(args, questionnaire.definition);
+    const draftArgs = { answers: args.answers, extraModules: args.extraModules, currentPage: args.currentPage, privacyVersion: args.privacyVersion };
     const updatedAt = Date.now();
-    const value = { ...args, currentQuestion: args.currentQuestion ?? null, extraModules: [...new Set(args.extraModules)], authUserId: user._id, version: ONBOARDING_VERSION, status: existing?.status === "submitted" && existing.version === ONBOARDING_VERSION && existing.privacyVersion === args.privacyVersion && JSON.stringify(existing.answers) === JSON.stringify(args.answers) && JSON.stringify(existing.extraModules) === JSON.stringify(args.extraModules) ? "submitted" as const : "draft" as const, updatedAt };
+    const value = { ...draftArgs, currentQuestion: args.currentQuestion ?? null, extraModules: [...new Set(args.extraModules)], authUserId: user._id, version: questionnaire.version, status: existing?.status === "submitted" && existing.version === questionnaire.version && existing.privacyVersion === args.privacyVersion && JSON.stringify(existing.answers) === JSON.stringify(args.answers) && JSON.stringify(existing.extraModules) === JSON.stringify(args.extraModules) ? "submitted" as const : "draft" as const, updatedAt };
     if (existing) await ctx.db.patch(existing._id, value);
     else {
       await ctx.db.insert("onboarding", value);
@@ -147,7 +163,7 @@ export const saveDraft = mutation({
   },
 });
 export const submit = mutation({
-  args: { privacyVersion: v.string() },
+  args: { privacyVersion: v.string(), questionnaireVersion: v.string() },
   returns: v.object({ workspaceReady: v.boolean(), pending: v.array(v.string()) }),
   handler: async (ctx, args) => {
     const user = await authComponent.getAuthUser(ctx);
@@ -155,7 +171,10 @@ export const submit = mutation({
     if (!privacy.approved || privacy.version !== args.privacyVersion) throw new ConvexError("Review the current approved privacy notice before submitting.");
     const draft = await ctx.db.query("onboarding").withIndex("by_authUserId", q => q.eq("authUserId", user._id)).unique();
     if (!draft) throw new ConvexError("Save your details before submitting.");
-    if (draft.version !== ONBOARDING_VERSION || draft.privacyVersion !== privacy.version) throw new ConvexError("Review and save your answers using the current questionnaire and privacy notice before submitting.");
+    const questionnaire = await ensureAssignment(ctx, "client", user._id, draft.version);
+    requireAssignedVersion(questionnaire.version, args.questionnaireVersion);
+    const { validateSubmission } = createQuestionnaire(questionnaire.definition);
+    if (draft.privacyVersion !== privacy.version) throw new ConvexError("Review and save your answers using the current questionnaire and privacy notice before submitting.");
     const errors = validateSubmission(draft.answers, draft.extraModules, { privacyReady: true });
     if (Object.keys(errors).length) throw new ConvexError({ message: "Please complete the highlighted answers.", errors });
     const engagement = await ctx.db.query("engagements").withIndex("by_authUserId", q => q.eq("authUserId", user._id)).unique();

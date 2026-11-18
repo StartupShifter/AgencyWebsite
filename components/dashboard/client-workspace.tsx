@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { getPhaseHref } from "@/lib/onboarding/phases";
+import { getPhaseHref } from "@/lib/onboarding/phase-engine";
 import { OnboardingPhases } from "./onboarding-phases";
 import { useState } from "react";
 import Link from "next/link";
@@ -19,7 +19,7 @@ import {
   type WorkspaceData,
   type WorkspaceView,
 } from "@/lib/onboarding/dashboard";
-import { formatAnswer } from "@/lib/onboarding/questionnaire";
+import { formatAnswer } from "@/lib/onboarding/engine";
 import { DashboardShell } from "./dashboard-shell";
 import { DashboardOverview } from "./dashboard-overview";
 import {
@@ -75,7 +75,7 @@ export function ClientWorkspace({
         title: topic.title,
         answers: topic.questions.map((question) => ({
           question: question.label,
-          answer: formatAnswer(model.answers[question.id]),
+          answer: formatAnswer(model.answers[question.id], question),
         })),
       })),
     };

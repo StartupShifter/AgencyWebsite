@@ -1,3 +1,4 @@
+import { resolveQuestionnaire } from "./questionnaireStore";
 import { ConvexError, v } from "convex/values";
 import { internalMutation, type MutationCtx } from "./_generated/server";
 import { authComponent } from "./auth";
@@ -85,6 +86,7 @@ export const seedWorkspace = internalMutation({
     const ready = workspaceReady ?? false;
     const summary = draft
       ? getClientSummary({
+          definition: (await resolveQuestionnaire(ctx, "client", authUserId, draft.version)).definition,
           answers: draft.answers,
           extraModules: draft.extraModules,
           status: draft.status,

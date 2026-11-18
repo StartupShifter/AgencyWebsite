@@ -239,3 +239,9 @@
 .ob-answer-options>summary::-webkit-details-marker{display:none}
 .ob-answer-options[open]>summary svg{transform:rotate(180deg)}
 .ob-guided-answer .ob-answer-options .ob-answer-actions{border:0;padding-top:0;margin-top:4px}
+
+/* Keep answer instructions short; disclose the decision context on request. */
+.ob-why { margin: 0 0 1.25rem; }
+.ob-why .ob-help { margin: .65rem 0 0; }
+.ob-choice-copy { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+.ob-choice-copy small { font-size: .8125rem; line-height: 1.5; color: var(--commerce-muted); font-weight: 400; }

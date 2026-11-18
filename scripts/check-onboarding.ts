@@ -1,21 +1,28 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { getPages, getSelectedModules, MODULE_PAGES, SHARED_PAGES, validateAnswerShape, validatePage, validateSubmission } from "../lib/onboarding/questionnaire";
+import { getPages, getSelectedModules, MODULE_PAGES, ONBOARDING_VERSION, SHARED_PAGES, getOptionLabel, formatAnswer, getOpenItems, validateAnswerShape, validatePage, validateSubmission } from "../lib/onboarding/questionnaire";
 import type { Answers } from "../lib/onboarding/types";
 
 const answer = (value: string | string[] | number | boolean | Record<string, string>) => ({ state: "answered" as const, value });
-const source = readFileSync(new URL("../../onboarding.md", import.meta.url), "utf8");
+const exported = JSON.parse(readFileSync(new URL("../docs/onboarding-questions.json", import.meta.url), "utf8"));
 const allPages = [...SHARED_PAGES, ...MODULE_PAGES];
-const sourceQuestions = [...source.matchAll(/^\| ((?:P|M)\d{2}\.\d) \| (.+?) \|/gm)].map((match) => ({ id: match[1], label: match[2] }));
-const implementedQuestions = allPages.flatMap((page) => page.questions.map((question) => ({ id: question.id, label: question.label })));
-assert.equal(SHARED_PAGES.length, 16);
-assert.equal(MODULE_PAGES.length, 26);
-assert.equal(implementedQuestions.length, 127);
-assert.deepEqual(implementedQuestions.sort((a, b) => a.id.localeCompare(b.id)), sourceQuestions.sort((a, b) => a.id.localeCompare(b.id)), "Every source question must preserve its stable ID and exact wording");
-assert.equal(new Set(allPages.map((page) => page.id)).size, 42);
+const implementedQuestions = allPages.flatMap(page => page.questions);
+assert.deepEqual(exported.core, SHARED_PAGES, "The reviewable JSON must match every runtime core property");
+assert.deepEqual(exported.modules, MODULE_PAGES, "The reviewable JSON must match every runtime module property");
+assert.equal(exported.meta.questionnaireVersion, ONBOARDING_VERSION);
+assert.equal(exported.meta.totalQuestions, implementedQuestions.length);
+assert.equal(implementedQuestions.length, 141);
+assert.equal(new Set(allPages.map(page => page.id)).size, 42);
+assert.equal(new Set(implementedQuestions.map(question => question.id)).size, implementedQuestions.length);
+const legacyIds = [...Array.from({ length: 16 }, (_, index) => Array.from({ length: index === 0 ? 4 : 3 }, (_, number) => `P${String(index + 1).padStart(2, "0")}.${number + 1}`)).flat(), ...Array.from({ length: 26 }, (_, index) => [1, 2, 3].map(number => `M${String(index + 1).padStart(2, "0")}.${number}`)).flat()];
+for (const id of legacyIds) assert.ok(implementedQuestions.some(question => question.id === id), `Existing answer ID ${id} must survive`);
+for (const question of implementedQuestions) {
+  assert.ok(question.help && question.why, `${question.id} needs an answering hint and decision context`);
+  for (const value of [...Object.keys(question.optionLabels ?? {}), ...Object.keys(question.optionDescriptions ?? {}), ...(question.exclusiveOptions ?? [])]) assert.ok(question.options?.includes(value), `${question.id} metadata must refer to real options`);
+}
 
 const mixed: Answers = { "P04.1": answer(["Physical goods", "Appointments"]), "P08.1": answer(["Website/store/application", "Chatbot", "Inventory", "ERP/CRM or other connections"]), "P08.2": answer(["Buy", "Book"]), "P11.1": answer(["None known"]), "P11.2": answer(["Ordinary contact/order details"]) };
-assert.deepEqual(getSelectedModules(mixed), ["M01", "M02", "M03", "M04", "M07", "M13", "M18", "M19", "M20", "M21", "M26"]);
+assert.deepEqual(getSelectedModules(mixed), ["M01", "M02", "M03", "M04", "M05", "M07", "M13", "M18", "M19", "M20", "M21", "M23", "M26"]);
 const pages = getPages(mixed);
 assert.deepEqual(pages.slice(0, 12).map((page) => page.id), SHARED_PAGES.slice(0, 12).map((page) => page.id));
 assert.deepEqual(pages.slice(-4).map((page) => page.id), ["P13", "P14", "P15", "P16"]);
@@ -90,8 +97,27 @@ assert.ok(validateValue("P16.2", "true"));
 const catalogQuestion = MODULE_PAGES.find(page => page.id === "M03")!.questions[2];
 assert.ok(validateAnswerShape(catalogQuestion, answer(["x".repeat(6001)])), "Nested list values obey the same data-size limit");
 assert.equal(validateAnswerShape(catalogQuestion, answer("")), undefined, "An unfinished empty control remains saveable as a draft");
-console.log("Onboarding checks passed: 42 pages, 127 exact questions, routing, inactive answers, validation, contact and privacy safeguards.");
+console.log("Onboarding checks passed: 42 pages, 141 reviewed questions, routing, inactive answers, validation, contact and privacy safeguards.");
 
 const bookingAnswers = { "P08.2": answer(["Book"]), "M07.3": answer("Collect a deposit before confirming") };
 assert.ok(getSelectedModules(bookingAnswers).includes("M13"), "Active bookings collecting money show payments questions");
 assert.ok(!getSelectedModules({ "M07.3": answer("Collect a deposit") }).includes("M13"), "Inactive booking answers do not restore payment pages");
+
+const commerce = getSelectedModules({ "P04.1": answer(["Physical goods"]), "P08.2": answer(["Buy"]) });
+for (const id of ["M03", "M04", "M05", "M13", "M23", "M26"]) assert.ok(commerce.includes(id), `Selling physical products needs ${id} without recognizing service jargon`);
+assert.deepEqual(getSelectedModules({ "P08.1": answer(["SEO and search visibility"]) }), ["M15", "M23", "M26"]);
+assert.deepEqual(getSelectedModules({ "P08.1": answer(["Email and WhatsApp marketing"]) }), ["M16", "M23", "M26"]);
+assert.deepEqual(getSelectedModules({ "P08.1": answer(["Social presence"]) }), ["M14", "M23", "M26"]);
+const serviceChoice = SHARED_PAGES.find(page => page.id === "P08")!.questions[0];
+assert.equal(getOptionLabel(serviceChoice, "ERP/CRM or other connections"), "Connect sales, stock, or business tools");
+assert.equal(formatAnswer(answer(["ERP/CRM or other connections"]), serviceChoice), "Connect sales, stock, or business tools");
+assert.ok(validateValue("P08.1", ["Help me choose", "Inventory"]), "Guidance-only options cannot be combined with specific requests");
+assert.ok(validateValue("M16.5", ["Welcome after signup", "Help me choose"]));
+assert.equal(validateValue("M16.5", ["Welcome after signup", "Reorder or renewal reminder"]), undefined);
+assert.ok(validateValue("M16.5", ["Welcome after signup", "Reorder or renewal reminder", "Review request", "Product or service education"]));
+assert.equal(validateValue("P16.4", "Very dissatisfied"), undefined, "Negative satisfaction feedback must remain valid");
+assert.equal(validateValue("P16.4", "Very satisfied"), undefined);
+assert.ok(validateValue("P16.4", "perfect"));
+assert.equal(validateSubmission(complete)["P16.4"], undefined, "Experience feedback is never required to submit");
+
+assert.deepEqual(getOpenItems({ "P16.4": { state: "not-applicable", value: "" }, "P16.5": answer("I need help understanding a question") }), [], "Skipped or critical feedback must not become an unresolved project prerequisite");

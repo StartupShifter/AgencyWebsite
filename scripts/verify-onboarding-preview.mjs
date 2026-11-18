@@ -10,10 +10,11 @@ const url = process.env.NEXT_PUBLIC_CONVEX_URL;
 assert.equal(new URL(url).hostname, "127.0.0.1", "Only local Convex may be tested.");
 assert.match(process.env.CONVEX_DEPLOYMENT ?? "", /^anonymous:/);
 const client = new ConvexHttpClient(url);
-const refs = Object.fromEntries(["getDraft", "saveDraft", "submit"].map(name => [name, makeFunctionReference(`onboardingPreview:${name}`)]));
+const refs = Object.fromEntries(["getDraft", "getQuestionnaire", "ensureQuestionnaire", "saveDraft", "submit"].map(name => [name, makeFunctionReference(`onboardingPreview:${name}`)]));
 const first = randomUUID(), second = randomUUID();
 const read = sessionId => client.query(refs.getDraft, { sessionId });
-const save = (sessionId, answers, extraModules = [], currentPage = "P01", currentQuestion = "P01.1") => client.mutation(refs.saveDraft, { sessionId, answers, extraModules, currentPage, ...(currentQuestion === null ? {} : { currentQuestion }) });
+const save = async (sessionId, answers, extraModules = [], currentPage = "P01", currentQuestion = "P01.1") => client.mutation(refs.saveDraft, { questionnaireVersion: await client.mutation(refs.ensureQuestionnaire, { sessionId }), sessionId, answers, extraModules, currentPage, ...(currentQuestion === null ? {} : { currentQuestion }) });
+const submit = async sessionId => client.mutation(refs.submit, { sessionId, questionnaireVersion: (await client.query(refs.getQuestionnaire, { sessionId })).version });
 const answered = value => ({ state: "answered", value });
 
 try {
@@ -23,13 +24,13 @@ try {
   const consentDraft = await read(first);
   assert.equal(consentDraft.answers["P16.3"].value, true, "The introduction saves the acknowledgement before project answers");
   assert.equal(consentDraft.currentQuestion, "P01.1", "Consent keeps the first project question ready to resume");
-  await assert.rejects(() => client.mutation(refs.submit, { sessionId: first }), /complete|highlighted/i);
+  await assert.rejects(() => submit(first), /complete|highlighted/i);
   console.log("PASS introduction acknowledgement persists; consent alone cannot submit an incomplete brief");
   await save(first, { "P01.1": answered("Preview fixture A") });
   await save(second, { "P01.1": answered("Preview fixture B") });
   assert.equal((await read(first)).answers["P01.1"].value, "Preview fixture A");
   assert.equal((await read(second)).answers["P01.1"].value, "Preview fixture B");
-  await assert.rejects(() => client.mutation(refs.submit, { sessionId: first }), /complete|highlighted/i);
+  await assert.rejects(() => submit(first), /complete|highlighted/i);
   for (const [answers, extras, page, question] of [
     [{ "P01.1": answered(true) }, [], "P01", "P01.1"],
     [{ unknown: answered("bad") }, [], "P01", "P01.1"],
@@ -43,7 +44,7 @@ try {
 
   const answers = completeFixture({ name: "Preview Fixture", email: "preview-fixture@example.test" });
   const extras = MODULE_PAGES.map(page => page.id);
-  assert.equal(Object.keys(answers).length, 127);
+  assert.equal(Object.keys(answers).length, 141);
   assert.deepEqual(validateSubmission(answers, extras, { privacyReady: true }), {});
   await save(first, answers, extras, "P16", "review");
   let draft = await read(first);
@@ -52,9 +53,9 @@ try {
   assert.equal(draft.currentQuestion, "review");
   assert.equal(draft.currentPage, "P16");
   assert.ok(draft.updatedAt > 0);
-  console.log("PASS all 127 answers, modules, details, priorities, and exact review position persist in Convex");
+  console.log("PASS all 141 answers, modules, details, priorities, and exact review position persist in Convex");
 
-  await client.mutation(refs.submit, { sessionId: first });
+  await submit(first);
   draft = await read(first);
   assert.equal(draft.status, "submitted");
   assert.ok(draft.submittedAt > 0);

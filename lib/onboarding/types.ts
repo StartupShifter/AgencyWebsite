@@ -24,8 +24,16 @@ export type Question = {
   type: QuestionType;
   required: boolean;
   options?: string[];
+  /** Presentation only: option values remain stable for stored answers and routing. */
+  optionLabels?: Record<string, string>;
+  optionDescriptions?: Record<string, string>;
+  /** These selections cannot be combined with any other answer. */
+  exclusiveOptions?: string[];
   placeholder?: string;
   help?: string;
+  why?: string;
+  /** Optional experience feedback must not become a project follow-up. */
+  feedback?: boolean;
   allowOther?: boolean;
   maxSelections?: number;
   presets?: string[];
@@ -47,3 +55,35 @@ export type Page = {
 };
 export type OnboardingPage = Page;
 export type ValidationErrors = Record<string, string>;
+
+export type RoutingCondition = {
+  questionId?: string;
+  includes?: string[];
+  states?: AnswerState[];
+  except?: string[];
+  textIncludes?: string[];
+  moduleId?: string;
+};
+export type RoutingRule = {
+  id: string;
+  all: RoutingCondition[];
+  any: RoutingCondition[];
+  modules: string[];
+};
+export type PhaseDefinition = {
+  id: string;
+  title: string;
+  questionIds: string[];
+  placement: "before-modules" | "after-modules";
+};
+export type QuestionnaireDefinition = {
+  pages: Page[];
+  phases: PhaseDefinition[];
+  rules: RoutingRule[];
+};
+export type AssignedQuestionnaire = {
+  version: string;
+  title: string;
+  definition: QuestionnaireDefinition;
+  customized: boolean;
+};

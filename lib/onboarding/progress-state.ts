@@ -1,7 +1,7 @@
-import { isStepComplete, type OnboardingPhase } from "./phases";
+import { isStepComplete, type OnboardingPhase } from "./phase-engine";
 import type { GuidedStep } from "./guided-flow";
 import type { Answers } from "./types";
-import { isAnswerEmpty } from "./questionnaire";
+import { isAnswerEmpty } from "./engine";
 
 export type QuestionStatus = "answered" | "later" | "pending" | "attention" | "review";
 export const QUESTION_STATUS_LABELS: Record<QuestionStatus, string> = {
