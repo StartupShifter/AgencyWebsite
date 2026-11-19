@@ -206,7 +206,7 @@ const questions = new Map(definition.pages.flatMap(page => page.questions.map(qu
 const moduleOwners = new Map(definition.pages.filter(page => page.kind === "module").flatMap(page => page.questions.map(question => [question.id, page.id] as const)));
 function visible(question: Question, answers: Answers, selected: Set<string>, seen = new Set<string>()): boolean {
   const owner = moduleOwners.get(question.id);
-  if (owner && !selected.has(owner) || seen.has(question.id)) return false;
+  if (owner && !selected.has(owner) && !(definition.layout === "compact" && !question.optionalDetail) || seen.has(question.id)) return false;
   if (!question.condition) return true;
   seen.add(question.id);
   const parent = questions.get(question.condition.questionId);
@@ -241,7 +241,21 @@ function getSelectedModules(answers: Answers = {}, extras: string[] = []): strin
 
 function getPages(answers: Answers = {}, selectedModules: string[] = []): Page[] {
   const selected = new Set(getSelectedModules(answers, selectedModules));
-  return definition.pages.filter(page => page.kind !== "module" || selected.has(page.id)).map(page => ({ ...page, questions: page.questions.filter(question => visible(question, answers, selected)) })).filter(page => page.questions.length);
+  if (definition.layout !== "compact") return definition.pages.filter(page => page.kind !== "module" || selected.has(page.id)).map(page => ({ ...page, questions: page.questions.filter(question => visible(question, answers, selected)) })).filter(page => page.questions.length);
+  const owners = new Map(definition.pages.flatMap(page => page.questions.map(question => [question.id, page] as const)));
+  const ordered: Page[] = [];
+  // Phase order is explicit in compact releases, including promoted workflow questions.
+  for (const id of definition.phases.flatMap(phase => phase.questionIds)) {
+    const question = questions.get(id)!;
+    const page = owners.get(id)!;
+    if (!visible(question, answers, selected)) continue;
+    const previous = ordered.at(-1);
+    if (previous?.id === page.id) previous.questions.push(question);
+    else ordered.push({ ...page, questions: [question] });
+  }
+  // Optional topics never change the guided route. Keep saved context visible even if routing changes.
+  const optional = definition.pages.map(page => ({ ...page, questions: page.questions.filter(question => question.optionalDetail && (page.kind !== "module" || selected.has(page.id) || !isAnswerEmpty(answers[question.id])) && isQuestionVisible(question, answers)) })).filter(page => page.questions.length);
+  return [...ordered, ...optional];
 }
 
 function getPageById(id: string): Page | undefined {

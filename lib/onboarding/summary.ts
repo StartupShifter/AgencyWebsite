@@ -51,7 +51,7 @@ export function getClientSummary({
     progress,
     status,
     submittedAt: submittedAt ?? null,
-    topicCount: pages.length,
-    questionCount: pages.reduce((total, page) => total + page.questions.length, 0),
+    topicCount: pages.filter(page => page.questions.some(question => !question.optionalDetail)).length,
+    questionCount: progress.total,
   };
 }

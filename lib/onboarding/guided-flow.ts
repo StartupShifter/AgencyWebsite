@@ -5,7 +5,7 @@ export type GuidedStep = { id: string; page: Page; question?: Question };
 
 /** Keep stable question IDs and insert a dedicated review before confirmations. */
 export function getGuidedSteps(pages: Page[], answers: Answers): GuidedStep[] {
-  return pages.flatMap(page => page.questions.filter(question => isQuestionVisible(question, answers)).flatMap(question => {
+  return pages.flatMap(page => page.questions.filter(question => !question.optionalDetail && isQuestionVisible(question, answers)).flatMap(question => {
     const step = { id: question.id, page, question };
     return question.id === "P16.2" ? [{ id: "review", page }, step] : [step];
   }));

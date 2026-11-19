@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import type { PrivacySettings } from "./privacy-notice";
 import { useI18n } from "@/context/i18n-context";
 
-export function OnboardingWelcome({ privacy, name, phaseCount, preview = false, development = false, busy = false, error, onStart }: { privacy: PrivacySettings; name?: string; phaseCount: number; preview?: boolean; development?: boolean; busy?: boolean; error?: string; onStart?: () => Promise<void> }) {
+export function OnboardingWelcome({ privacy, name, phaseCount, compact = false, preview = false, development = false, busy = false, error, onStart }: { privacy: PrivacySettings; name?: string; phaseCount: number; compact?: boolean; preview?: boolean; development?: boolean; busy?: boolean; error?: string; onStart?: () => Promise<void> }) {
   const { content } = useI18n();
   const welcome = content.onboarding.welcome;
   const [accepted, setAccepted] = useState(false);
@@ -21,7 +21,7 @@ export function OnboardingWelcome({ privacy, name, phaseCount, preview = false, 
     <div className="ob-start-body">
     <p className="ob-start-greeting">{name ? `${welcome.greetingNamePrefix}${name.trim().split(/\s+/)[0]}.` : welcome.greeting}</p>
     <h1 id="ob-start-heading">{welcome.heading}</h1>
-    <p className="ob-start-description">{welcome.descriptionPrefix}{phaseCount}{welcome.descriptionSuffix}</p>
+    <p className="ob-start-description">{compact ? `Tell us about your business in ${phaseCount} short phases, with up to five questions each. Extra topics are optional and stay together in the final review.` : <>{welcome.descriptionPrefix}{phaseCount}{welcome.descriptionSuffix}</>}</p>
     <ul className="ob-welcome-promises">{welcome.promises.map((promise, index) => <li key={promise}>{index === 0 ? <PencilLine aria-hidden="true" /> : index === 1 ? <Route aria-hidden="true" /> : <Coffee aria-hidden="true" />}<span>{promise}</span></li>)}</ul>
     <form onSubmit={event => { event.preventDefault(); if (ready && accepted && !busy) void onStart?.(); }}>
       <div className="ob-start-consent">

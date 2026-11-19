@@ -34,6 +34,8 @@ export type Question = {
   why?: string;
   /** Optional experience feedback must not become a project follow-up. */
   feedback?: boolean;
+  /** Extra context shown only in the final optional topic library. */
+  optionalDetail?: boolean;
   allowOther?: boolean;
   maxSelections?: number;
   presets?: string[];
@@ -77,6 +79,8 @@ export type PhaseDefinition = {
   placement: "before-modules" | "after-modules";
 };
 export type QuestionnaireDefinition = {
+  /** Older snapshots retain their original adaptive phase layout. */
+  layout?: "compact";
   pages: Page[];
   phases: PhaseDefinition[];
   rules: RoutingRule[];

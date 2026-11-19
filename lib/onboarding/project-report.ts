@@ -28,7 +28,7 @@ export function getProjectReport(data: WorkspaceData) {
   const visibleIds = new Set(model.topics.flatMap((topic) => topic.questions.map((q) => q.id)));
   const savedOutsidePath = data.questionnaire.definition.pages.flatMap((page) =>
     page.questions
-      .filter((question) => !visibleIds.has(question.id) && model.answers[question.id])
+      .filter((question) => !question.optionalDetail && !visibleIds.has(question.id) && model.answers[question.id])
       .map((question) => ({
         id: question.id,
         topic: page.title,
@@ -43,6 +43,7 @@ export function getProjectReport(data: WorkspaceData) {
     buildStatus,
     stageLabel: (status: keyof typeof DELIVERY_STAGE_STATUS_LABELS) => DELIVERY_STAGE_STATUS_LABELS[status],
     savedOutsidePath,
+    optionalAnswers: data.questionnaire.definition.pages.flatMap(page => page.questions.filter(question => question.optionalDetail && model.answers[question.id]).map(question => ({ id: question.id, topic: page.title, label: question.label, answer: formatAnswer(model.answers[question.id], question) }))),
     phases: model.phases.map((phase) => ({
       ...phase,
       questions: phase.questions.map((item) => ({

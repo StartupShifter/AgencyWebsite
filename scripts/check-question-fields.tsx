@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
-import { renderToStaticMarkup } from "react-dom/server";
+import { renderToStaticMarkup as renderMarkup } from "react-dom/server";
+import type { ReactNode } from "react";
+import { I18nProvider } from "../context/i18n-context";
+import { content } from "../context/content";
+const renderToStaticMarkup = (node: ReactNode) => renderMarkup(<I18nProvider locale="en" content={content}>{node}</I18nProvider>);
 import { QuestionField } from "../components/onboarding/question-field";
 import { getPageById } from "../lib/onboarding/questionnaire";
 

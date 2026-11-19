@@ -24,6 +24,7 @@ export function validateDefinition(definition: QuestionnaireDefinition): string[
       const prefix = `${question.id}: `;
       if (!question.id.startsWith(`${page.id}.`) || !/^[a-zA-Z0-9_.-]+$/.test(question.id) || question.id.length > 100) errors.push(prefix + "use a stable ID within its topic.");
       if (!question.label.trim() || question.label.length > 600 || (question.help?.length ?? 0) > 2000 || (question.why?.length ?? 0) > 4000) errors.push(prefix + "provide a short label and concise help.");
+      if (question.optionalDetail && (definition.layout !== "compact" || question.required || question.requiredWhen || question.acknowledgement)) errors.push(prefix + "extra details must be optional and cannot contain required confirmations.");
       const options = question.options ?? [];
       if (!unique(options.map(option => option.trim().toLocaleLowerCase("en"))) || options.some(option => !option.trim() || option.length > 300) || options.length > 100) errors.push(prefix + "choices must be distinct, non-empty, and at most 300 characters.");
       if (["select", "multi-select"].includes(question.type) && !options.length) errors.push(prefix + "choice questions need options.");
@@ -54,8 +55,14 @@ export function validateDefinition(definition: QuestionnaireDefinition): string[
     if (!question || question.type !== spec.type || !question.required || question.allowStates?.length !== 0 || question.condition || question.acknowledgement !== spec.acknowledgement) errors.push(`${id}: keep the required identity/confirmation field, type, and direct-answer requirement.`);
   }
   if (!unique(definition.phases.map(phase => phase.id)) || definition.phases.length > 100) errors.push("Phase IDs must be unique; use at most 100 phases.");
-  const shared = pages.filter(page => page.kind !== "module").flatMap(page => page.questions.map(question => question.id));
   const assigned = definition.phases.flatMap(phase => phase.questionIds);
+  if (definition.layout === "compact") {
+    const core = questions.filter(question => !question.optionalDetail).map(question => question.id);
+    if (!unique(assigned) || assigned.length !== core.length || core.some(id => !assigned.includes(id))) errors.push("Assign every main question to exactly one phase; keep extra details outside the guided phases.");
+    if (definition.phases.length > 12) errors.push("Keep the compact brief within twelve phases. Add extra questions to the optional library.");
+    if (questions.some(question => !question.help?.trim())) errors.push("Every compact question needs a practical hint.");
+  } else {
+  const shared = pages.filter(page => page.kind !== "module").flatMap(page => page.questions.map(question => question.id));
   if (!unique(assigned) || assigned.length !== shared.length || shared.some(id => !assigned.includes(id))) errors.push("Assign every shared question to exactly one phase; workflow questions are grouped automatically.");
   if (JSON.stringify(assigned) !== JSON.stringify(shared)) errors.push("Shared phase questions must follow the shared topic/question order.");
   const expectedOrder = [
@@ -64,6 +71,7 @@ export function validateDefinition(definition: QuestionnaireDefinition): string[
     ...definition.phases.filter(phase => phase.placement === "after-modules").flatMap(phase => phase.questionIds),
   ];
   if (JSON.stringify(expectedOrder) !== JSON.stringify(questions.map(question => question.id))) errors.push("Topic order must match the introductory phases, workflows, then closing phases.");
+  }
   const final = definition.phases.at(-1);
   if (final?.id !== "final" || final.placement !== "after-modules" || !final.questionIds.includes("P16.2") || !final.questionIds.includes("P16.3") || assigned.at(-1) !== "P16.3") errors.push("Keep final review and both confirmations in the last phase, ending with privacy.");
   let afterModules = false;

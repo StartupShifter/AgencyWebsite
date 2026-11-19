@@ -1,5 +1,15 @@
 # Backend-managed onboarding questionnaires
 
+## Compact brief release — 2026-11-20
+
+The current database release uses `layout: "compact"`: 12 fixed phases and 59 main questions. Phases 1–8 retain their stable IDs and phase assignments. Phases 9–11 cover store essentials, social media/marketing, and approvals/handover, with five questions each. Phase 12 offers three optional feedback/notes questions, review, and the two protected confirmations. Clients can skip the three optional questions together.
+
+The remaining 82 questions are retained by stable ID with `optionalDetail: true`, revised wording and practical hints. They appear in a searchable, expandable final topic library; routing recommends relevant topics instead of adding phases. Clients can browse every extra topic. Blank extras do not affect progress, create missing-input flags, or prevent submission. Supplied extras are still validated, saved, included in reports, and available to the admin. Older immutable releases keep their original rendering behavior.
+
+`docs/compact-onboarding-release.json` records the reviewed database release payload, not a bootstrap replacement. The canonical bootstrap and historical definitions remain unchanged. Publishing went through `questionnaireAdmin:saveEditor` and `publishEditor` over the official Convex MCP server. The configured shared **development** backend received the compatible schema/functions; global publication did not migrate existing client assignments. The owner selected **new clients only** for this release; existing assignments and in-progress/submitted briefs remain unchanged. Future existing-client rollout requires an explicit targeted operation. Frontend source changes are present in both repositories; production frontend deployment is a separate step.
+
+The admin editor starts with a client journey overview and keeps optional topics separate. New questions/topics in a compact definition default to the optional library to prevent accidental phase growth. `scripts/check-compact-onboarding.ts` verifies counts, stable values, the first eight phases, optional submission, validation, admin parity, and editor additions.
+
 Implemented 2026-11-18. This supersedes the earlier compile-time questionnaire and global version-upgrade behavior. The question rewrite is already in the application; its revised 141-question library is now the initial published database version for new clients. Existing v1 briefs have their original 127-question definition preserved.
 
 ## Editing from the admin dashboard

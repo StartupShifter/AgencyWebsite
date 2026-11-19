@@ -17,6 +17,7 @@ import { getOnboardingPhases as buildPhases, getPhaseErrors } from "@/lib/onboar
 import { OnboardingWelcome } from "./onboarding-welcome";
 import { getGuidedSteps, getResumeStep } from "@/lib/onboarding/guided-flow";
 import { formatAnswer as formatQuestionAnswer } from "@/lib/onboarding/engine";
+import { OptionalDetails } from "./optional-details";
 import { QuestionField } from "./question-field";
 import { PortalShell } from "./portal-shell";
 import { PrivacyNotice, type PrivacySettings } from "./privacy-notice";
@@ -44,7 +45,7 @@ export function OnboardingWizard({ user, development = false }: { user: User; de
   if (assignment.error) return <PortalShell><p className="ob-error" role="alert">{assignment.error}</p><Button type="button" onClick={() => window.location.reload()}>{content.onboarding.wizard.reloadOnboarding}</Button></PortalShell>;
   if (!assignment.ready || mine === undefined || !privacy || isLoading) return <OnboardingSkeleton />;
   if (!mine) return <PortalShell><div className="ob-loading">{content.onboarding.wizard.sessionEnded} <Link href="/login">{content.onboarding.wizard.signInAgain}</Link>.</div></PortalShell>;
-  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome phaseCount={buildPhases(mine.questionnaire.definition, mine.draft?.answers, mine.draft?.extraModules).length} privacy={privacy} name={user.name} development={development} /></PortalShell>;
+  if (!privacy.approved) return <PortalShell businessName={getBusinessName(mine.draft?.answers)} userName={user.name}><OnboardingWelcome compact={mine.questionnaire.definition.layout === "compact"} phaseCount={buildPhases(mine.questionnaire.definition, mine.draft?.answers, mine.draft?.extraModules).length} privacy={privacy} name={user.name} development={development} /></PortalShell>;
   return <WizardSession key={`${user.id}:${mine.questionnaire.version}:${privacy.version}:${requestedQuestion}`} requestedQuestion={requestedQuestion} user={user} initial={mine} privacy={privacy} />;
 }
 
@@ -84,6 +85,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   const editingBriefQuestion = fromBrief && searchParams.get("mode") === "question";
   const dashboardBase = preview ? "/dashboard/preview" : "/dashboard";
   const { getPages, getSelectedModules, validateSubmission } = createQuestionnaire(initial.questionnaire.definition);
+  const compact = initial.questionnaire.definition.layout === "compact";
   const MODULE_PAGES = initial.questionnaire.definition.pages.filter(page => page.kind === "module");
   const getOnboardingPhases = (answers: Answers = {}, extras: string[] = [], privacyReady = true) => buildPhases(initial.questionnaire.definition, answers, extras, privacyReady);
   const questionById = (id: string) => initial.questionnaire.definition.pages.flatMap(page => page.questions).find(question => question.id === id);
@@ -197,7 +199,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   function updateAnswer(id: string, answer: Answers[string]) {
     dirty.current = true;
     setSaveState(content.onboarding.wizard.saveStates.unsaved);
-    setAnswers(previous => ({ ...previous, [id]: answer }));
+    setAnswers(previous => { const next = { ...previous, [id]: answer }; if (compact && id !== "P16.2" && id !== "P16.3") delete next["P16.2"]; return next; });
     setErrors(previous => { const next = { ...previous }; delete next[id]; return next; });
   }
   function moveTo(id: string) {
@@ -296,6 +298,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
     if (Object.keys(allErrors).length) {
       const first = steps.find(item => allErrors[item.id]);
       if (first) moveTo(first.id);
+      else if (compact) moveTo("review");
       setErrors(allErrors); setReturnToReview(true);
       setFailure(content.onboarding.wizard.errors.attentionBeforeSubmit); return;
     }
@@ -306,6 +309,18 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
         await submitPreview({ sessionId: previewSessionId, questionnaireVersion: initial.questionnaire.version }); moveTo("review"); router.push("/dashboard/preview");
       } else { await submit({ privacyVersion: privacy.version, questionnaireVersion: initial.questionnaire.version }); router.push("/dashboard"); router.refresh(); } }
     catch (e) { setFailure(e instanceof Error ? e.message : content.onboarding.wizard.errors.unableToSubmit); }
+    finally { setBusy(false); }
+  }
+  async function skipFinalExtras() {
+    if (busy) return;
+    const nextAnswers = { ...answers };
+    for (const item of phaseQuestions) if (item.question && !isQuestionRequired(item.question, answers) && isAnswerEmpty(nextAnswers[item.id])) nextAnswers[item.id] = { state: "not-applicable", value: "" };
+    const review = steps.find(item => item.id === "review")!;
+    setBusy(true);
+    try {
+      await persist({ answers: nextAnswers, extras, currentId: review.page.id, currentQuestion: review.id });
+      setAnswers(nextAnswers); moveTo("review");
+    } catch (error) { setFailure(error instanceof Error ? error.message : content.onboarding.wizard.errors.unableToSave); }
     finally { setBusy(false); }
   }
   async function finishPhase(nextAnswers = answers) {
@@ -330,7 +345,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
   function toggleModule(id: string) { dirty.current = true; setSaveState(content.onboarding.wizard.saveStates.unsaved); setExtras(old => old.includes(id) ? old.filter(s => s !== id) : [...old, id]); }
 
   if (!started) return <PortalShell focused preview={preview} businessName={getBusinessName(answers)} userName={user.name}>
-    <OnboardingWelcome phaseCount={phases.length} privacy={privacy} name={user.name} preview={preview} busy={busy} error={failure} onStart={async () => {
+    <OnboardingWelcome compact={compact} phaseCount={phases.length} privacy={privacy} name={user.name} preview={preview} busy={busy} error={failure} onStart={async () => {
       if (busy) return;
       setBusy(true); setFailure("");
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -354,12 +369,13 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
         <button className="ob-exit" type="button" disabled={busy} onClick={() => void saveExit()}><Save size={16} aria-hidden="true" />{fromBrief ? content.onboarding.wizard.saveAndReturn : content.onboarding.wizard.saveAndExit}</button>
       </div>
       <div className="ob-question-layout">
-      <OnboardingProgress phases={phases} activeIndex={phaseIndex} currentQuestion={reviewPhase ? "" : step.id} answers={answers} privacyReady={privacy.approved || preview} busy={busy} onNavigate={id => void navigate(id)} />
+      <OnboardingProgress phases={phases} activeIndex={phaseIndex} currentQuestion={reviewPhase ? "" : step.id} answers={answers} privacyReady={privacy.approved || preview} busy={busy} compact={compact} onNavigate={id => void navigate(id)} />
       <div className="ob-question-area">
         <div className="ob-topic-bar">
           <span><span className="ob-phase-kicker">{content.onboarding.wizard.phaseOf}{phaseIndex + 1}{content.onboarding.wizard.phaseOfSuffix}{phases.length}</span>{phase.title}</span>
           <span className="ob-question-position">{reviewPhase ? content.onboarding.wizard.phaseReview : question ? `${content.onboarding.wizard.questionOf}${questionIndex + 1}${content.onboarding.wizard.of}${phase.total}` : content.onboarding.wizard.reviewYourAnswers}</span>
         </div>
+        {compact && phase.id === "final" && step.id !== "review" && !question?.acknowledgement && <div className="ob-optional-intro"><p>These last questions are optional. You can add notes now or go straight to your brief and extra topics.</p><Button type="button" variant="outline" disabled={busy} onClick={() => void skipFinalExtras()}>Skip optional questions and review</Button></div>}
         {!reviewPhase && page.description && question?.id === page.questions.find(item => isQuestionVisible(item, answers))?.id && <p className="ob-help">{page.description}</p>}
         {!reviewPhase && <div className="ob-question-status" data-status={questionStatus}><QuestionStatusMark status={questionStatus} />{content.shared.questionStatusLabels[questionStatus]}{questionStatus === "later" && ` · ${content.onboarding.wizard.answerBeforeFinish}`}</div>}
         {completedPhase && <p className="ob-phase-saved" role="status"><CheckCheck size={16} aria-hidden="true" />{completedPhase}{content.onboarding.wizard.phaseSavedSuffix}</p>}
@@ -378,11 +394,11 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
           <div className="ob-guided-answer" key={step.id}>
             {question?.id === "P14.1" && <EngagementSummary engagement={initial.engagement} />}
             {question?.id === "P15.3" && initial.pending.length > 0 && <div className="ob-context-box"><h2>{content.onboarding.wizard.remainingPrereqs}</h2><ul>{initial.pending.map(item => <li key={item}>{item}</li>)}</ul><p>{content.onboarding.wizard.prereqsNote}</p></div>}
-            {step.id === "review" && <><p className="ob-help">{content.onboarding.wizard.reviewHelp}</p><ReviewSummary pages={pages} answers={answers} onEdit={editTopic} /></>}
+            {step.id === "review" && <><p className="ob-help">{content.onboarding.wizard.reviewHelp}</p>{compact && <OptionalDetails definition={initial.questionnaire.definition} answers={answers} recommended={selectedModules} errors={errors} disabled={busy} onChange={updateAnswer} />}<ReviewSummary pages={pages} answers={answers} onEdit={editTopic} /></>}
             {question?.id === "P16.3" && <PrivacyNotice compact privacy={privacy} preview={preview} />}
             <fieldset disabled={busy} className="ob-input-lock">
               {question && <QuestionField guided key={question.id} question={{ ...question, required: isQuestionRequired(question, answers), ...(preview && question.id === "P16.3" ? { help: content.onboarding.wizard.previewPrivacyHelp } : {}) }} answer={answers[question.id]} error={errors[question.id]} onChange={answer => updateAnswer(question.id, answer)} />}
-              {question?.id === "P08.1" && <>
+              {question?.id === "P08.1" && !compact && <>
                 <details className="ob-module-picker"><summary>{content.onboarding.wizard.addProjectTopic}<ChevronDown size={16} /></summary><p className="ob-help">{content.onboarding.wizard.topicsAutoHelp}</p><input className="ob-input" aria-label={content.onboarding.wizard.searchTopicsLabel} placeholder={content.onboarding.wizard.searchTopicsPlaceholder} value={filter} onChange={e => setFilter(e.target.value)} /><div className="ob-choices">{MODULE_PAGES.filter(p => p.title.toLowerCase().includes(filter.toLowerCase())).map(p => <label className="ob-choice" key={p.id}><input type="checkbox" checked={selectedModules.includes(p.id)} disabled={selectedModules.includes(p.id) && !extras.includes(p.id)} onChange={() => toggleModule(p.id)} /><span>{p.title}{selectedModules.includes(p.id) && !extras.includes(p.id) ? ` · ${content.onboarding.wizard.selectedByAnswers}` : ""}</span></label>)}</div></details>
                 {inactiveModules.length > 0 && <details className="ob-module-picker"><summary>{content.onboarding.wizard.previouslyAnswered}<ChevronDown size={16} /></summary><p className="ob-help">{content.onboarding.wizard.previouslyAnsweredHelp}</p>{inactiveModules.map(module => <div className="ob-list-row ob-context-box" key={module.id}><span className="ob-help">{module.title}</span><Button type="button" variant="outline" onClick={() => toggleModule(module.id)}>{content.onboarding.wizard.restoreTopic}</Button><Button type="button" variant="ghost" onClick={() => { dirty.current = true; setAnswers(previous => Object.fromEntries(Object.entries(previous).filter(([id]) => !id.startsWith(`${module.id}.`)))); }}>{content.onboarding.wizard.removeSavedAnswers}</Button></div>)}</details>}
                 <p className="ob-route-note">{selectedModules.length}{content.onboarding.wizard.routeNotePrefix}</p>
@@ -415,12 +431,13 @@ export function formatAnswer(answer?: Answers[string], question?: import("@/lib/
   return formatQuestionAnswer(answer, question);
 }
 export function ReviewSummary({ pages, answers, onEdit, editHref = "/onboarding" }: { pages: Page[]; answers: Answers; onEdit?: (id: string) => void; editHref?: string }) {
+  const mainPages = pages.map(page => ({ ...page, questions: page.questions.filter(question => !question.optionalDetail) })).filter(page => page.questions.length);
   const { content } = useI18n();
   const summary = content.onboarding.wizard.reviewSummary;
-  const groups = summary.groups.map(group => ({ ...group, ids: [...group.ids, ...(group.key === "work" ? pages.filter(p => p.kind === "module").map(p => p.id) : [])] }));
+  const groups = summary.groups.map(group => ({ ...group, ids: [...group.ids, ...(group.key === "work" ? mainPages.filter(p => p.kind === "module").map(p => p.id) : [])] }));
   const mapped = new Set(groups.flatMap(group => group.ids));
-  const additional = pages.filter(page => !mapped.has(page.id)).map(page => page.id);
+  const additional = mainPages.filter(page => !mapped.has(page.id)).map(page => page.id);
   if (additional.length) groups.push({ key: "additional", title: summary.additionalTitle, ids: additional });
-  const openItems = getOpenItemsForPages(answers, pages);
-  return <div className="ob-review">{groups.map(group => <details key={group.title}><summary><span>{group.title}<small>{pages.filter(p => group.ids.includes(p.id)).length}{summary.topicsToReview}</small></span><ChevronDown size={16} aria-hidden="true" /></summary>{pages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>{summary.edit}</button> : <Link href={editHref}>{summary.editBrief}</Link>}</div><dl>{p.questions.filter(q => !q.acknowledgement && isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`${summary.edit}: ${q.label}`} onClick={() => onEdit(q.id)}>{summary.edit}</button>}</dt><dd>{formatAnswer(answers[q.id], q)}</dd></div>)}</dl></section>)}</details>)}<details><summary>{summary.openQuestions}<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">{summary.noFollowups}</p>}</details></div>;
+  const openItems = getOpenItemsForPages(answers, mainPages);
+  return <div className="ob-review">{groups.map(group => <details key={group.title}><summary><span>{group.title}<small>{mainPages.filter(p => group.ids.includes(p.id)).length}{summary.topicsToReview}</small></span><ChevronDown size={16} aria-hidden="true" /></summary>{mainPages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>{summary.edit}</button> : <Link href={editHref}>{summary.editBrief}</Link>}</div><dl>{p.questions.filter(q => !q.acknowledgement && isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`${summary.edit}: ${q.label}`} onClick={() => onEdit(q.id)}>{summary.edit}</button>}</dt><dd>{formatAnswer(answers[q.id], q)}</dd></div>)}</dl></section>)}</details>)}<details><summary>{summary.openQuestions}<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">{summary.noFollowups}</p>}</details></div>;
 }

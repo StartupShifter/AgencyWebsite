@@ -30,7 +30,7 @@ export function getOnboardingPhases(definition: QuestionnaireDefinition, answers
   const core = definition.phases.map(definition => phase(definition.id, definition.title,
     steps.filter(step => definition.questionIds.includes(step.id) || (definition.id === "final" && step.id === "review"))))
     .filter(item => item.total > 0);
-  const moduleSteps = steps.filter(step => step.page.kind === "module");
+  const moduleSteps = steps.filter(step => step.page.kind === "module" && !definition.phases.some(phase => phase.questionIds.includes(step.id)));
   const count = Math.ceil(moduleSteps.length / 5);
   const size = count ? Math.floor(moduleSteps.length / count) : 0;
   const remainder = count ? moduleSteps.length % count : 0;

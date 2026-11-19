@@ -261,6 +261,16 @@ export function createProjectReportPdf(data: WorkspaceData, options: ProjectRepo
       p.rule();
     }
   }
+  if (report.optionalAnswers.length) {
+    section("Optional extra details", "Additional context supplied voluntarily, outside main brief completion.");
+    for (const item of report.optionalAnswers) {
+      p.ensure(75);
+      p.paragraph(`${item.id} | ${item.topic}`, { size: 8, color: C.muted });
+      p.paragraph(item.label, { bold: true });
+      p.paragraph(item.answer);
+      p.rule();
+    }
+  }
   if (report.savedOutsidePath.length) {
     section("Earlier saved answers", "Responses retained from questions outside the current brief.");
     p.paragraph("These responses were saved earlier and are outside your current questionnaire path. They do not contribute to current completion or confirm agreed scope.", { color: C.muted });

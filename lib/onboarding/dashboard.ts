@@ -42,7 +42,7 @@ export function getDashboardModel(data: WorkspaceData, content: Content = defaul
     answers,
     true,
   );
-  const topics = pages.map((page) => {
+  const topics = pages.map(page => ({ ...page, questions: page.questions.filter(question => !question.optionalDetail) })).filter(page => page.questions.length).map((page) => {
     const questions = page.questions.filter((question) =>
       isQuestionVisible(question, answers),
     );

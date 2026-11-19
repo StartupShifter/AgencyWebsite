@@ -1,0 +1,3725 @@
+{
+  "title": "Your business, store and marketing brief",
+  "baseVersion": "2026-11-18.v2",
+  "definition": {
+    "pages": [
+      {
+        "description": "Tell us who you are and the name we should use for your project.",
+        "id": "P01",
+        "kind": "shared",
+        "questions": [
+          {
+            "allowStates": [],
+            "help": "Use the name you use at work. We will use it in project updates.",
+            "id": "P01.1",
+            "label": "What name should we use for you?",
+            "required": true,
+            "type": "text",
+            "why": "This helps us address you correctly in project conversations."
+          },
+          {
+            "allowStates": [
+              "unknown",
+              "help"
+            ],
+            "help": "Enter the name customers know. Your legal invoice name can be different.",
+            "id": "P01.2",
+            "label": "What is your business or brand called?",
+            "presets": [
+              "Use my personal name",
+              "Name not decided yet"
+            ],
+            "required": true,
+            "type": "text",
+            "why": "We use this name in the brief and check it against your website and profiles."
+          },
+          {
+            "allowStates": [],
+            "help": "Use an inbox you check regularly, such as hello@yourbrand.com. A personal email is fine.",
+            "id": "P01.3",
+            "label": "Which email should we use for this project?",
+            "required": true,
+            "type": "email",
+            "why": "We use this address for project updates and questions that need your input."
+          },
+          {
+            "help": "Include the country code, such as +91. You can skip this unless you choose phone or WhatsApp updates.",
+            "id": "P01.4",
+            "label": "Which phone number can we reach you on?",
+            "required": false,
+            "requiredWhen": {
+              "includes": [
+                "Phone"
+              ],
+              "questionId": "P02.3"
+            },
+            "type": "tel",
+            "why": "A reachable number lets us use a phone-based channel if you choose one."
+          }
+        ],
+        "title": "Let's meet"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P02",
+        "kind": "shared",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Choose the closest match, such as owner or marketing lead. You can explain another role in a note.",
+            "id": "P02.1",
+            "label": "What is your role in this project?",
+            "optionLabels": {
+              "Authorized representative": "Working on behalf of the business",
+              "Employee/project lead": "Team member leading the project",
+              "Individual professional": "Independent professional",
+              "Owner/founder": "Business owner or founder"
+            },
+            "options": [
+              "Owner/founder",
+              "Employee/project lead",
+              "Authorized representative",
+              "Individual professional",
+              "Other"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "This helps us involve the right people in decisions; we ask about final approval separately."
+          },
+          {
+            "allowStates": [],
+            "fields": [
+              {
+                "id": "country",
+                "label": "Country or region",
+                "required": true
+              },
+              {
+                "id": "timezone",
+                "label": "Timezone",
+                "required": true
+              }
+            ],
+            "help": "This helps us schedule reviews. Check the suggested time zone; no street address is needed.",
+            "id": "P02.2",
+            "label": "Which country and time zone do you work in?",
+            "required": true,
+            "type": "country-timezone",
+            "why": "We use this to arrange reviews at suitable times."
+          },
+          {
+            "allowOther": true,
+            "help": "Choose the channels you check. For WhatsApp, choose messaging/group and add a note saying WhatsApp.",
+            "id": "P02.3",
+            "label": "How would you like to hear from us?",
+            "optionLabels": {
+              "Dashboard when available": "Project workspace",
+              "Messaging/group": "Messaging app or project group",
+              "Video meeting": "Video call"
+            },
+            "options": [
+              "Email",
+              "Dashboard when available",
+              "Phone",
+              "Messaging/group",
+              "Video meeting",
+              "Other"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "We will confirm the channels we can support and use your preferences to plan communication."
+          }
+        ],
+        "title": "How we should work with you"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P03",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "In two or three sentences, describe what you sell, who buys it, and the need it meets.",
+            "id": "P03.1",
+            "label": "What does your business do?",
+            "placeholder": "We sell refillable skincare to customers in India through our store and Instagram.",
+            "required": true,
+            "type": "textarea",
+            "why": "This becomes the starting point for research, website content, and marketing direction."
+          },
+          {
+            "allowOther": true,
+            "help": "Choose the closest category. Add your specific niche in a note if it is not listed.",
+            "id": "P03.2",
+            "label": "Which industry are you in?",
+            "options": [
+              "Retail and ecommerce",
+              "Professional services",
+              "Health and wellbeing",
+              "Education and learning",
+              "Food and hospitality",
+              "Manufacturing",
+              "Construction and property",
+              "Technology",
+              "Creative and media",
+              "Travel and events",
+              "Nonprofit and community",
+              "Internal business operations",
+              "Other"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "Your industry helps us find relevant competitors and spot requirements to investigate."
+          },
+          {
+            "allowOther": true,
+            "help": "Choose your current stage, such as preparing to launch or already selling online.",
+            "id": "P03.3",
+            "label": "Where is your business today?",
+            "optionDescriptions": {
+              "Already online": "Improving your current online experience is the main goal.",
+              "Expanding or improving": "Adding markets, channels, or a new line of business is the main goal."
+            },
+            "optionLabels": {
+              "Already online": "We sell online and want to improve",
+              "Established internal team": "This project is for our internal team",
+              "Expanding or improving": "We are expanding into new markets or channels",
+              "Idea/pre-launch": "We have not launched yet",
+              "Operating mainly offline": "We sell mainly offline"
+            },
+            "options": [
+              "Idea/pre-launch",
+              "Operating mainly offline",
+              "Already online",
+              "Expanding or improving",
+              "Established internal team",
+              "Other"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "We adapt recommendations to what already exists and what still needs to be built."
+          }
+        ],
+        "title": "Your business at a glance"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P04",
+        "kind": "shared",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Select the kinds of offers you have, such as physical products, digital downloads, or services.",
+            "id": "P04.1",
+            "label": "What will this project help you sell or deliver?",
+            "optionLabels": {
+              "Appointments": "Appointments or bookings",
+              "Digital products/courses": "Digital products or courses",
+              "Internal operations": "An internal team process",
+              "Marketplace connecting buyers and providers": "A marketplace for buyers and sellers",
+              "Not decided": "Help me choose a business model",
+              "Physical goods": "Physical products",
+              "Project-based services": "Services or custom projects",
+              "Subscriptions/memberships": "Subscriptions or memberships",
+              "Wholesale/B2B": "Wholesale or business sales"
+            },
+            "options": [
+              "Physical goods",
+              "Appointments",
+              "Project-based services",
+              "Digital products/courses",
+              "Subscriptions/memberships",
+              "Wholesale/B2B",
+              "Marketplace connecting buyers and providers",
+              "Internal operations",
+              "Other",
+              "Not decided"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "Your choices reveal relevant follow-up questions, such as delivery, bookings, or subscriptions."
+          },
+          {
+            "help": "Give up to three names or examples. A link to an existing catalog is also useful.",
+            "id": "P04.2",
+            "label": "Which products or services should we focus on first?",
+            "maxSelections": 3,
+            "presets": [
+              "Help me define this"
+            ],
+            "required": true,
+            "type": "list",
+            "why": "These examples help us plan the first launch around the offers that matter most."
+          },
+          {
+            "fields": [
+              {
+                "id": "now",
+                "label": "Current markets",
+                "placeholder": "For example: India, mainly Mumbai and Pune",
+                "required": true
+              },
+              {
+                "id": "later",
+                "label": "Planned markets",
+                "placeholder": "For example: UAE next year, or not decided"
+              }
+            ],
+            "help": "Name cities, regions, or countries. Leave future markets undecided if you have not chosen them.",
+            "id": "P04.3",
+            "label": "Where do you sell now, and where would you like to sell next?",
+            "options": [
+              "Local area",
+              "Country/region",
+              "Several countries",
+              "Online audience",
+              "Internal locations",
+              "Undecided"
+            ],
+            "required": true,
+            "type": "two-lists",
+            "why": "Markets affect language, currency, delivery, research, and the requirements we must verify."
+          }
+        ],
+        "title": "What you offer"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P05",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "Describe one useful group: what they need, where they live, and when they buy.",
+            "id": "P05.1",
+            "label": "Who is your main customer?",
+            "presets": [
+              "Help us identify them"
+            ],
+            "required": true,
+            "type": "text",
+            "why": "We use this to shape navigation, product information, and marketing messages for the right people."
+          },
+          {
+            "help": "For example, a parent may pay for a child, or a company buyer may order for a team.",
+            "id": "P05.2",
+            "label": "Does the person using your product also choose and pay for it?",
+            "optionLabels": {
+              "Different people": "Different people decide, pay, or use it",
+              "No payment involved": "There is no payment in this process",
+              "Not sure": "I am not sure yet",
+              "Usually yes": "Usually the same person"
+            },
+            "options": [
+              "Usually yes",
+              "Different people",
+              "No payment involved",
+              "Not sure"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "Different buyers and users may need different information, approvals, or account access."
+          },
+          {
+            "help": "Think of a recent customer. What did they need, what worried them, and what helped them decide?",
+            "id": "P05.3",
+            "label": "What helps a customer decide to buy from you?",
+            "presets": [
+              "No customers yet"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "Customer concerns guide product pages, FAQs, trust information, and follow-up messages."
+          }
+        ],
+        "title": "Who this is for"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P06",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "Describe the main problem or opportunity, such as slow sales, a new range, or too much manual work.",
+            "id": "P06.1",
+            "label": "Why are you starting this project now?",
+            "required": true,
+            "type": "textarea",
+            "why": "This tells us what needs attention first and what would make the project useful."
+          },
+          {
+            "allowOther": true,
+            "help": "Choose up to three outcomes, then mark your first priority so we know where to start.",
+            "id": "P06.2",
+            "label": "What are the three most important improvements you want?",
+            "maxSelections": 3,
+            "optionLabels": {
+              "Bookings": "Get more bookings",
+              "Customer experience": "Make buying or getting help easier",
+              "Customer retention": "Bring customers back",
+              "Errors": "Reduce mistakes",
+              "Online presence": "Help people find and understand us",
+              "Qualified inquiries": "Get more suitable inquiries",
+              "Reporting": "Understand business performance",
+              "Sales": "Increase sales",
+              "Staff adoption": "Help our team use the new process",
+              "Time spent on manual work": "Reduce manual work"
+            },
+            "options": [
+              "Online presence",
+              "Sales",
+              "Qualified inquiries",
+              "Bookings",
+              "Customer experience",
+              "Time spent on manual work",
+              "Errors",
+              "Reporting",
+              "Customer retention",
+              "Staff adoption",
+              "Other"
+            ],
+            "priority": true,
+            "required": true,
+            "type": "multi-select",
+            "why": "Your priority helps us make trade-offs when time, budget, or capacity is limited."
+          },
+          {
+            "help": "Give a practical result and a review date, such as more qualified inquiries within three months. Estimates are fine.",
+            "id": "P06.3",
+            "label": "What result would make this project worthwhile?",
+            "presets": [
+              "Help us set a realistic target"
+            ],
+            "required": true,
+            "type": "text",
+            "why": "We compare this goal with your starting point before agreeing realistic success measures."
+          },
+          {
+            "help": "Share a recent number, date range, and source if available. Choose not sure if you do not track this yet.",
+            "id": "P06.4",
+            "label": "What starting numbers do you have for your main goal?",
+            "placeholder": "About 120 orders in October, from our store report; estimated.",
+            "presets": [
+              "Not launched yet",
+              "We do not measure this yet",
+              "Discuss privately"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "A starting point lets us compare progress fairly. Revenue is optional; a new business can say it has not launched."
+          }
+        ],
+        "title": "Why you are starting this project"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P07",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "Paste full links to your store, social handles, marketplace pages, or review profiles. Share public links only.",
+            "id": "P07.1",
+            "label": "Which websites and public profiles belong to your business?",
+            "maxSelections": 20,
+            "placeholder": "Instagram — https://www.instagram.com/yourbrand/",
+            "presets": [
+              "We are not online yet"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "We use these sources to research your business and check consistency. Note which links are current; private reports can be shared through agreed access later."
+          },
+          {
+            "help": "Walk us through one example, from first contact to payment, delivery, and follow-up. A few sentences are enough.",
+            "id": "P07.2",
+            "label": "How does a typical order or inquiry move through your business?",
+            "placeholder": "Instagram message → WhatsApp order → payment link → spreadsheet → courier → follow-up",
+            "presets": [
+              "Explain on a call"
+            ],
+            "required": true,
+            "type": "textarea",
+            "why": "We map the handoffs between people and tools before proposing changes. A new business can describe its intended process."
+          },
+          {
+            "help": "Name the biggest difficulty. Add how often it happens or the time it takes if you know.",
+            "id": "P07.3",
+            "label": "Where does that process get stuck or create extra work?",
+            "presets": [
+              "No known problems yet"
+            ],
+            "required": true,
+            "type": "text",
+            "why": "This helps us prioritize the cause of a problem and preserve the parts that already work."
+          },
+          {
+            "help": "List tool names for orders, stock, delivery, accounting, customer support, and marketing. Do not share logins.",
+            "id": "P07.4",
+            "label": "Which tools does your team use to run the business?",
+            "placeholder": "For example: Shopify for orders; a spreadsheet for stock",
+            "presets": [
+              "Mostly paper or spreadsheets",
+              "No tools selected yet"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "We look for existing tools to retain and gaps between them before recommending new software."
+          }
+        ],
+        "title": "How things work today"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P08",
+        "kind": "shared",
+        "questions": [
+          {
+            "exclusiveOptions": [
+              "Help me choose"
+            ],
+            "help": "Choose the areas that matter to this project. We will confirm the exact work against your agreement.",
+            "id": "P08.1",
+            "label": "What would you like our help with?",
+            "optionDescriptions": {
+              "Campaigns/lead generation": "Plan promotions and acquisition; ongoing work depends on your plan.",
+              "ERP/CRM or other connections": "Move information between the tools your team uses.",
+              "Email and WhatsApp marketing": "Plan messages, signup forms, and customer follow-up.",
+              "Help me choose": "We will recommend priorities from the context you provide.",
+              "Research/design": "Understand your market and plan the customer experience.",
+              "SEO and search visibility": "Help people find your business through search.",
+              "Social presence": "Set up or improve your public social profiles and content direction.",
+              "Website/store/application": "Build or improve where customers browse, buy, or get help."
+            },
+            "optionLabels": {
+              "Campaigns/lead generation": "Marketing campaigns and customer growth",
+              "Chatbot": "A customer-facing chatbot",
+              "Customer handling": "Customer support processes",
+              "ERP/CRM or other connections": "Connect sales, stock, or business tools",
+              "Help me choose": "Help me choose priorities",
+              "Inventory": "Stock and availability",
+              "Invoicing": "Payments and invoices",
+              "Maintenance": "Care and maintenance after launch",
+              "Performance/reporting": "Measure and improve results",
+              "Research/design": "Business research and design",
+              "Shipping/order workflows": "Orders, delivery, and returns",
+              "Social presence": "Social media setup or improvements",
+              "Task automation": "Automate repeated tasks",
+              "Website/store/application": "Website, online store, or app"
+            },
+            "options": [
+              "Research/design",
+              "Website/store/application",
+              "Social presence",
+              "SEO and search visibility",
+              "Email and WhatsApp marketing",
+              "Campaigns/lead generation",
+              "Customer handling",
+              "Chatbot",
+              "Task automation",
+              "Inventory",
+              "Shipping/order workflows",
+              "Invoicing",
+              "ERP/CRM or other connections",
+              "Maintenance",
+              "Performance/reporting",
+              "Help me choose"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "We show relevant follow-ups and review requests against your agreement. Choices do not change your plan or price; Basic setup and Pro ongoing work have different boundaries."
+          },
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Need guidance"
+            ],
+            "help": "Select the main actions, such as buy, book, or request a quote. Leave future ideas for the next question.",
+            "id": "P08.2",
+            "label": "What should customers or staff be able to do at launch?",
+            "optionLabels": {
+              "Book": "Book a service or appointment",
+              "Buy": "Buy products",
+              "Connect as buyers and providers": "Connect buyers and sellers",
+              "Download/access content": "Download or access digital content",
+              "Learn/contact": "Learn about us or contact us",
+              "Need guidance": "Help me choose the main actions",
+              "Register/sign in": "Create an account or sign in",
+              "Submit/approve/track work": "Submit, approve, or track work",
+              "Subscribe": "Start a subscription or membership"
+            },
+            "options": [
+              "Learn/contact",
+              "Request a quote",
+              "Buy",
+              "Book",
+              "Subscribe",
+              "Download/access content",
+              "Register/sign in",
+              "Submit/approve/track work",
+              "Connect as buyers and providers",
+              "Other",
+              "Need guidance"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "These actions help us define the pages, steps, and connections the first version needs."
+          },
+          {
+            "fields": [
+              {
+                "id": "now",
+                "label": "First launch priorities",
+                "required": true
+              },
+              {
+                "id": "later",
+                "label": "Can wait"
+              }
+            ],
+            "help": "List up to three launch essentials. Put later ideas in the second box so we can keep the first release focused.",
+            "id": "P08.3",
+            "label": "What is essential for launch, and what can wait?",
+            "maxSelections": 3,
+            "presets": [
+              "Please recommend priorities"
+            ],
+            "required": true,
+            "type": "two-lists",
+            "why": "This keeps the first release focused. Add anything explicitly excluded so we can record that boundary."
+          }
+        ],
+        "title": "What you want help with"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P09",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "Share up to three competitor names or links. Shops or offline alternatives are useful too.",
+            "id": "P09.1",
+            "label": "Who do customers compare you with?",
+            "maxSelections": 3,
+            "presets": [
+              "Please research this"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "We compare offers, buying experiences, and messaging to find useful differences, rather than copy competitors."
+          },
+          {
+            "help": "Give strengths you can demonstrate today, such as product quality, expertise, or delivery. Separate future ideas.",
+            "id": "P09.2",
+            "label": "Why do customers choose you?",
+            "required": true,
+            "type": "textarea",
+            "why": "We use supported differences in positioning and content; planned strengths need validation first."
+          },
+          {
+            "help": "Share useful reviews, research, or feedback links with dates if available. Remove private customer information.",
+            "id": "P09.3",
+            "label": "What can help us understand your customers and market?",
+            "presets": [
+              "None yet"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "Evidence helps us check assumptions. Public marketing use of reviews, images, or testimonials needs separate permission."
+          }
+        ],
+        "title": "Your market and reasons to choose you"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P10",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "For each item you have, mark ready, needs updating, or need help. Choose nothing yet if you are starting fresh.",
+            "id": "P10.1",
+            "label": "Which brand and content materials do you have?",
+            "optionLabels": {
+              "Colors/fonts": "Brand colors and fonts",
+              "FAQs/policies": "Common questions and policies",
+              "Photos/video": "Photos and videos",
+              "Product/service information": "Product or service details"
+            },
+            "options": [
+              "Logo",
+              "Colors/fonts",
+              "Brand guide",
+              "Photos/video",
+              "Product/service information",
+              "Website copy",
+              "FAQs/policies",
+              "Nothing yet",
+              "Not sure"
+            ],
+            "required": true,
+            "type": "assets",
+            "why": "This shows what we can reuse and what may delay delivery. File production and licensing must match the agreed scope."
+          },
+          {
+            "allowOther": true,
+            "help": "Choose up to three qualities. Add a website or brand reference and explain what you like about it.",
+            "id": "P10.2",
+            "label": "How should your brand look and sound?",
+            "maxSelections": 3,
+            "options": [
+              "Warm and approachable",
+              "Clear and practical",
+              "Professional and trusted",
+              "Bold and energetic",
+              "Calm and minimal",
+              "Premium and refined",
+              "Playful and creative",
+              "Other"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use this to guide design and writing consistently. Add styles or language to avoid."
+          },
+          {
+            "help": "Name one person or role. You can use the main project contact if they will supply images, text, and approvals.",
+            "id": "P10.3",
+            "label": "Who can provide and approve your content?",
+            "presets": [
+              "Use my project contact",
+              "I need help"
+            ],
+            "required": true,
+            "type": "text",
+            "why": "We need a clear owner for product details, photos, copy, and approvals so missing content does not stall the build."
+          }
+        ],
+        "title": "Brand and content readiness"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P11",
+        "kind": "shared",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Tell us about known product, industry, platform, or advertising restrictions. A brief description is enough.",
+            "id": "P11.1",
+            "label": "Are there restrictions or approvals we should plan for?",
+            "optionLabels": {
+              "Confidential work": "Confidential information or projects",
+              "Licenses/regulated services": "Licenses or regulated products/services",
+              "Professional review": "Approval from a qualified reviewer"
+            },
+            "options": [
+              "None known",
+              "Age restrictions",
+              "Licenses/regulated services",
+              "Restricted products",
+              "Professional review",
+              "Confidential work",
+              "Contractual requirements",
+              "Not sure",
+              "Other"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "We flag requirements that may affect sales, advertising, or launch for review with the responsible person."
+          },
+          {
+            "help": "Select categories only, such as customer details or staff access. Do not paste real records or credentials.",
+            "id": "P11.2",
+            "label": "What private information or account access will the project involve?",
+            "optionLabels": {
+              "Different user roles": "Different permissions for different people",
+              "Ordinary contact/order details": "Contact details and order history",
+              "Staff-only information": "Information only staff should see"
+            },
+            "options": [
+              "Ordinary contact/order details",
+              "Financial information",
+              "Health or other sensitive records",
+              "Information about minors",
+              "Staff-only information",
+              "Different user roles",
+              "None",
+              "Not sure"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "This helps us plan access and identify information-handling requirements to verify before implementation."
+          },
+          {
+            "allowOther": true,
+            "help": "Add languages, devices, or barriers we should consider. Choose needs assessment if you want help deciding.",
+            "id": "P11.3",
+            "label": "Which languages or accessibility needs should we plan for?",
+            "optionLabels": {
+              "Assistive technology": "Screen readers or other access tools",
+              "Low digital confidence": "Customers or staff who need simpler steps",
+              "Mobile-only use": "People mainly using phones",
+              "Needs assessment": "Help us identify access needs"
+            },
+            "options": [
+              "Multiple languages",
+              "Assistive technology",
+              "Low digital confidence",
+              "Mobile-only use",
+              "Slow connections",
+              "None known",
+              "Needs assessment",
+              "Other"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "These inputs guide accessible design, translations, and mobile or slow-connection priorities."
+          }
+        ],
+        "title": "Requirements we should know early"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P12",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "Choose a date, flexible, or not decided. Add the event or reason if the date is fixed.",
+            "id": "P12.1",
+            "label": "Is there a launch date or event we should plan around?",
+            "presets": [
+              "Flexible",
+              "Not decided"
+            ],
+            "required": true,
+            "type": "date",
+            "why": "We use this to discuss dependencies and a realistic schedule; entering a date does not confirm it."
+          },
+          {
+            "fields": [
+              {
+                "id": "currency",
+                "label": "Currency",
+                "placeholder": "For example INR, USD, GBP"
+              },
+              {
+                "id": "setup",
+                "label": "Project / setup budget",
+                "placeholder": "Amount or range"
+              },
+              {
+                "id": "recurring",
+                "label": "Recurring tools / support budget",
+                "placeholder": "Amount or range per month"
+              },
+              {
+                "id": "advertising",
+                "label": "Monthly advertising budget, if relevant",
+                "placeholder": "Amount or range"
+              }
+            ],
+            "help": "Include the currency. Separate one-time work, monthly tools/support, and monthly advertising; ranges are fine.",
+            "id": "P12.2",
+            "label": "What budget limits should guide our recommendations?",
+            "presets": [
+              "Discuss privately",
+              "Need an estimate"
+            ],
+            "required": false,
+            "type": "budget",
+            "why": "We use these limits to compare options. Your agreement sets agency fees; hosting, domains, ad spend, and other third-party charges are client-paid."
+          },
+          {
+            "allowOther": true,
+            "help": "Choose known limits, such as missing photos, account access, holidays, or slow approvals.",
+            "id": "P12.3",
+            "label": "What could delay the work or your feedback?",
+            "optionLabels": {
+              "Seasonal peaks": "Busy seasons or events",
+              "Staff capacity": "Limited time or staff",
+              "Supplier readiness": "Suppliers are not ready yet"
+            },
+            "options": [
+              "Staff capacity",
+              "Supplier readiness",
+              "Content",
+              "Account access",
+              "Approvals",
+              "Seasonal peaks",
+              "Existing contracts",
+              "None known",
+              "Other"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "We can plan around dependencies early instead of discovering them close to launch."
+          }
+        ],
+        "title": "Timing and practical limits"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M01",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Choose the closest match; we will reuse the links you already shared.",
+            "id": "M01.1",
+            "label": "Are you starting a new site or updating an existing one?",
+            "options": [
+              "Create something new",
+              "Improve what we have",
+              "Replace what we have",
+              "Please recommend"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "A new build, improvement, or replacement needs a different plan for content, access, and continuity.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Need guidance"
+            ],
+            "help": "Optional: Choose the information or tools that help them decide and continue.",
+            "id": "M01.2",
+            "label": "What information should visitors find before buying or contacting you?",
+            "optionLabels": {
+              "Account": "Customer account",
+              "Examples": "Examples or customer proof",
+              "FAQs": "Answers to common questions",
+              "Location": "Location or service area",
+              "Offer details": "Product or service details",
+              "Search/filtering": "Search and product filters",
+              "Status tracking": "Order or request status"
+            },
+            "options": [
+              "Offer details",
+              "Pricing",
+              "Examples",
+              "FAQs",
+              "Location",
+              "Search/filtering",
+              "Contact",
+              "Account",
+              "Status tracking",
+              "Need guidance"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "This shapes page content and navigation around the customer’s task.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Choose your current platform or a preference, or ask us to recommend one. We will check it against your needs.",
+            "id": "M01.3",
+            "label": "Do you have a preferred platform for your store or application?",
+            "options": [
+              "Shopify",
+              "WordPress/WooCommerce",
+              "Another platform",
+              "No preference"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "We check fit, existing investments, and platform limits before recommending a solution."
+          },
+          {
+            "help": "Optional: Give one example or page link, including the device if known.",
+            "id": "M01.4",
+            "label": "What is difficult for customers on your current site?",
+            "presets": [
+              "No existing site",
+              "We need help investigating"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "A real problem helps us prioritize the redesign and define a task to check before launch.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Your website's job"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M02",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Name the provider and owner if known; do not share login details.",
+            "id": "M02.1",
+            "label": "Who manages your domain, website, and hosting?",
+            "optionLabels": {
+              "Managed by someone else": "Someone else manages them",
+              "Need to create": "We need new accounts",
+              "Owned and accessible": "We own the accounts and can access them",
+              "Owned but access uncertain": "We own them but need to check access"
+            },
+            "options": [
+              "Owned and accessible",
+              "Owned but access uncertain",
+              "Managed by someone else",
+              "Need to create",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "Account ownership and access can affect setup, migration, and handover.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: List priorities or link an existing page list; mark content ready or needing work.",
+            "id": "M02.2",
+            "label": "Which extra pages or content would you like ready at launch?",
+            "placeholder": "For example: Home — ready, Services — needs writing",
+            "presets": [
+              "Please recommend"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "This defines the launch content and who needs to prepare it.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose what matters; add important URLs or connections in a note.",
+            "id": "M02.3",
+            "label": "What should we preserve from your current website?",
+            "optionLabels": {
+              "Customer access": "Customer accounts and sign-in",
+              "Integrations": "Connections to other tools",
+              "URLs/search traffic": "Important page links and search visibility"
+            },
+            "options": [
+              "Domain",
+              "URLs/search traffic",
+              "Branding",
+              "Content",
+              "Customer access",
+              "Integrations",
+              "Nothing",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We identify migration needs and protect useful content, search visibility, and customer access.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Website ownership and content"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M03",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Choose an approximate range. For services or digital offers, count the offers customers can buy; mark not applicable if needed.",
+            "id": "M03.1",
+            "label": "Roughly how many products will you launch with?",
+            "options": [
+              "1–10",
+              "11–50",
+              "51–100",
+              "101–500",
+              "501–1,000",
+              "More than 1,000",
+              "Not sure"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "Ten products with many sizes can involve more setup than ten simple items; rough counts help estimate the work."
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose what applies, then add one example if helpful.",
+            "id": "M03.2",
+            "label": "Which product options should customers be able to choose?",
+            "optionDescriptions": {
+              "Text/image personalization": "For example, a name or uploaded design printed on a product.",
+              "Variant": "For example, a shirt available in several sizes and colors."
+            },
+            "optionLabels": {
+              "Approval": "A proof or design approval",
+              "Bundle": "A bundle or product set",
+              "Measurements": "Custom measurements",
+              "Nothing": "No choices beyond the product itself",
+              "Text/image personalization": "Personalized text or images",
+              "Variant": "Size, color, or another version"
+            },
+            "options": [
+              "Variant",
+              "Quantity",
+              "Bundle",
+              "Measurements",
+              "Text/image personalization",
+              "Approval",
+              "Nothing"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Product choices affect the catalog structure, pricing, fulfillment, and checkout.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Share a catalog or folder link, or name the tool you use. Mention missing materials; a sample is enough for now.",
+            "id": "M03.3",
+            "label": "Where can we find your product details, prices, and images?",
+            "presets": [
+              "Not prepared yet",
+              "A colleague will provide this"
+            ],
+            "required": true,
+            "type": "assets",
+            "why": "We check data readiness, missing details, image rights, and import needs before building the catalog."
+          },
+          {
+            "help": "Optional: Name best sellers or priorities; share price ranges and margin limits only if comfortable.",
+            "id": "M03.4",
+            "label": "Which products are your biggest commercial priorities?",
+            "presets": [
+              "No sales history yet",
+              "Discuss privately"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "This helps us prioritize products and avoid promotions that are unsuitable for your costs or supply.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose useful browsing methods; add important product facts in a note.",
+            "id": "M03.5",
+            "label": "How should customers browse and find products?",
+            "options": [
+              "Browse by category",
+              "Search by name or product code",
+              "Filter by size, color, or material",
+              "Compare specifications",
+              "Find compatible products or parts",
+              "Get help choosing",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Your catalog structure and search filters should reflect how people choose, not just how stock is stored.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Product catalog"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M04",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the main source; add its name and who updates it.",
+            "id": "M04.1",
+            "label": "Where do you record stock levels?",
+            "optionLabels": {
+              "Inventory system": "Stock management software",
+              "Not tracked": "We do not track stock yet",
+              "Physical records": "Paper or in-store records",
+              "Supplier feeds": "Stock updates from suppliers"
+            },
+            "options": [
+              "Spreadsheet",
+              "Inventory system",
+              "Supplier feeds",
+              "Physical records",
+              "Not tracked",
+              "Another process"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "We need a trusted stock source before designing synchronization or availability rules.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: List your main warehouses, stores, website, and marketplaces.",
+            "id": "M04.2",
+            "label": "Which locations and sales channels share your stock?",
+            "placeholder": "For example: 2 stores and an online shop",
+            "required": false,
+            "type": "list",
+            "why": "Shared stock needs rules to reduce overselling; note batches, expiry, or serial numbers only if relevant.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the behaviors you need; add an exception owner if known.",
+            "id": "M04.3",
+            "label": "What should customers see when a product is unavailable?",
+            "optionLabels": {
+              "Allow backorders": "Accept orders for later delivery",
+              "Manual review": "Ask a person to check",
+              "Reorder alert": "Alert the team to restock",
+              "Stop sales": "Show sold out and stop orders",
+              "Waitlist": "Let customers join a waitlist"
+            },
+            "options": [
+              "Stop sales",
+              "Allow backorders",
+              "Waitlist",
+              "Reorder alert",
+              "Manual review",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use this to plan availability messages, backorders, and staff checks.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Stock and availability"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M05",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Choose the relevant delivery or pickup methods and add the regions you serve. Digital-only businesses can choose not applicable.",
+            "id": "M05.1",
+            "label": "How should customers receive their orders or purchases?",
+            "optionLabels": {
+              "Courier": "Courier or postal delivery",
+              "Own delivery": "Our own delivery team",
+              "Pickup": "Customer pickup",
+              "Supplier dispatch": "Supplier ships directly"
+            },
+            "options": [
+              "Courier",
+              "Own delivery",
+              "Pickup",
+              "Supplier dispatch",
+              "Undecided"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "Delivery methods and areas determine the shipping and pickup choices customers see."
+          },
+          {
+            "help": "Optional: Link your rules or name providers, charges, processing times, and tracking needs.",
+            "id": "M05.2",
+            "label": "Which delivery providers and shipping rules do you use?",
+            "presets": [
+              "Please help define this"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We use these details to check checkout rates and fulfillment connections, including packaging or cross-border constraints.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name the team and link or summarize your returns policy.",
+            "id": "M05.3",
+            "label": "Who handles delivery problems, returns, and refunds?",
+            "presets": [
+              "Policy not ready"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "Clear ownership and rules help us plan customer messages and exception handling; include return costs if known.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Delivery, pickup, and returns"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M06",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Name suppliers or your production team; label undecided suppliers as options.",
+            "id": "M06.1",
+            "label": "Who makes or ships products on your behalf?",
+            "placeholder": "Supplier or production team — name or link",
+            "presets": [
+              "Suppliers not selected yet"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "We need to verify production and dispatch capabilities before connecting the order flow.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the checks needed before an order is made.",
+            "id": "M06.2",
+            "label": "What must be checked before a custom product is made?",
+            "optionLabels": {
+              "Artwork": "Artwork or design",
+              "Customer proof": "Customer approval of a preview",
+              "Customization": "Personalization details",
+              "Sample quality": "Quality of a sample",
+              "Size/variant availability": "Availability of the selected version"
+            },
+            "options": [
+              "Artwork",
+              "Customization",
+              "Sample quality",
+              "Size/variant availability",
+              "Customer proof",
+              "Nothing"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "These checks can prevent incorrect or unapproved orders reaching production; note whether samples and timing are tested.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Give the responsible person and key remake, deadline, or payment rules.",
+            "id": "M06.3",
+            "label": "How do you handle supplier problems and payments?",
+            "presets": [
+              "Not sure yet"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "Supplier timing and upfront costs may affect promises, order status, and cash flow.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Supplier-made or personalized products"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M07",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Give one service example with duration, location, staff, and capacity if known.",
+            "id": "M07.1",
+            "label": "Which services or appointments can customers book?",
+            "placeholder": "For example: 30-minute online consultations with one adviser",
+            "presets": [
+              "Help us define availability"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "These limits determine available time slots and booking rules.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Choose the main approach; add your calendar tool if you have one.",
+            "id": "M07.2",
+            "label": "How should a customer booking be confirmed?",
+            "optionLabels": {
+              "Consultation first": "Arrange a consultation first",
+              "Instant": "Confirm immediately",
+              "Staff approval": "Confirm after staff approval",
+              "Waitlist": "Add to a waitlist"
+            },
+            "options": [
+              "Instant",
+              "Staff approval",
+              "Consultation first",
+              "Waitlist",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "This determines when we reserve capacity and notify the customer.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Link a policy or summarize it; mention deposits and reminders if relevant.",
+            "id": "M07.3",
+            "label": "What are your cancellation, rescheduling, and no-show rules?",
+            "presets": [
+              "Help us define the process"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We need these rules for booking messages, payment requirements, and changes to availability.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Bookings and appointments"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M08",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the details that help you assess fit.",
+            "id": "M08.1",
+            "label": "What do you need to know before accepting an inquiry?",
+            "options": [
+              "Location",
+              "Type of work",
+              "Quantity",
+              "Budget range",
+              "Target date"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We keep inquiry forms focused on information your team actually uses.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Describe the steps or link a quote or order template.",
+            "id": "M08.2",
+            "label": "How does a quote become an approved order?",
+            "placeholder": "Inquiry → quote → approval → project delivery",
+            "presets": [
+              "Help us define the process"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "Quotes, purchase orders, approvals, and handoffs shape the sales workflow.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose existing rules such as trade pricing, minimum quantities, or payment terms.",
+            "id": "M08.3",
+            "label": "Do wholesale or business customers have special buying rules?",
+            "optionLabels": {
+              "Minimum quantities": "Minimum order quantities",
+              "Negotiated prices": "Prices agreed for each customer",
+              "Payment terms": "Pay later on agreed terms",
+              "Repeat ordering": "Reorder previous purchases",
+              "Trade accounts": "Approved business accounts"
+            },
+            "options": [
+              "Negotiated prices",
+              "Minimum quantities",
+              "Trade accounts",
+              "Payment terms",
+              "Repeat ordering",
+              "None"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "These rules may require different accounts, prices, approvals, or checkout behavior.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Quotes, projects, and B2B buying"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M09",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose delivery methods; add the file or content format if known.",
+            "id": "M09.1",
+            "label": "How should customers receive digital purchases?",
+            "optionLabels": {
+              "Account access": "Access through an account",
+              "Download": "File download",
+              "License": "Licensed content or software",
+              "Live session": "Live online session"
+            },
+            "options": [
+              "Download",
+              "Account access",
+              "Course",
+              "Live session",
+              "License"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Delivery format affects hosting, access, and purchase confirmation.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose relevant limits and add any known duration, seat, or license rules.",
+            "id": "M09.2",
+            "label": "Are there limits on access to your digital products?",
+            "optionLabels": {
+              "Access duration": "Time-limited access",
+              "Licenses": "License or permitted-use rules",
+              "Prerequisites": "Requirements before joining",
+              "Seat limits": "Limit on people or devices"
+            },
+            "options": [
+              "Access duration",
+              "Licenses",
+              "Seat limits",
+              "Prerequisites",
+              "Not decided"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use these rules to plan who gets access and when it ends.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose only what your offer needs.",
+            "id": "M09.3",
+            "label": "What help or features do customers need after gaining access?",
+            "optionLabels": {
+              "Expiry/revocation": "End or remove access"
+            },
+            "options": [
+              "Progress tracking",
+              "Assessments",
+              "Certificates",
+              "Updates",
+              "Support",
+              "Expiry/revocation",
+              "None"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Learning, updates, support, and expiry require different follow-up workflows.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Digital products and learning"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M10",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Summarize the ongoing benefit; link existing tiers and billing periods if available.",
+            "id": "M10.1",
+            "label": "What does a subscription or membership give customers?",
+            "presets": [
+              "Help us define the offer"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "The recurring offer determines delivery, access, and billing requirements.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Need guidance"
+            ],
+            "help": "Optional: Choose trial, renewal, plan-change, and failed-payment behaviors to discuss.",
+            "id": "M10.2",
+            "label": "Which subscription payment options do you need?",
+            "optionLabels": {
+              "Pause access after failed payment": "Pause access if payment fails"
+            },
+            "options": [
+              "Free trial",
+              "Paid trial",
+              "Automatic renewal",
+              "Renewal reminder",
+              "Upgrade or downgrade",
+              "Retry failed payments",
+              "Pause access after failed payment",
+              "Need guidance"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We check these against your policies and provider capabilities before implementation.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Link your rules or explain when access or deliveries end and whether refunds apply.",
+            "id": "M10.3",
+            "label": "What happens when a customer pauses or cancels?",
+            "presets": [
+              "Help us define the policy"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "Cancellation behavior affects billing, fulfillment, and customer messages.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Subscriptions and memberships"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M11",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the groups and add the main task each needs to do.",
+            "id": "M11.1",
+            "label": "Who will use your marketplace?",
+            "options": [
+              "Buyers",
+              "Sellers",
+              "Service providers",
+              "Reviewers",
+              "Administrators"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Each group may need different permissions and screens.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Describe selection, quality checks, and who supplies or performs the work.",
+            "id": "M11.2",
+            "label": "How do you approve providers and assign orders or work?",
+            "presets": [
+              "Help us define the process"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "This defines onboarding, matching, and operational responsibilities.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Describe commissions, payouts, refunds, and ownership where relevant.",
+            "id": "M11.3",
+            "label": "Who collects payments, pays providers, and handles disputes?",
+            "presets": [
+              "Not decided"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "The money flow affects provider feasibility and responsibilities that need specialist review.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Marketplaces and multiple providers"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M12",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Reuse your earlier workflow; add frequency or time spent if known.",
+            "id": "M12.1",
+            "label": "Which repeated team task would you like to improve?",
+            "presets": [
+              "Help us choose the priority task"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We choose a useful first improvement and a baseline for checking its effect.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose roles and explain what each can do.",
+            "id": "M12.2",
+            "label": "What should each team role be allowed to do?",
+            "options": [
+              "Employees",
+              "Managers",
+              "Project leads",
+              "External partners",
+              "Administrators"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Permissions and approval steps need to reflect how the team actually works.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose support such as training, mobile access, or a gradual rollout.",
+            "id": "M12.3",
+            "label": "What would help your team adopt the new process?",
+            "optionLabels": {
+              "Existing sign-in": "Use our current sign-in",
+              "Parallel running": "Keep the old process during a trial"
+            },
+            "options": [
+              "Training",
+              "Simpler mobile access",
+              "Existing sign-in",
+              "Gradual rollout",
+              "Parallel running"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "A workable rollout matters as much as the tool itself for team adoption.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Internal team workflows"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M13",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Select your preferred methods and add selling currencies in a note. We will confirm provider support and account readiness later.",
+            "id": "M13.1",
+            "label": "How should customers pay you?",
+            "optionLabels": {
+              "Cash/pay on delivery": "Cash or payment on delivery",
+              "Deposit/balance": "Deposit now, balance later",
+              "Invoice": "Pay an invoice",
+              "Online payment": "Online card, wallet, or local payment"
+            },
+            "options": [
+              "Online payment",
+              "Bank transfer",
+              "Invoice",
+              "Deposit/balance",
+              "Cash/pay on delivery",
+              "No payment in this flow",
+              "Not sure"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "This concerns customer payments, separate from your agency fees, and helps us check provider coverage."
+          },
+          {
+            "help": "Optional: Name providers and whether accounts are approved; never share bank or card credentials.",
+            "id": "M13.2",
+            "label": "Which payment or accounting providers do you already use?",
+            "presets": [
+              "No providers yet"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "Provider readiness and supported connections affect payment setup and reconciliation.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Link the rules or name the person who will confirm them.",
+            "id": "M13.3",
+            "label": "Which pricing, tax, invoice, and refund rules are already approved?",
+            "presets": [
+              "Needs review"
+            ],
+            "required": false,
+            "type": "assets",
+            "why": "Checkout and invoices must reflect approved business rules; we do not infer tax treatment from a country alone.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Help me choose"
+            ],
+            "help": "Optional: Choose business needs; we will check platform and payment-provider support.",
+            "id": "M13.4",
+            "label": "Does your checkout need any special features?",
+            "options": [
+              "Buy without creating an account",
+              "Use a saved customer account",
+              "Use a fast wallet payment",
+              "Enter company or tax details",
+              "Add a discount or gift card",
+              "Choose pickup or delivery",
+              "Help me choose"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Checkout requirements affect conversion, account design, and the steps we need to test before launch.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Customer payments and invoicing"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M14",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Need guidance"
+            ],
+            "help": "Choose up to three. We will use the public profile links you shared earlier; mention any handles that still need creating.",
+            "id": "M14.1",
+            "label": "Which social channels should we focus on first?",
+            "maxSelections": 3,
+            "options": [
+              "Instagram",
+              "Facebook",
+              "LinkedIn",
+              "YouTube",
+              "TikTok",
+              "Pinterest",
+              "X",
+              "WhatsApp",
+              "Need guidance"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "We focus setup or improvements on relevant channels and verify account ownership separately."
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the main actions or messages to support.",
+            "id": "M14.2",
+            "label": "What should your social content help customers do?",
+            "optionLabels": {
+              "Inquire": "Ask about a purchase or service",
+              "Return": "Come back or buy again",
+              "See products": "Discover products",
+              "Trust expertise": "Build confidence in our expertise",
+              "Understand services": "Understand what we offer"
+            },
+            "options": [
+              "Understand services",
+              "See products",
+              "Trust expertise",
+              "Inquire",
+              "Book",
+              "Buy",
+              "Return"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "This connects content choices to business goals rather than posting without a purpose.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Choose the closest working arrangement. Add who can supply photos or videos and who can approve posts.",
+            "id": "M14.3",
+            "label": "Who will create, approve, and publish social content?",
+            "optionLabels": {
+              "Agency where agreed": "Starter Shifter, for agreed work",
+              "Client": "Our team",
+              "Shared": "Our team and Starter Shifter together"
+            },
+            "options": [
+              "Client",
+              "Agency where agreed",
+              "Shared",
+              "Undecided"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "We plan responsibilities and approvals around the agreement; ongoing production needs defined coverage."
+          },
+          {
+            "help": "Optional: Link one useful post or redacted report and say what happened and when.",
+            "id": "M14.4",
+            "label": "Which posts or social campaigns have worked well?",
+            "presets": [
+              "No results measured yet",
+              "No social pages yet"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We distinguish attention from inquiries or sales and learn which topics and formats are worth testing.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Your social presence"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M15",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Pick one starting campaign, such as your best-selling range for customers in your main city. You can refer to earlier answers.",
+            "id": "M15.1",
+            "label": "Which offer and customer group should marketing focus on first?",
+            "presets": [
+              "Help us choose the campaign priority"
+            ],
+            "required": true,
+            "type": "textarea",
+            "why": "A clear starting point helps us connect campaigns, landing pages, and follow-up."
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose current sources; add one thing that worked or failed with a dated results link.",
+            "id": "M15.2",
+            "label": "How do customers find your business today?",
+            "optionLabels": {
+              "Ads": "Paid advertising",
+              "No history": "We have not started marketing yet",
+              "Offline": "Offline activity or events",
+              "Search": "Search engines",
+              "Social": "Unpaid social posts"
+            },
+            "options": [
+              "Search",
+              "Social",
+              "Ads",
+              "Referrals",
+              "Partnerships",
+              "Repeat customers",
+              "Offline",
+              "Email or messaging",
+              "No history"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use past evidence to decide what to retain, test, or investigate rather than guess channel performance.",
+            "optionalDetail": true
+          },
+          {
+            "fields": [
+              {
+                "id": "currency",
+                "label": "Currency",
+                "placeholder": "For example INR, USD, GBP",
+                "required": true
+              },
+              {
+                "id": "advertising",
+                "label": "Campaign spending limit",
+                "placeholder": "Amount or range",
+                "required": true
+              }
+            ],
+            "help": "Optional: Confirm the monthly ad budget already shared; add only promotion limits or changes.",
+            "id": "M15.3",
+            "label": "Are there extra advertising spend or promotion limits?",
+            "presets": [
+              "Discuss first",
+              "Use the advertising budget already shared"
+            ],
+            "required": false,
+            "type": "budget",
+            "why": "We reuse your project budget and check commercial limits. Ad spend is client-paid; requests do not authorize campaign spending.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Give a few phrases a customer might use, or link important search pages.",
+            "id": "M15.4",
+            "label": "What might customers search for to find you?",
+            "presets": [
+              "Please research this"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We use your language as a research starting point, then verify search demand and intent; rankings are not guaranteed.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name tools or assets and who manages them; add access status without logins.",
+            "id": "M15.5",
+            "label": "Which marketing accounts or materials can we reuse?",
+            "placeholder": "For example: Google Search Console — our team owns it; access needs checking",
+            "presets": [
+              "No marketing accounts yet",
+              "Need help checking ownership"
+            ],
+            "required": false,
+            "type": "list",
+            "why": "We check analytics, search, ads, email, and creative readiness before planning connections or campaigns.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Campaign and growth priorities"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M16",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose criteria and add any customers or requests you cannot serve.",
+            "id": "M16.1",
+            "label": "What makes an inquiry a good fit for your business?",
+            "optionLabels": {
+              "Company type": "A suitable business type",
+              "Need": "A need we can help with",
+              "Timing": "A suitable buying timeline"
+            },
+            "options": [
+              "Service area",
+              "Need",
+              "Budget",
+              "Timing",
+              "Company type"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use this to distinguish useful inquiries from volume alone.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name the owner, destination tool, usual response time, and daily capacity.",
+            "id": "M16.2",
+            "label": "Who follows up on new inquiries?",
+            "presets": [
+              "Help us define follow-up"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "A campaign needs a workable handoff so inquiries receive timely follow-up.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Describe repeat needs, offers, or reasons people stop returning.",
+            "id": "M16.3",
+            "label": "What brings customers back to buy again?",
+            "presets": [
+              "Help us identify a repeat offer"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We use this to plan useful retention messages rather than send promotions without a reason.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Describe signup sources, channels, and where preferences or opt-outs are recorded.",
+            "id": "M16.4",
+            "label": "How do people agree to receive your marketing messages?",
+            "presets": [
+              "No contact list yet",
+              "Permission needs review"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We need to verify permissions and channel requirements before using a list. Do not upload subscriber details here.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Help me choose"
+            ],
+            "help": "Choose up to three useful messages, such as welcome, abandoned purchase, or repeat-order reminders. We will confirm channels and permissions.",
+            "id": "M16.5",
+            "label": "Which customer messages should we set up first?",
+            "maxSelections": 3,
+            "options": [
+              "Welcome after signup",
+              "Help after an unfinished checkout",
+              "Product or service education",
+              "After-purchase guidance",
+              "Review request",
+              "Reorder or renewal reminder",
+              "Bring inactive customers back",
+              "Help me choose"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use this to plan email or messaging flows, timing, and ownership; implementation depends on scope and verified permissions."
+          }
+        ],
+        "title": "Lead follow-up and repeat business"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M17",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose channels; add rough weekly volume and common topics if known.",
+            "id": "M17.1",
+            "label": "Where do customers send questions?",
+            "optionLabels": {
+              "Dashboard": "Customer portal or workspace",
+              "Messaging": "Messaging apps such as WhatsApp"
+            },
+            "options": [
+              "Email",
+              "Phone",
+              "Messaging",
+              "Social messages",
+              "Website chat",
+              "Dashboard"
+            ],
+            "presets": [
+              "Not measured"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Volume and channel mix help define staffing, coverage, and workflow needs.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose tasks and note what needs your approval.",
+            "id": "M17.2",
+            "label": "Which customer conversations would you like help with?",
+            "optionLabels": {
+              "Exceptions": "Unusual cases",
+              "FAQs": "Common questions",
+              "Qualifying inquiries": "Checking whether inquiries are a good fit"
+            },
+            "options": [
+              "FAQs",
+              "Qualifying inquiries",
+              "Booking",
+              "Status updates",
+              "Complaints",
+              "Refunds",
+              "Exceptions"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We clarify responsibilities and authority limits against the agreed scope before handling customers.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name a person or role and their availability.",
+            "id": "M17.3",
+            "label": "Who takes over urgent or unresolved customer issues?",
+            "presets": [
+              "Need to appoint a contact"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We need a clear escalation path for complaints, sensitive issues, and exceptions; no coverage hours are assumed.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Human customer handling"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M18",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose channels and add up to three priority questions or tasks.",
+            "id": "M18.1",
+            "label": "Where would you like a chatbot to help?",
+            "optionLabels": {
+              "Messaging": "Messaging apps such as WhatsApp"
+            },
+            "options": [
+              "Website",
+              "Online store",
+              "Facebook",
+              "Instagram",
+              "Messaging",
+              "Client dashboard"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We check channel capabilities and access before agreeing what the chatbot can do.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Link FAQs, policies, or catalog pages and name who keeps them updated.",
+            "id": "M18.2",
+            "label": "Which approved information may the chatbot use?",
+            "presets": [
+              "Needs preparing"
+            ],
+            "required": false,
+            "type": "assets",
+            "why": "Reliable sources reduce unsupported answers; private datasets should use an agreed secure process.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "exclusiveOptions": [
+              "Use the language and tone already shared"
+            ],
+            "help": "Optional: Reuse earlier brand preferences unless customer conversations need something different.",
+            "id": "M18.3",
+            "label": "Which languages and tone should the chatbot use?",
+            "options": [
+              "Use the language and tone already shared",
+              "Friendly",
+              "Professional",
+              "Clear and concise",
+              "Warm",
+              "Formal"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "This keeps chatbot responses consistent with your brand and customers’ language needs.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Chatbot purpose and knowledge"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M19",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the main job; add other requested actions in a note.",
+            "id": "M19.1",
+            "label": "What should the chatbot mainly help customers do?",
+            "optionLabels": {
+              "Answer only": "Answer questions only",
+              "Check status": "Look up an order or request status",
+              "Collect inquiries": "Collect details for a person to follow up",
+              "Suggest/book appointments": "Help customers book"
+            },
+            "options": [
+              "Answer only",
+              "Collect inquiries",
+              "Suggest/book appointments",
+              "Check status",
+              "Other"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "Action-taking needs verified access and feasibility checks before it enters the scope.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose decisions or situations the chatbot should not handle on its own.",
+            "id": "M19.2",
+            "label": "Which chatbot decisions should require a person’s approval?",
+            "optionLabels": {
+              "Account changes": "Changes to a customer account",
+              "Binding quotes": "Final prices or binding quotes",
+              "Discounts/refunds": "Discounts or refunds",
+              "Sensitive advice": "Sensitive or regulated advice",
+              "Unknown answers": "Questions it cannot answer reliably"
+            },
+            "options": [
+              "Discounts/refunds",
+              "Binding quotes",
+              "Sensitive advice",
+              "Account changes",
+              "Unknown answers",
+              "Complaints"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use these boundaries to define permissions and human review.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose handoff situations and name the receiving team in a note.",
+            "id": "M19.3",
+            "label": "When should the chatbot pass a conversation to a person?",
+            "options": [
+              "Uncertain answers",
+              "Failed actions",
+              "Unavailable staff",
+              "Urgent or sensitive cases",
+              "Customer requests a person"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We plan escalation and what happens when staff are unavailable; add any usage-cost limit if known.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Chatbot actions and human handoff"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M20",
+        "kind": "module",
+        "questions": [
+          {
+            "help": "Optional: Start with one task from the workflow you already described.",
+            "id": "M20.1",
+            "label": "Which repeated task would you like to automate?",
+            "placeholder": "When a quote is accepted, create an invoice.",
+            "presets": [
+              "Help us choose the first automation"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "A focused first automation makes it easier to verify value and avoid automating a broken process.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose tool types and add product names or plans if known.",
+            "id": "M20.2",
+            "label": "Which tools should work together?",
+            "optionLabels": {
+              "CRM": "Customer and sales management tools",
+              "Custom tools": "Custom or in-house tools",
+              "ERP": "Tools for wider business operations"
+            },
+            "options": [
+              "Spreadsheets",
+              "CRM",
+              "ERP",
+              "Accounting",
+              "Shipping",
+              "Inventory",
+              "Custom tools",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We verify connectors, permissions, and platform limits before promising a connection.",
+            "optionalDetail": true
+          },
+          {
+            "fields": [
+              {
+                "id": "trigger",
+                "label": "When this happens",
+                "placeholder": "For example: A quote is accepted",
+                "required": true
+              },
+              {
+                "id": "result",
+                "label": "This should happen next",
+                "placeholder": "For example: Create an invoice",
+                "required": true
+              }
+            ],
+            "help": "Optional: Give one trigger and one expected result in everyday words.",
+            "id": "M20.3",
+            "label": "What should start the automation, and what should happen next?",
+            "presets": [
+              "Need guidance"
+            ],
+            "required": false,
+            "type": "two-lists",
+            "why": "This defines the first workflow to validate; add frequency or volume only if known.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Automation and connected tools"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M21",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose records; add timing and whether information moves one way or both.",
+            "id": "M21.1",
+            "label": "What information should pass between your tools?",
+            "optionLabels": {
+              "Stock": "Stock counts and availability"
+            },
+            "options": [
+              "Customer information",
+              "Orders",
+              "Stock",
+              "Invoices",
+              "Files",
+              "Other records"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "Record types, direction, and timing determine connection requirements.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name the trusted source for customers, orders, stock, or invoices where relevant.",
+            "id": "M21.2",
+            "label": "Which tool should we trust when records disagree?",
+            "presets": [
+              "Need help deciding"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "A trusted source prevents updates from overwriting the wrong information.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name the alert recipient and how staff can continue manually.",
+            "id": "M21.3",
+            "label": "What should your team do if a connection stops working?",
+            "presets": [
+              "Help us define a fallback"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We plan recovery and exception handling alongside the normal workflow.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Data rules and failed workflows"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M22",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the information; name each source and rough volume if known.",
+            "id": "M22.1",
+            "label": "What should move from your old website or tools?",
+            "optionLabels": {
+              "System settings": "Settings in the current tools"
+            },
+            "options": [
+              "Website content",
+              "Product catalog",
+              "Customer records",
+              "Order history",
+              "Booking history",
+              "Files",
+              "System settings"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We assess export access, migration work, and what needs verification before moving live data.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose known issues and name who can approve cleanup.",
+            "id": "M22.2",
+            "label": "Are there known problems in the information being moved?",
+            "optionLabels": {
+              "Access/export limits": "Difficulty accessing or exporting records"
+            },
+            "options": [
+              "Duplicates",
+              "Missing details",
+              "Outdated records",
+              "Inconsistent formats",
+              "Access/export limits",
+              "None known",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We avoid carrying known errors into the new system or changing records without an owner.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose critical services; add acceptable interruption and who can check the result.",
+            "id": "M22.3",
+            "label": "What must keep working while we move your information?",
+            "optionLabels": {
+              "Backups and rollback": "Backups and a way to switch back",
+              "Important URLs": "Important page links and search visibility"
+            },
+            "options": [
+              "Important URLs",
+              "Live orders",
+              "Live bookings",
+              "Customer access",
+              "Connected systems",
+              "Backups and rollback"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We plan redirects, continuity, backups, and rollback around these priorities before switching.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Moving existing data or systems"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M23",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose measures and add a report link or tool name if available.",
+            "id": "M23.1",
+            "label": "Which business or website results do you track?",
+            "optionLabels": {
+              "Conversion": "Visits that lead to a purchase or inquiry",
+              "Repeat business": "Returning customers",
+              "System speed": "Website or tool speed",
+              "Task time": "Time spent on a task",
+              "Visits": "Website visits"
+            },
+            "options": [
+              "Visits",
+              "Inquiries",
+              "Bookings",
+              "Sales",
+              "Conversion",
+              "Repeat business",
+              "Response time",
+              "Task time",
+              "Errors",
+              "System speed",
+              "Nothing yet",
+              "Not sure"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We check what evidence exists before proposing reporting or new tracking.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Reuse your earlier baseline; add only new detail with dates and a source.",
+            "id": "M23.2",
+            "label": "Do you have any extra starting figures to share?",
+            "placeholder": "For example: Approximately 20 inquiries per month, from our CRM",
+            "presets": [
+              "Baseline needed"
+            ],
+            "required": false,
+            "type": "text",
+            "why": "Comparable starting numbers help assess progress; estimates are welcome and revenue is optional.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Name the most useful decision, who will read the report, and how often. For example: which campaign to fund next month.",
+            "id": "M23.3",
+            "label": "What would you like marketing and store reports to help you decide?",
+            "presets": [
+              "Help us decide what to measure"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We focus reporting on actions your team can take, rather than collect metrics without a purpose."
+          },
+          {
+            "help": "Optional: Share a recent step-by-step report or an example; include dates and the source.",
+            "id": "M23.4",
+            "label": "Where do customers leave before completing an order or inquiry?",
+            "placeholder": "For example: October store report — 2,000 visits, 90 checkout starts, 30 orders.",
+            "presets": [
+              "We do not track the steps yet"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We use the same period and definitions to locate drop-off. Unknown steps become measurement work, not guessed conversion rates.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Measurement and performance"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M24",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose the tasks you want help with.",
+            "id": "M24.1",
+            "label": "Which tasks would you like help with after launch?",
+            "optionLabels": {
+              "Integration monitoring": "Checking connections between tools"
+            },
+            "options": [
+              "Updates",
+              "Bug fixes",
+              "Backups",
+              "Integration monitoring",
+              "Content changes",
+              "Chatbot updates",
+              "Performance"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We compare requests with the agreed coverage; maintenance and new feature work need clear limits.",
+            "optionalDetail": true
+          },
+          {
+            "allowOther": true,
+            "help": "Optional: Choose critical failures; add busy periods and recovery needs if known.",
+            "id": "M24.2",
+            "label": "Which service interruptions would affect you most?",
+            "options": [
+              "Website or store unavailable",
+              "Payments unavailable",
+              "Bookings unavailable",
+              "Lost or delayed data",
+              "Connected systems unavailable"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "These priorities guide a support discussion; they do not create response-time or recovery guarantees.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Reuse a contact or name a responsible role; add a suitable update window.",
+            "id": "M24.3",
+            "label": "Who should receive alerts and approve maintenance?",
+            "presets": [
+              "Use the primary project contact",
+              "Need to appoint a contact"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We need an owner for access, subscriptions, and approval of disruptive or extra work.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Ongoing care and recovery"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M25",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose roles and describe their access; do not provide real private records.",
+            "id": "M25.1",
+            "label": "Who may view or change private information?",
+            "optionLabels": {
+              "Agency for agreed work": "Starter Shifter, only for agreed work"
+            },
+            "options": [
+              "Project owner",
+              "Employees",
+              "Managers",
+              "Customers",
+              "External providers",
+              "Agency for agreed work"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We use these boundaries to plan permissions for staff, customers, and providers.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Link a policy or name a contact; add AI or third-party processing limits if relevant.",
+            "id": "M25.2",
+            "label": "Do you have rules for storing or deleting information?",
+            "presets": [
+              "Needs review",
+              "No requirements known"
+            ],
+            "required": false,
+            "type": "assets",
+            "why": "These requirements can affect tool selection and data flows and need confirmation by the responsible person.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name the responsible person or team; link an existing requirements document if available.",
+            "id": "M25.3",
+            "label": "Who can confirm your data requirements or handle incidents?",
+            "presets": [
+              "Use the primary project contact",
+              "Need to appoint a responsible contact"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "A clear owner helps us verify requirements and arrange access removal or incident escalation.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Information access and protection"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "M26",
+        "kind": "module",
+        "questions": [
+          {
+            "allowOther": true,
+            "help": "Optional: Choose policy areas and link current approved versions if available.",
+            "id": "M26.1",
+            "label": "Which approved policies should we follow?",
+            "optionLabels": {
+              "Accessibility": "Accessibility requirements",
+              "Advertising/claims": "Advertising and product claims",
+              "Cookies/tracking": "Cookies and marketing tracking",
+              "Licenses": "Licenses or industry permissions",
+              "Privacy": "Use and protection of personal information",
+              "Returns/cancellation": "Returns, refunds, and cancellations"
+            },
+            "options": [
+              "Customer terms",
+              "Privacy",
+              "Cookies/tracking",
+              "Returns/cancellation",
+              "Accessibility",
+              "Licenses",
+              "Advertising/claims",
+              "Needs review"
+            ],
+            "required": false,
+            "type": "multi-select",
+            "why": "We identify missing text, disclosures, and review needs before launch or campaign setup.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Name an owner for policy text and rights to supplied images, designs, and testimonials.",
+            "id": "M26.2",
+            "label": "Who can approve missing policies and permissions?",
+            "presets": [
+              "Need to arrange"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We need approved text and usage rights; providing a file alone does not establish permission to publish it.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Optional: Describe known restrictions or name the person who should review them.",
+            "id": "M26.3",
+            "label": "Could any known restriction affect sales, campaigns, or launch?",
+            "presets": [
+              "None known",
+              "Needs specialist review"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "This helps us identify a blocking dependency before committing to a proposed implementation.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Policies and approvals for your business"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P13",
+        "kind": "shared",
+        "questions": [
+          {
+            "allowStates": [],
+            "help": "Name the person who can approve scope, design, content, and launch. Use your main contact if that is you.",
+            "id": "P13.1",
+            "label": "Who has final approval for this project?",
+            "presets": [
+              "Use my project contact"
+            ],
+            "required": true,
+            "type": "text",
+            "why": "A clear decision owner helps avoid conflicting feedback; list separate approvers only where needed."
+          },
+          {
+            "help": "Optional: Name people or roles and who will combine their feedback.",
+            "id": "P13.2",
+            "label": "Who else would you like involved in research and design reviews?",
+            "required": false,
+            "type": "list",
+            "why": "This helps us plan reviews and hear from the people who will use or run the result.",
+            "optionalDetail": true
+          },
+          {
+            "exclusiveOptions": [
+              "Shared",
+              "Need help deciding"
+            ],
+            "help": "Choose the responsible team. Add any training or handover support they need; ongoing agency work is agreed separately.",
+            "id": "P13.3",
+            "label": "Who will run the store and marketing after launch?",
+            "optionLabels": {
+              "Agency for agreed work": "Starter Shifter for agreed tasks",
+              "Me/my team": "Me or my team",
+              "Need help deciding": "Help us decide ownership",
+              "Shared": "Shared responsibilities to agree"
+            },
+            "options": [
+              "Me/my team",
+              "Agency for agreed work",
+              "Shared",
+              "Need help deciding"
+            ],
+            "required": true,
+            "type": "multi-select",
+            "why": "We plan ownership and handover around the agreed coverage. Selecting the agency does not add ongoing services."
+          }
+        ],
+        "title": "Decisions, reviews, and handover"
+      },
+      {
+        "description": "Your approved proposal and contract provide the project summary. Selecting work in this form does not create an agreement or verify a payment.",
+        "id": "P14",
+        "kind": "shared",
+        "questions": [
+          {
+            "help": "Check the scope, fees, currency, exclusions, and third-party costs shown above. Request a correction if something is missing.",
+            "id": "P14.1",
+            "label": "Does the recorded project agreement look right?",
+            "options": [
+              "Matches my agreement",
+              "Request a correction",
+              "No agreement yet"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "We flag differences for review. This answer does not sign a contract or verify a payment."
+          },
+          {
+            "allowStates": [],
+            "fields": [
+              {
+                "id": "legalName",
+                "label": "Contracting person or legal name",
+                "required": true
+              },
+              {
+                "id": "billingEmail",
+                "label": "Billing email",
+                "required": true,
+                "type": "email"
+              }
+            ],
+            "help": "Confirm or correct the suggested business name and billing email. Include only the invoice details requested here.",
+            "id": "P14.2",
+            "label": "Which legal name and email should appear on your invoices?",
+            "required": true,
+            "type": "budget",
+            "why": "These details support contracting and billing. Address and tax details are requested separately only when needed."
+          },
+          {
+            "help": "Optional: Describe the blocker without entering payment-card or bank details.",
+            "id": "P14.3",
+            "label": "Is anything blocking your agreement or advance payment?",
+            "required": false,
+            "type": "textarea",
+            "why": "We can resolve administrative issues; verified contract and 40% advance status come from agency records.",
+            "optionalDetail": true
+          }
+        ],
+        "title": "Your engagement details"
+      },
+      {
+        "description": "Answer what you know. Estimates are welcome; you can ask for help or return later.",
+        "id": "P15",
+        "kind": "shared",
+        "questions": [
+          {
+            "allowStates": [],
+            "help": "Optional: Keep your project email or enter a different address you control.",
+            "id": "P15.1",
+            "label": "Would you like to use a different email for the client workspace?",
+            "required": false,
+            "type": "email",
+            "why": "The address must be verified before access is granted; this form does not grant permissions.",
+            "optionalDetail": true
+          },
+          {
+            "fields": [
+              {
+                "id": "name",
+                "label": "Name"
+              },
+              {
+                "id": "email",
+                "label": "Work email",
+                "type": "email"
+              },
+              {
+                "id": "role",
+                "label": "Role"
+              },
+              {
+                "id": "access",
+                "label": "Requested access"
+              }
+            ],
+            "help": "Optional: Add each person’s name, work email, role, and requested access.",
+            "id": "P15.2",
+            "label": "Who else should join the project workspace or group?",
+            "required": false,
+            "type": "list",
+            "why": "This records your access request so we can check responsibilities before sending any invitations.",
+            "optionalDetail": true
+          },
+          {
+            "help": "Choose a convenient sharing method. We will arrange invitations or a secure handoff; never enter passwords, codes, or API keys.",
+            "id": "P15.3",
+            "label": "How would you like to share files and arrange account access?",
+            "options": [
+              "Ready to share securely",
+              "Colleague will provide",
+              "Need instructions",
+              "Discuss on a call",
+              "No remaining inputs"
+            ],
+            "required": true,
+            "type": "select",
+            "why": "We will arrange the appropriate sharing or role-based access process for the outstanding items."
+          }
+        ],
+        "title": "Your workspace and remaining inputs"
+      },
+      {
+        "description": "Check your business, goals, selected work, responsibilities, and open items. You can edit each section before submitting. Submission saves your answers; workspace activation follows verified project prerequisites.",
+        "id": "P16",
+        "kind": "shared",
+        "questions": [
+          {
+            "feedback": true,
+            "help": "Optional: choose a rating if you wish. Your answer will not affect your project or our service.",
+            "id": "P16.4",
+            "label": "How has this onboarding felt so far?",
+            "options": [
+              "Very dissatisfied",
+              "Dissatisfied",
+              "Neither satisfied nor dissatisfied",
+              "Satisfied",
+              "Very satisfied"
+            ],
+            "required": false,
+            "type": "select",
+            "why": "Your feedback helps us improve onboarding. This is an optional experience rating, not approval of scope or a satisfaction guarantee."
+          },
+          {
+            "feedback": true,
+            "help": "Optional: mention a confusing question, missing choice, or unnecessary step. You can leave this blank.",
+            "id": "P16.5",
+            "label": "What would make these questions easier to answer?",
+            "presets": [
+              "Nothing to add"
+            ],
+            "required": false,
+            "type": "textarea",
+            "why": "We review this alongside your rating to decide what to change. Please leave out private customer details."
+          },
+          {
+            "help": "Optional: add a concern, correction, or useful link. You can also open the extra topics on the review screen.",
+            "id": "P16.1",
+            "label": "Is there anything else you would like us to know?",
+            "required": false,
+            "type": "textarea",
+            "why": "This catches context that did not fit earlier questions before we review the brief with you."
+          },
+          {
+            "acknowledgement": "accuracy",
+            "allowStates": [],
+            "help": "Review your brief and any extra details. Estimates and unknowns are welcome when clearly marked; confirm when you are ready.",
+            "id": "P16.2",
+            "label": "Are your answers accurate, and are you allowed to share them?",
+            "required": true,
+            "type": "checkbox",
+            "why": "Your confirmation helps us distinguish supplied facts from research still needed. It does not approve project scope."
+          },
+          {
+            "acknowledgement": "privacy",
+            "allowStates": [],
+            "help": "Read the privacy notice below before confirming. This is the final confirmation before sending your brief.",
+            "id": "P16.3",
+            "label": "Have you read how we use your onboarding information?",
+            "required": true,
+            "type": "checkbox",
+            "why": "This acknowledgement covers project use of your information. Marketing permission is separate and is not required for workspace access."
+          }
+        ],
+        "title": "Review and submit"
+      }
+    ],
+    "phases": [
+      {
+        "id": "meet",
+        "placement": "before-modules",
+        "questionIds": [
+          "P01.1",
+          "P01.2",
+          "P01.3",
+          "P01.4",
+          "P02.1"
+        ],
+        "title": "Meet your project team"
+      },
+      {
+        "id": "business",
+        "placement": "before-modules",
+        "questionIds": [
+          "P02.2",
+          "P02.3",
+          "P03.1",
+          "P03.2",
+          "P03.3"
+        ],
+        "title": "Your business at a glance"
+      },
+      {
+        "id": "audience",
+        "placement": "before-modules",
+        "questionIds": [
+          "P04.1",
+          "P04.2",
+          "P04.3",
+          "P05.1",
+          "P05.2"
+        ],
+        "title": "Your offer and audience"
+      },
+      {
+        "id": "goals",
+        "placement": "before-modules",
+        "questionIds": [
+          "P05.3",
+          "P06.1",
+          "P06.2",
+          "P06.3",
+          "P06.4"
+        ],
+        "title": "Your goals"
+      },
+      {
+        "id": "workflow",
+        "placement": "before-modules",
+        "questionIds": [
+          "P07.1",
+          "P07.2",
+          "P07.3",
+          "P07.4",
+          "P08.1"
+        ],
+        "title": "How things work today"
+      },
+      {
+        "id": "priorities",
+        "placement": "before-modules",
+        "questionIds": [
+          "P08.2",
+          "P08.3",
+          "P09.1",
+          "P09.2",
+          "P09.3"
+        ],
+        "title": "Your launch priorities"
+      },
+      {
+        "id": "brand",
+        "placement": "before-modules",
+        "questionIds": [
+          "P10.1",
+          "P10.2",
+          "P10.3",
+          "P11.1",
+          "P11.2"
+        ],
+        "title": "Your brand and requirements"
+      },
+      {
+        "id": "launch",
+        "placement": "before-modules",
+        "questionIds": [
+          "P11.3",
+          "P12.1",
+          "P12.2",
+          "P12.3"
+        ],
+        "title": "Your launch plan"
+      },
+      {
+        "id": "store",
+        "title": "Your store essentials",
+        "questionIds": [
+          "M01.3",
+          "M03.1",
+          "M03.3",
+          "M05.1",
+          "M13.1"
+        ],
+        "placement": "before-modules"
+      },
+      {
+        "id": "growth",
+        "title": "Social media and marketing",
+        "questionIds": [
+          "M14.1",
+          "M14.3",
+          "M15.1",
+          "M16.5",
+          "M23.3"
+        ],
+        "placement": "before-modules"
+      },
+      {
+        "id": "people",
+        "title": "Approvals and handover",
+        "questionIds": [
+          "P13.1",
+          "P13.3",
+          "P14.1",
+          "P14.2",
+          "P15.3"
+        ],
+        "placement": "before-modules"
+      },
+      {
+        "id": "final",
+        "title": "Optional details and final review",
+        "questionIds": [
+          "P16.4",
+          "P16.5",
+          "P16.1",
+          "P16.2",
+          "P16.3"
+        ],
+        "placement": "after-modules"
+      }
+    ],
+    "rules": [
+      {
+        "all": [
+          {
+            "includes": [
+              "Website/store/application"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "website",
+        "modules": [
+          "M01",
+          "M02"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Physical goods"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "goods",
+        "modules": [
+          "M03"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Inventory"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "stock",
+        "modules": [
+          "M04"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Shipping/order workflows"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "delivery",
+        "modules": [
+          "M05"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Appointments"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "bookings",
+        "modules": [
+          "M07"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Book"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "booking-action",
+        "modules": [
+          "M07"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Project-based services",
+              "Wholesale/B2B"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "services",
+        "modules": [
+          "M08"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Request a quote"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "quote",
+        "modules": [
+          "M08"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Digital products/courses"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "digital",
+        "modules": [
+          "M09"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Download/access content"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "digital-action",
+        "modules": [
+          "M09"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Subscriptions/memberships"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "membership",
+        "modules": [
+          "M10"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Subscribe"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "subscribe",
+        "modules": [
+          "M10"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Marketplace connecting buyers and providers"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "marketplace",
+        "modules": [
+          "M11"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Connect as buyers and providers"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "market-action",
+        "modules": [
+          "M11"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Internal operations"
+            ],
+            "questionId": "P04.1"
+          }
+        ],
+        "any": [],
+        "id": "internal",
+        "modules": [
+          "M12"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Submit/approve/track work"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "internal-action",
+        "modules": [
+          "M12"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Invoicing"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "invoices",
+        "modules": [
+          "M13"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Buy",
+              "Subscribe"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "payments",
+        "modules": [
+          "M13"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Social presence"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "social",
+        "modules": [
+          "M14"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Campaigns/lead generation"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "campaigns",
+        "modules": [
+          "M15",
+          "M16"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "SEO and search visibility"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "seo",
+        "modules": [
+          "M15"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Email and WhatsApp marketing"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "email",
+        "modules": [
+          "M16"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Customer handling"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "support",
+        "modules": [
+          "M17"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Chatbot"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "chat",
+        "modules": [
+          "M18",
+          "M19"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Task automation",
+              "ERP/CRM or other connections"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "automation",
+        "modules": [
+          "M20",
+          "M21"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Performance/reporting"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "measurement",
+        "modules": [
+          "M23"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Maintenance"
+            ],
+            "questionId": "P08.1"
+          }
+        ],
+        "any": [],
+        "id": "care",
+        "modules": [
+          "M24"
+        ]
+      },
+      {
+        "all": [
+          {
+            "moduleId": "M03"
+          },
+          {
+            "includes": [
+              "Buy"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "commerce-ops",
+        "modules": [
+          "M04",
+          "M05"
+        ]
+      },
+      {
+        "all": [],
+        "any": [
+          {
+            "includes": [
+              "Buy"
+            ],
+            "questionId": "P08.2"
+          },
+          {
+            "moduleId": "M14"
+          },
+          {
+            "moduleId": "M15"
+          },
+          {
+            "moduleId": "M16"
+          }
+        ],
+        "id": "measure-sales-marketing",
+        "modules": [
+          "M23"
+        ]
+      },
+      {
+        "all": [],
+        "any": [
+          {
+            "moduleId": "M14"
+          },
+          {
+            "moduleId": "M15"
+          },
+          {
+            "moduleId": "M16"
+          }
+        ],
+        "id": "marketing-policies",
+        "modules": [
+          "M26"
+        ]
+      },
+      {
+        "all": [],
+        "any": [
+          {
+            "except": [
+              "None known",
+              "None"
+            ],
+            "questionId": "P11.1"
+          },
+          {
+            "questionId": "P11.1",
+            "states": [
+              "unknown",
+              "help"
+            ]
+          },
+          {
+            "includes": [
+              "Financial information",
+              "Health or other sensitive records",
+              "Information about minors",
+              "Staff-only information",
+              "Different user roles",
+              "Not sure"
+            ],
+            "questionId": "P11.2"
+          },
+          {
+            "questionId": "P11.2",
+            "states": [
+              "unknown",
+              "help"
+            ]
+          },
+          {
+            "includes": [
+              "Needs assessment"
+            ],
+            "questionId": "P11.3"
+          },
+          {
+            "questionId": "P11.3",
+            "states": [
+              "unknown",
+              "help"
+            ]
+          }
+        ],
+        "id": "special-requirements",
+        "modules": [
+          "M25",
+          "M26"
+        ]
+      },
+      {
+        "all": [
+          {
+            "includes": [
+              "Buy",
+              "Book",
+              "Subscribe",
+              "Download/access content",
+              "Register/sign in",
+              "Connect as buyers and providers"
+            ],
+            "questionId": "P08.2"
+          }
+        ],
+        "any": [],
+        "id": "transaction-policies",
+        "modules": [
+          "M26"
+        ]
+      },
+      {
+        "all": [],
+        "any": [
+          {
+            "questionId": "P04.1",
+            "textIncludes": [
+              "print on demand",
+              "print-on-demand",
+              "made to order",
+              "made-to-order",
+              "personalization",
+              "personalisation",
+              "dropship"
+            ]
+          },
+          {
+            "questionId": "P04.2",
+            "textIncludes": [
+              "print on demand",
+              "print-on-demand",
+              "made to order",
+              "made-to-order",
+              "personalization",
+              "personalisation",
+              "dropship"
+            ]
+          }
+        ],
+        "id": "supplier-model",
+        "modules": [
+          "M06"
+        ]
+      },
+      {
+        "all": [
+          {
+            "moduleId": "M03"
+          },
+          {
+            "includes": [
+              "Text/image personalization"
+            ],
+            "questionId": "M03.2"
+          }
+        ],
+        "any": [],
+        "id": "personalization",
+        "modules": [
+          "M06"
+        ]
+      },
+      {
+        "all": [
+          {
+            "moduleId": "M06"
+          }
+        ],
+        "any": [],
+        "id": "production-ops",
+        "modules": [
+          "M03",
+          "M05"
+        ]
+      },
+      {
+        "all": [
+          {
+            "moduleId": "M07"
+          },
+          {
+            "questionId": "M07.3",
+            "textIncludes": [
+              "deposit",
+              "payment",
+              "collect money",
+              "collecting money",
+              "charge",
+              "paid",
+              "refund"
+            ]
+          }
+        ],
+        "any": [],
+        "id": "booking-money",
+        "modules": [
+          "M13"
+        ]
+      },
+      {
+        "all": [
+          {
+            "moduleId": "M02"
+          },
+          {
+            "includes": [
+              "URLs/search traffic",
+              "Content",
+              "Customer access",
+              "Integrations"
+            ],
+            "questionId": "M02.3"
+          }
+        ],
+        "any": [],
+        "id": "migration",
+        "modules": [
+          "M22"
+        ]
+      },
+      {
+        "all": [
+          {
+            "moduleId": "M02"
+          },
+          {
+            "includes": [
+              "Replace what we have",
+              "Replacing it",
+              "Replacing what you have",
+              "Replace an existing site"
+            ],
+            "questionId": "M01.1"
+          },
+          {
+            "questionId": "P07.1",
+            "textIncludes": [
+              "https://",
+              "http://"
+            ]
+          }
+        ],
+        "any": [],
+        "id": "replacement",
+        "modules": [
+          "M22"
+        ]
+      }
+    ],
+    "layout": "compact"
+  }
+}

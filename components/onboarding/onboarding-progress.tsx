@@ -13,13 +13,14 @@ export function QuestionStatusMark({ status, number }: { status: QuestionStatus;
   </span>;
 }
 
-export function OnboardingProgress({ phases, activeIndex, currentQuestion, answers, privacyReady, busy, onNavigate }: {
+export function OnboardingProgress({ phases, activeIndex, currentQuestion, answers, privacyReady, busy, compact = false, onNavigate }: {
   phases: OnboardingPhase[];
   activeIndex: number;
   currentQuestion: string;
   answers: Answers;
   privacyReady: boolean;
   busy: boolean;
+  compact?: boolean;
   onNavigate: (questionId: string) => void;
 }) {
   const { content } = useI18n();
@@ -81,7 +82,8 @@ export function OnboardingProgress({ phases, activeIndex, currentQuestion, answe
         </li>;
       })}</ol></nav>
       <div className="ob-progress-legend"><span><QuestionStatusMark status="answered" />{copy.legendAnswered}</span><span><QuestionStatusMark status="later" />{copy.legendForLater}</span><span><QuestionStatusMark status="pending" />{copy.legendPending}</span></div>
-      <p className="ob-rail-note">{copy.railNote}</p>
+      <details className="ob-phase-map"><summary>Preview the full journey</summary><ol>{phases.map((phase, index) => <li key={phase.id}><button type="button" disabled={busy} onClick={() => navigate(phase.nextQuestion)}><span>{index + 1}. {phase.title}</span><small>{phase.steps.filter(step => step.question).map(step => step.question!.label).join(" · ")}</small></button></li>)}</ol></details>
+      <p className="ob-rail-note">{compact ? "Your twelve phases stay the same. Extra topics are optional in the final review." : copy.railNote}</p>
     </div>
   </aside>;
 }
