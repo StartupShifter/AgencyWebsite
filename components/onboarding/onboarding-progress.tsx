@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { Check, ChevronDown, CircleAlert } from "lucide-react";
 import type { OnboardingPhase } from "@/lib/onboarding/phase-engine";
 import type { Answers } from "@/lib/onboarding/types";
-import { getPhaseQuestionProgress, getQuestionStatus, QUESTION_STATUS_LABELS, type QuestionStatus } from "@/lib/onboarding/progress-state";
-import { content } from "@/context/content";
+import { getPhaseQuestionProgress, getQuestionStatus, type QuestionStatus } from "@/lib/onboarding/progress-state";
+import { useI18n } from "@/context/i18n-context";
 
 export function QuestionStatusMark({ status, number }: { status: QuestionStatus; number?: number }) {
   return <span className="ob-status-mark" data-status={status} aria-hidden="true">
@@ -22,6 +22,7 @@ export function OnboardingProgress({ phases, activeIndex, currentQuestion, answe
   busy: boolean;
   onNavigate: (questionId: string) => void;
 }) {
+  const { content } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
   const listRef = useRef<HTMLOListElement>(null);
   const progress = phases.map(phase => getPhaseQuestionProgress(phase, answers, privacyReady));
@@ -72,7 +73,7 @@ export function OnboardingProgress({ phases, activeIndex, currentQuestion, answe
             const questionNumber = phase.steps.slice(0, stepIndex + 1).filter(item => item.question).length;
             const questionStatus = getQuestionStatus(step, answers, privacyReady);
             const current = step.id === currentQuestion;
-            return <li key={step.id}><button type="button" disabled={busy} aria-current={current ? "step" : undefined} aria-label={`${step.question ? `Question ${questionNumber}: ${step.question.label}` : copy.reviewYourAnswers} — ${QUESTION_STATUS_LABELS[questionStatus]}${current ? copy.currentQuestionSuffix : ""}`} title={step.question?.label ?? copy.reviewYourAnswers} onClick={() => navigate(step.id)}>
+            return <li key={step.id}><button type="button" disabled={busy} aria-current={current ? "step" : undefined} aria-label={`${step.question ? `Question ${questionNumber}: ${step.question.label}` : copy.reviewYourAnswers} — ${content.shared.questionStatusLabels[questionStatus]}${current ? copy.currentQuestionSuffix : ""}`} title={step.question?.label ?? copy.reviewYourAnswers} onClick={() => navigate(step.id)}>
               <QuestionStatusMark status={questionStatus} number={step.question ? questionNumber : undefined} />
               <span>{step.question ? `Q${questionNumber}` : copy.review}</span>
             </button></li>;

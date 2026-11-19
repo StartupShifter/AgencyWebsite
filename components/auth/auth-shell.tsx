@@ -3,13 +3,13 @@ import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 import { Brand } from "@/components/landing/brand";
 import { CopyrightYear } from "@/components/landing/copyright-year";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import "./auth.css";
 
-const steps = content.auth.shell.steps;
-
-export function AuthShell({ children }: { children: ReactNode }) {
+export async function AuthShell({ children }: { children: ReactNode }) {
+  const { content } = await getLocalizedContent();
   const shell = content.auth.shell;
+  const steps = content.auth.shell.steps;
   return (
     <main className="auth-screen">
       <aside className="auth-story" aria-labelledby="auth-story-heading">

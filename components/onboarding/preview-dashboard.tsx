@@ -9,7 +9,7 @@ import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { DashboardLoading } from "@/components/dashboard/dashboard-shell";
 import { answerText } from "@/lib/onboarding/dashboard";
 import { PreviewSessionProvider } from "./preview-session";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function PreviewDashboard() {
   return (
@@ -20,6 +20,7 @@ export function PreviewDashboard() {
 }
 
 function SavedPreviewDashboard() {
+  const { content } = useI18n();
   const [sessionId] = useSessionId();
   const assignment = useAssignedQuestionnaire(Boolean(sessionId), sessionId);
   const questionnaire = useQuery(api.onboardingPreview.getQuestionnaire, sessionId ? { sessionId } : "skip");

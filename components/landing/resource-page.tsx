@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import "./resource-page.css";
 
 export type ResourceFact = {
@@ -23,15 +23,17 @@ type ResourcePageProps = {
   children: ReactNode;
 };
 
-export function ResourcePage({
+export async function ResourcePage({
   eyebrow,
-  note = content.common.resourceNoteDefault,
+  note,
   title,
   description,
   facts,
   actions,
   children,
 }: ResourcePageProps) {
+  const { content } = await getLocalizedContent();
+  const resolvedNote = note ?? content.common.resourceNoteDefault;
   return (
     <div id="top" className="resourcePage">
       <a className={twLanding("skip-link")} href="#main">
@@ -45,7 +47,7 @@ export function ResourcePage({
         >
           <div className="resourceHero-top">
             <p className="resourceEyebrow">{eyebrow}</p>
-            <p className="resourceHero-note">{note}</p>
+            <p className="resourceHero-note">{resolvedNote}</p>
           </div>
 
           <h1 id="resource-page-heading">{title}</h1>

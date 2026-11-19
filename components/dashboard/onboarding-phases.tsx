@@ -1,8 +1,10 @@
+"use client";
+
 import { ArrowRight, Check, CircleCheck, ClipboardList } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import type { DashboardModel } from "@/lib/onboarding/dashboard";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function OnboardingPhases({
   model,
@@ -13,6 +15,7 @@ export function OnboardingPhases({
   completedId: string | null;
   onOpenBrief: (phase?: string) => void;
 }) {
+  const { content } = useI18n();
   const { briefProgress: progress, nextPhase } = model;
   const completed = model.phases.find(
     (phase) => phase.id === completedId && phase.complete,

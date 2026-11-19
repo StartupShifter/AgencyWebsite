@@ -1,6 +1,7 @@
 "use client";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
+import { LanguageSwitcher } from "./language-switcher";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
@@ -66,16 +67,6 @@ const navIcons: Record<string, LucideIcon> = {
   users: Users,
   pricing: BadgeDollarSign,
 };
-
-const sections: NavSection[] = content.navigation.sections.map((section) => ({
-  ...section,
-  items: section.items.map((item) => ({ ...item, icon: navIcons[item.icon] ?? Store })),
-}));
-
-const directLinks: NavEntry[] = content.navigation.directLinks.map((entry) => ({
-  ...entry,
-  icon: navIcons[entry.icon] ?? Users,
-}));
 
 // A single column lists up to 4 entries; every additional group of 4
 // spreads the menu out by one more column (5-8 → 2, 9-12 → 3, and so on).
@@ -150,6 +141,17 @@ function MobileNavLink({
 }
 
 export function SiteHeader() {
+  const { content } = useI18n();
+  const sections: NavSection[] = content.navigation.sections.map((section) => ({
+    ...section,
+    items: section.items.map((item) => ({ ...item, icon: navIcons[item.icon] ?? Store })),
+  }));
+
+  const directLinks: NavEntry[] = content.navigation.directLinks.map((entry) => ({
+    ...entry,
+    icon: navIcons[entry.icon] ?? Users,
+  }));
+
   const [open, setOpen] = useState(false);
   const pillRef = useRef<HTMLDivElement>(null);
 
@@ -240,6 +242,7 @@ export function SiteHeader() {
           </NavigationMenuList>
         </NavigationMenu>
         <div className={twLanding("header-actions")}>
+          <LanguageSwitcher />
           <Link href="/login" className={twLanding("navbar-cta")}>
             {content.navigation.cta} <ArrowUpRight aria-hidden="true" />
           </Link>

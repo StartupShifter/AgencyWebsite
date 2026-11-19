@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function SignOutButton() {
+  const { content } = useI18n();
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");

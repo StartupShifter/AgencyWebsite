@@ -1,7 +1,7 @@
 import { twLanding } from "@/lib/landing-styles";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import {
   Accordion,
   AccordionContent,
@@ -9,10 +9,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const questions = content.landing.faq.questions;
-
-export function FaqSection() {
+export async function FaqSection() {
+  const { content } = await getLocalizedContent();
   const faq = content.landing.faq;
+  const questions = content.landing.faq.questions;
   return (
     <section
       id="faq"

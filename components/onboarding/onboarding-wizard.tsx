@@ -12,7 +12,7 @@ import { api } from "@/convex/_generated/api";
 import { Button } from "@/components/ui/button";
 import { OnboardingMascot } from "./onboarding-mascot";
 import { OnboardingProgress, QuestionStatusMark } from "./onboarding-progress";
-import { getPhaseQuestionProgress, getQuestionStatus, QUESTION_STATUS_LABELS } from "@/lib/onboarding/progress-state";
+import { getPhaseQuestionProgress, getQuestionStatus } from "@/lib/onboarding/progress-state";
 import { getOnboardingPhases as buildPhases, getPhaseErrors } from "@/lib/onboarding/phase-engine";
 import { OnboardingWelcome } from "./onboarding-welcome";
 import { getGuidedSteps, getResumeStep } from "@/lib/onboarding/guided-flow";
@@ -25,7 +25,7 @@ import { createQuestionnaire, getOpenItemsForPages, validatePage, isQuestionVisi
 import { useAssignedQuestionnaire } from "./use-assigned-questionnaire";
 import type { Answers, Page, ValidationErrors } from "@/lib/onboarding/types";
 import type { FunctionReturnType } from "convex/server";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 type Mine = NonNullable<FunctionReturnType<typeof api.onboarding.getMine>>;
 type User = { id: string; name: string; email: string; emailVerified: boolean };
@@ -33,6 +33,7 @@ const previewPrivacy: PrivacySettings = { approved: false, text: "", contact: ""
 const demoUser: User = { id: "preview", name: "", email: "", emailVerified: false };
 
 export function OnboardingWizard({ user, development = false }: { user: User; development?: boolean }) {
+  const { content } = useI18n();
   const requestedQuestion = useSearchParams().get("question");
   const { isAuthenticated, isLoading } = useConvexAuth();
   const router = useRouter();
@@ -76,6 +77,7 @@ function initialAnswers(user: User, mine: Mine, privacy: PrivacySettings): Answe
   return result;
 }
 function WizardSession({ user, initial, privacy, preview = false, previewSessionId, requestedQuestion }: { requestedQuestion?: string | null; user: User; initial: Mine; privacy: PrivacySettings; preview?: boolean; previewSessionId?: SessionId }) {
+  const { content } = useI18n();
   const router = useRouter();
   const searchParams = useSearchParams();
   const fromBrief = searchParams.get("returnTo") === "brief";
@@ -359,7 +361,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
           <span className="ob-question-position">{reviewPhase ? content.onboarding.wizard.phaseReview : question ? `${content.onboarding.wizard.questionOf}${questionIndex + 1}${content.onboarding.wizard.of}${phase.total}` : content.onboarding.wizard.reviewYourAnswers}</span>
         </div>
         {!reviewPhase && page.description && question?.id === page.questions.find(item => isQuestionVisible(item, answers))?.id && <p className="ob-help">{page.description}</p>}
-        {!reviewPhase && <div className="ob-question-status" data-status={questionStatus}><QuestionStatusMark status={questionStatus} />{QUESTION_STATUS_LABELS[questionStatus]}{questionStatus === "later" && ` · ${content.onboarding.wizard.answerBeforeFinish}`}</div>}
+        {!reviewPhase && <div className="ob-question-status" data-status={questionStatus}><QuestionStatusMark status={questionStatus} />{content.shared.questionStatusLabels[questionStatus]}{questionStatus === "later" && ` · ${content.onboarding.wizard.answerBeforeFinish}`}</div>}
         {completedPhase && <p className="ob-phase-saved" role="status"><CheckCheck size={16} aria-hidden="true" />{completedPhase}{content.onboarding.wizard.phaseSavedSuffix}</p>}
       {reviewPhase ? <section className="ob-phase-recap" aria-labelledby="ob-guided-heading">
         <span className="ob-phase-kicker">{content.onboarding.wizard.beforeNextPhase}</span>
@@ -404,6 +406,7 @@ function WizardSession({ user, initial, privacy, preview = false, previewSession
 }
 
 export function EngagementSummary({ engagement }: { engagement: Mine["engagement"] }) {
+  const { content } = useI18n();
   const summary = content.onboarding.wizard.engagementSummary;
   if (!engagement) return <div className="ob-context-box"><h2>{summary.noneHeading}</h2><p>{summary.noneBody}</p><p>{summary.noneMeta}</p></div>;
   return <div className="ob-context-box"><h2>{engagement.plan}{summary.approvedSuffix}</h2><p>{engagement.summary}</p><p>{summary.setupPrefix}{engagement.currency} {engagement.setupFee.toLocaleString()}{engagement.recurringFee !== undefined ? `${summary.recurringPrefix}${engagement.currency} ${engagement.recurringFee.toLocaleString()}${summary.perMonthSuffix}` : ""}</p><p>{summary.scopePrefix}{engagement.scope.join(", ")}</p><p>{summary.exclusionsPrefix}{engagement.exclusions.join(", ") || summary.seeAgreement}</p><p>{summary.thirdPartyPrefix}{engagement.thirdPartyCosts}</p><p>{summary.agreementPrefix}{engagement.signedAgreementRef ? summary.verified : summary.awaitingConfirmation}{summary.advancePrefix}{engagement.advancePaymentRef ? summary.verified : summary.awaitingVerification}</p></div>;
@@ -412,11 +415,12 @@ export function formatAnswer(answer?: Answers[string], question?: import("@/lib/
   return formatQuestionAnswer(answer, question);
 }
 export function ReviewSummary({ pages, answers, onEdit, editHref = "/onboarding" }: { pages: Page[]; answers: Answers; onEdit?: (id: string) => void; editHref?: string }) {
+  const { content } = useI18n();
   const summary = content.onboarding.wizard.reviewSummary;
-  const groups = summary.groups.map(group => ({ ...group, ids: [...group.ids, ...(group.title === "Selected work and requirements" ? pages.filter(p => p.kind === "module").map(p => p.id) : [])] }));
+  const groups = summary.groups.map(group => ({ ...group, ids: [...group.ids, ...(group.key === "work" ? pages.filter(p => p.kind === "module").map(p => p.id) : [])] }));
   const mapped = new Set(groups.flatMap(group => group.ids));
   const additional = pages.filter(page => !mapped.has(page.id)).map(page => page.id);
-  if (additional.length) groups.push({ title: summary.additionalTitle, ids: additional });
+  if (additional.length) groups.push({ key: "additional", title: summary.additionalTitle, ids: additional });
   const openItems = getOpenItemsForPages(answers, pages);
   return <div className="ob-review">{groups.map(group => <details key={group.title}><summary><span>{group.title}<small>{pages.filter(p => group.ids.includes(p.id)).length}{summary.topicsToReview}</small></span><ChevronDown size={16} aria-hidden="true" /></summary>{pages.filter(p => group.ids.includes(p.id)).map(p => <section key={p.id}><div className="ob-review-heading"><h3>{p.title}</h3>{onEdit ? <button type="button" onClick={() => onEdit(p.id)}>{summary.edit}</button> : <Link href={editHref}>{summary.editBrief}</Link>}</div><dl>{p.questions.filter(q => !q.acknowledgement && isQuestionVisible(q, answers)).map(q => <div key={q.id}><dt>{q.label}{onEdit && <button type="button" aria-label={`${summary.edit}: ${q.label}`} onClick={() => onEdit(q.id)}>{summary.edit}</button>}</dt><dd>{formatAnswer(answers[q.id], q)}</dd></div>)}</dl></section>)}</details>)}<details><summary>{summary.openQuestions}<ChevronDown size={16} /></summary>{openItems.length ? <ul>{openItems.map(item => <li key={item.questionId}><strong>{item.label}</strong><p>{item.detail || item.state}</p></li>)}</ul> : <p className="ob-help">{summary.noFollowups}</p>}</details></div>;
 }

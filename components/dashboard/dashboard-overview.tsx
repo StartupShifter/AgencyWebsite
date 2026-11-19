@@ -22,7 +22,7 @@ import type {
   WorkspaceData,
   WorkspaceView,
 } from "@/lib/onboarding/dashboard";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export const panelClass =
   "min-w-0 rounded-[20px] border border-[var(--workspace-line)] bg-white p-5 sm:p-6";
@@ -30,6 +30,7 @@ export const subtleButton =
   "flex items-center gap-1.5 text-xs font-medium text-[var(--workspace-muted)] hover:text-[#20231f] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--commerce-green)]";
 
 export function ProgressRing({ percent }: { percent: number }) {
+  const { content } = useI18n();
   return (
     <svg
       viewBox="0 0 76 76"
@@ -92,12 +93,13 @@ export function DashboardOverview({
   exportStatus: "idle" | "preparing" | "downloaded" | "error";
   onFollowups: () => void;
 }) {
+  const { content } = useI18n();
   const { briefProgress: progress, prerequisites, topics, submitted, openItems, project } =
     model;
   const verified = prerequisites.filter((item) => item.verified).length;
   const selected = topics.filter((topic) => topic.kind === "module");
   const sections = content.dashboard.overview.topicSections.map((section) => {
-    const ids = section.label === "Requirements"
+    const ids = section.key === "requirements"
       ? [...section.ids, ...selected.map((topic) => topic.id)]
       : section.ids;
     const rows = topics.filter((topic) => ids.includes(topic.id));

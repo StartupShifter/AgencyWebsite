@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 function ResearchVisual() {
   return (
@@ -231,6 +231,7 @@ function PerformanceVisual() {
 }
 
 function BenefitCard({ type, title, description, children }: { type: string; title: string; description: string; children: ReactNode }) {
+  const { content } = useI18n();
   const [active, setActive] = useState(false);
   return <article className={`aboutBenefits-card aboutBenefits-${type}`} data-active={active}>
     <button
@@ -249,6 +250,7 @@ function BenefitCard({ type, title, description, children }: { type: string; tit
 }
 
 export function AboutBenefits() {
+  const { content } = useI18n();
   const benefits = content.landing.about.benefits;
   const benefit = (type: string) => {
     const item = benefits.find((entry) => entry.type === type);

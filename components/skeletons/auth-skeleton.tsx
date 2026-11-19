@@ -1,9 +1,10 @@
 import { AuthShell } from "@/components/auth/auth-shell";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export function AuthSkeleton() {
+export async function AuthSkeleton() {
+  const { content } = await getLocalizedContent();
   return (
     <AuthShell>
       <LoadingRegion

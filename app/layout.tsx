@@ -5,7 +5,8 @@ import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { RootSkeleton } from "@/components/skeletons/root-skeleton";
 import { getToken } from "@/lib/auth-server";
 import { isConvexConfigured } from "@/lib/convex-config";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
+import { I18nProvider } from "@/context/i18n-context";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -18,7 +19,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = content.metadata.home;
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return content.metadata.home;
+}
 
 async function AuthProvider({ children }: { children: ReactNode }) {
   // Public pages must still render when a deployment does not have Convex
@@ -28,16 +32,21 @@ async function AuthProvider({ children }: { children: ReactNode }) {
   return <ConvexClientProvider initialToken={initialToken}>{children}</ConvexClientProvider>;
 }
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const { locale, dir, content } = await getLocalizedContent();
+
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={dir}
       className={`${dmSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Suspense fallback={<RootSkeleton />}>
-          <AuthProvider>{children}</AuthProvider>
-        </Suspense>
+        <I18nProvider locale={locale} content={content}>
+          <Suspense fallback={<RootSkeleton />}>
+            <AuthProvider>{children}</AuthProvider>
+          </Suspense>
+        </I18nProvider>
       </body>
     </html>
   );

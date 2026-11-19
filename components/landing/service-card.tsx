@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ServiceIllustration, type ServiceType } from "@/components/landing/service-illustrations";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 import "./service-card.css";
 
-const labels = content.landing.services.illustrationLabels;
-
 export function ServiceCard({ type, children }: { type: ServiceType; children: ReactNode }) {
+  const { content } = useI18n();
+  const labels = content.landing.services.illustrationLabels;
   const [expanded, setExpanded] = useState(false);
   const [inView, setInView] = useState(false);
   const cardRef = useRef<HTMLElement>(null);

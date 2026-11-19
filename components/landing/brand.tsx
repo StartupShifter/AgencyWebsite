@@ -1,9 +1,13 @@
+"use client";
+
 import { twLanding } from "@/lib/landing-styles";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "cn";
 import Link from "next/link";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
+
 export function Brand({ className }: { className?: string }) {
+  const { content } = useI18n();
   return (
     <Link
       href="/"

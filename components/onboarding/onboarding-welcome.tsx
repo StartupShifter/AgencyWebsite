@@ -7,9 +7,10 @@ import { Coffee, PencilLine, Route, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { PrivacySettings } from "./privacy-notice";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function OnboardingWelcome({ privacy, name, phaseCount, preview = false, development = false, busy = false, error, onStart }: { privacy: PrivacySettings; name?: string; phaseCount: number; preview?: boolean; development?: boolean; busy?: boolean; error?: string; onStart?: () => Promise<void> }) {
+  const { content } = useI18n();
   const welcome = content.onboarding.welcome;
   const [accepted, setAccepted] = useState(false);
   const consentId = useId();

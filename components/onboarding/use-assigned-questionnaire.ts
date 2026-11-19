@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { useMutation } from "convex/react";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { api } from "@/convex/_generated/api";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 /** Pin a version before interaction, including clients who have not saved answers yet. */
 export function useAssignedQuestionnaire(enabled: boolean, previewSessionId?: SessionId) {
+  const { content } = useI18n();
   const ensure = useMutation(api.onboarding.ensureQuestionnaire);
   const ensurePreview = useMutation(api.onboardingPreview.ensureQuestionnaire);
   const [ready, setReady] = useState(false);

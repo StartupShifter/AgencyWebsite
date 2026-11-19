@@ -15,9 +15,12 @@ import {
   ResourcePage,
   ResourceSection,
 } from "@/components/landing/resource-page";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = content.metadata.howWeWork;
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return content.metadata.howWeWork;
+}
 
 const prerequisiteIcons: Record<string, LucideIcon> = {
   fileSignature: FileSignature,
@@ -31,18 +34,18 @@ const workingIcons: Record<string, LucideIcon> = {
   shieldCheck: ShieldCheck,
 };
 
-const prerequisites = content.pages.howWeWork.prerequisites.map((item) => ({
-  ...item,
-  icon: prerequisiteIcons[item.icon] ?? FileSignature,
-}));
-
-const workingTogether = content.pages.howWeWork.workingTogether.map((item) => ({
-  ...item,
-  icon: workingIcons[item.icon] ?? ClipboardCheck,
-}));
-
-export default function HowWeWorkPage() {
+export default async function HowWeWorkPage() {
+  const { content } = await getLocalizedContent();
   const page = content.pages.howWeWork;
+  const prerequisites = content.pages.howWeWork.prerequisites.map((item) => ({
+    ...item,
+    icon: prerequisiteIcons[item.icon] ?? FileSignature,
+  }));
+
+  const workingTogether = content.pages.howWeWork.workingTogether.map((item) => ({
+    ...item,
+    icon: workingIcons[item.icon] ?? ClipboardCheck,
+  }));
   return (
     <ResourcePage
       eyebrow={page.eyebrow}

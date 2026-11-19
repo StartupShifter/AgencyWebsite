@@ -3,9 +3,10 @@ import { SiteHeader } from "@/components/landing/site-header";
 import { twLanding } from "@/lib/landing-styles";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export function InformationSkeleton() {
+export async function InformationSkeleton() {
+  const { content } = await getLocalizedContent();
   return (
     <div id="top">
       <a className={twLanding("skip-link")} href="#main">

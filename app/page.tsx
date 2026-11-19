@@ -8,8 +8,9 @@ import { ProcessSection } from "@/components/landing/process-section";
 import { PricingSection } from "@/components/landing/pricing-section";
 import { FaqSection } from "@/components/landing/faq-section";
 import { SiteFooter } from "@/components/landing/site-footer";
-import { content } from "@/context/content";
-export default function Home() {
+import { getLocalizedContent } from "@/lib/i18n-server";
+export default async function Home() {
+  const { content } = await getLocalizedContent();
   return (
     <div id="top">
       <a className={twLanding("skip-link")} href="#main">

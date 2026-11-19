@@ -12,10 +12,13 @@ import { SiteFooter } from "@/components/landing/site-footer";
 import { Button } from "@/components/ui/button";
 import { MarkedTitle } from "@/components/landing/resource-page";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import "./about.css";
 
-export const metadata: Metadata = content.metadata.about;
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return content.metadata.about;
+}
 
 type Service = {
   icon: LucideIcon;
@@ -30,17 +33,17 @@ const serviceIcons: Record<string, LucideIcon> = {
   network: Network,
 };
 
-const services: Service[] = content.pages.about.services.map((service) => ({
-  ...service,
-  icon: serviceIcons[service.icon] ?? Globe2,
-}));
-
-const steps = content.pages.about.steps;
-const scope = content.pages.about.scope;
-const facts = content.pages.about.facts;
-
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { content } = await getLocalizedContent();
   const page = content.pages.about;
+  const services: Service[] = content.pages.about.services.map((service) => ({
+    ...service,
+    icon: serviceIcons[service.icon] ?? Globe2,
+  }));
+
+  const steps = content.pages.about.steps;
+  const scope = content.pages.about.scope;
+  const facts = content.pages.about.facts;
   return (
     <div id="top" className="aboutPage">
       <a className={twLanding("skip-link")} href="#main">

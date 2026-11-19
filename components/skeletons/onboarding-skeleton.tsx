@@ -1,7 +1,9 @@
+"use client";
+
 import { PortalShell } from "@/components/onboarding/portal-shell";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 function ChoiceRows() {
   return (
@@ -17,6 +19,7 @@ function ChoiceRows() {
 }
 
 export function OnboardingSkeletonContent() {
+  const { content } = useI18n();
   return (
     <LoadingRegion label={content.common.loading.projectBrief} className="ob-guided ob-focused">
       <div className="ob-journey-top">

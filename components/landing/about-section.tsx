@@ -1,9 +1,10 @@
 import { twLanding } from "@/lib/landing-styles";
 import { AboutBenefits } from "./about-benefits";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import "./about-section.css";
 
-export function AboutSection() {
+export async function AboutSection() {
+  const { content } = await getLocalizedContent();
   const about = content.landing.about;
   return (
     <section id="about" className={`${twLanding("section-shell section-space")} aboutBenefits-section`} aria-labelledby="about-heading">

@@ -10,9 +10,12 @@ import {
   ResourcePage,
   ResourceSection,
 } from "@/components/landing/resource-page";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = content.metadata.faq;
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return content.metadata.faq;
+}
 
 type FaqAnswer = string | { before: string; linkLabel: string; linkHref: string; after: string };
 type FaqGroup = {
@@ -20,8 +23,6 @@ type FaqGroup = {
   label: string;
   questions: { question: string; answer: FaqAnswer }[];
 };
-
-const groups = content.pages.faq.groups as unknown as FaqGroup[];
 
 function FaqAnswer({ answer }: { answer: FaqAnswer }) {
   if (typeof answer === "string") return <p>{answer}</p>;
@@ -34,8 +35,10 @@ function FaqAnswer({ answer }: { answer: FaqAnswer }) {
   );
 }
 
-export default function FaqPage() {
+export default async function FaqPage() {
+  const { content } = await getLocalizedContent();
   const page = content.pages.faq;
+  const groups = content.pages.faq.groups as unknown as FaqGroup[];
   return (
     <ResourcePage
       eyebrow={page.eyebrow}

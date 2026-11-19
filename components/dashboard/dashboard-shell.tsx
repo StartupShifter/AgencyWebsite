@@ -20,14 +20,14 @@ import {
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { viewNames, type WorkspaceView } from "@/lib/onboarding/dashboard";
+import { type WorkspaceView } from "@/lib/onboarding/dashboard";
 import { WorkspaceSkeletonContent } from "@/components/skeletons/workspace-skeleton";
 
 import "./dashboard.css";
@@ -64,6 +64,8 @@ export function DashboardShell({
   preview?: boolean;
   loading?: boolean;
 }) {
+  const { content } = useI18n();
+  const viewNames = content.shared.workspaceViewNames as Record<WorkspaceView, string>;
   const router = useRouter();
   const contentRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -350,6 +352,7 @@ export function DashboardShell({
 }
 
 export function DashboardLoading({ preview = false }: { preview?: boolean }) {
+  const { content } = useI18n();
   return (
     <DashboardShell
       name=""

@@ -1,9 +1,10 @@
 import { twLanding } from "@/lib/landing-styles";
 import { ArrowUpRight, ArrowDown, Globe2 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export function HeroSection() {
+export async function HeroSection() {
+  const { content } = await getLocalizedContent();
   const { hero } = content.landing;
   return (
     <section aria-labelledby="hero-heading" className={twLanding("hero-section")}>

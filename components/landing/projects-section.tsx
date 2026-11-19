@@ -5,15 +5,15 @@ import { useEffect, useRef, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ProjectPreview } from "@/components/projects/project-preview";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 import { twLanding } from "@/lib/landing-styles";
 import "./projects-section.css";
 
-const projects = content.projects;
-// Extra cycles let cards return around the back, outside the visible stack.
-const showcaseProjects = [...projects, ...projects, ...projects];
-
 export function ProjectsSection() {
+  const { content } = useI18n();
+  const projects = content.projects;
+  // Extra cycles let cards return around the back, outside the visible stack.
+  const showcaseProjects = [...projects, ...projects, ...projects];
   const sectionRef = useRef<HTMLElement>(null);
   const activeLinkRef = useRef<HTMLAnchorElement>(null);
   const gestureRef = useRef<{ x: number; y: number } | null>(null);

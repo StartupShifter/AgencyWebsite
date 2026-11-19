@@ -4,7 +4,7 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { twLanding } from "@/lib/landing-styles";
 import { cn } from "@/lib/utils";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import "./pricing-section.css";
 
 type Plan = {
@@ -28,10 +28,10 @@ const planIcons: Record<string, LucideIcon> = {
   handshake: Handshake,
 };
 
-const plans = content.landing.pricing.plans as unknown as Plan[];
-
-export function PricingSection() {
+export async function PricingSection() {
+  const { content } = await getLocalizedContent();
   const pricing = content.landing.pricing;
+  const plans = content.landing.pricing.plans as unknown as Plan[];
   return (
     <section
       id="pricing"

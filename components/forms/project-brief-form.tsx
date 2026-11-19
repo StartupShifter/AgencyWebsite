@@ -22,12 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
-
-export const projectBriefServiceOptions = content.projectBrief.serviceOptions;
+import { useI18n } from "@/context/i18n-context";
 
 export function ProjectBriefForm({ contactEmail }: { contactEmail?: string }) {
+  const { content } = useI18n();
   const copy = content.projectBrief;
+  const projectBriefServiceOptions = content.projectBrief.serviceOptions;
   const id = useId();
   const [services, setServices] = useState<string[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});

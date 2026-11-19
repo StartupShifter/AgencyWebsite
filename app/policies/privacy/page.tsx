@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { InformationPage } from "@/components/landing/information-page";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = { title: content.metadata.privacy.title, robots: { index: false, follow: true } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return { title: content.metadata.privacy.title, robots: { index: false, follow: true } };
+}
 
-export default function PrivacyPage() {
+export default async function PrivacyPage() {
+  const { content } = await getLocalizedContent();
   const page = content.pages.policies.privacy;
   return <InformationPage policy title={page.title} description={page.description}>
     {page.sections.map((section) => (

@@ -4,9 +4,10 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { SiteHeader } from "./site-header";
 import { SiteFooter } from "./site-footer";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export function InformationPage({ title, description, children, policy = false }: { title: string; description: string; children: ReactNode; policy?: boolean }) {
+export async function InformationPage({ title, description, children, policy = false }: { title: string; description: string; children: ReactNode; policy?: boolean }) {
+  const { content } = await getLocalizedContent();
   return (
     <div id="top">
       <a className={twLanding("skip-link")} href="#main">{content.common.skipToContent}</a>

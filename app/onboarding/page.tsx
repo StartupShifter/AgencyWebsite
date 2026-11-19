@@ -3,9 +3,12 @@ import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth-server";
 import { OnboardingWizard } from "@/components/onboarding/onboarding-wizard";
 import { OnboardingSkeleton } from "@/components/skeletons/onboarding-skeleton";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = { title: content.metadata.onboarding.title, robots: { index: false, follow: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return { title: content.metadata.onboarding.title, robots: { index: false, follow: false } };
+}
 
 async function AuthenticatedOnboarding() {
   const user = await requireUser("/onboarding");

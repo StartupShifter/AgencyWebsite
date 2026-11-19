@@ -1,11 +1,11 @@
 import { ServiceCard } from "@/components/landing/service-card";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-const services = content.landing.services.cards;
-
-export function ServicesSection() {
+export async function ServicesSection() {
+  const { content } = await getLocalizedContent();
   const section = content.landing.services;
+  const services = content.landing.services.cards;
   return (
     <section id="services" className={twLanding("section-shell section-space")} aria-labelledby="services-heading">
       <div className={twLanding("section-topline")}>

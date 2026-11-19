@@ -8,14 +8,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { getAllowedAnswerStates, getOptionLabel, isExclusiveOption } from "@/lib/onboarding/engine";
 import type { Answer, AnswerState, AnswerValue, Question } from "@/lib/onboarding/types";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
-const qf = content.onboarding.questionField;
-const stateLabels: Record<AnswerState, string> = { answered: qf.answerNow, unknown: qf.notSureYet, "not-applicable": qf.notApplicable, deferred: qf.provideLater, help: qf.requestHelp };
-const countries = qf.countries;
 const timezones = Intl.supportedValuesOf("timeZone");
 
 export function QuestionField({ question: q, answer, error, onChange, guided = false }: { guided?: boolean; question: Question; answer?: Answer; error?: string; onChange: (answer: Answer) => void }) {
+  const { content } = useI18n();
+  const qf = content.onboarding.questionField;
+  const stateLabels: Record<AnswerState, string> = { answered: qf.answerNow, unknown: qf.notSureYet, "not-applicable": qf.notApplicable, deferred: qf.provideLater, help: qf.requestHelp };
+  const countries = qf.countries;
   const [search, setSearch] = useState("");
   const [detailsOpen, setDetailsOpen] = useState(Boolean(answer?.detail));
   const value = answer?.value ?? "";
@@ -87,6 +88,8 @@ export function QuestionField({ question: q, answer, error, onChange, guided = f
 }
 
 function InvitationFields({ question, record, update }: { question: Question; record: Record<string, string>; update: (value: AnswerValue) => void }) {
+  const { content } = useI18n();
+  const qf = content.onboarding.questionField;
   const indexes = [...new Set(["", ...Object.keys(record).map(key => key.match(/^(?:name|email|role|access)(\d*)$/)?.[1]).filter((index): index is string => index !== undefined)])];
   const add = () => { const next = Array.from({ length: 9 }, (_, i) => String(i + 2)).find(index => !indexes.includes(index)); if (!next) return; update({ ...record, [`name${next}`]: "", [`email${next}`]: "", [`role${next}`]: "", [`access${next}`]: "" }); };
   return <div>{indexes.map((index, position) => <div key={index} className="ob-person"><p>{qf.workspaceMemberPrefix}{position + 1}</p><div className="ob-fields">{question.fields?.map(field => <label key={field.id} className="ob-subfield" htmlFor={`${question.id}-${field.id}${index}`}><span>{field.label}</span>{field.id === "access" ? <select className="ob-input" id={`${question.id}-${field.id}${index}`} value={record[`${field.id}${index}`] ?? ""} onChange={e => update({ ...record, [`${field.id}${index}`]: e.target.value })}><option value="">{qf.chooseAccess}</option><option>{qf.viewProject}</option><option>{qf.reviewAndComment}</option><option>{qf.supplyInputs}</option><option>{qf.needGuidance}</option></select> : <Input className="ob-input" id={`${question.id}-${field.id}${index}`} type={field.type ?? "text"} value={record[`${field.id}${index}`] ?? ""} maxLength={6000} onChange={e => update({ ...record, [`${field.id}${index}`]: e.target.value })} />}</label>)}</div>{index && <Button type="button" variant="ghost" onClick={() => update(Object.fromEntries(Object.entries(record).filter(([key]) => !["name", "email", "role", "access"].some(field => key === `${field}${index}`))))}>{qf.removeMember}</Button>}</div>)}<Button type="button" variant="outline" disabled={indexes.length >= 10} onClick={add}>{qf.addAnotherPerson}</Button></div>;

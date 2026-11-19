@@ -15,10 +15,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ProjectBriefForm } from "@/components/forms/project-brief-form";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 import "./contact-section.css";
 
 export function ContactSection({ contactEmail }: { contactEmail?: string }) {
+  const { content } = useI18n();
   const [formKey, setFormKey] = useState(0);
   const contact = content.landing.contact;
 

@@ -17,7 +17,7 @@ export type Project = {
   description: string;
   image: string;
   imageAlt: string;
-  status: "Completed project" | "Concept preview";
+  status: string;
   url?: string;
 };
 
@@ -177,6 +177,7 @@ export const content = {
     policyNote: "Policy status and current information.",
     navigation: [
       {
+        key: "company",
         title: "Company",
         links: [
           ["About us", "/about"],
@@ -186,6 +187,7 @@ export const content = {
         ],
       },
       {
+        key: "services",
         title: "Services",
         links: [
           ["Web applications", "/#services"],
@@ -196,6 +198,7 @@ export const content = {
         ],
       },
       {
+        key: "resources",
         title: "Resources",
         links: [
           ["Client login", "/login"],
@@ -206,6 +209,7 @@ export const content = {
         ],
       },
       {
+        key: "information",
         title: "Information",
         links: [
           ["Privacy", "/policies/privacy"],
@@ -213,7 +217,7 @@ export const content = {
           ["Service terms", "/policies/terms"],
         ],
       },
-    ] as { title: string; links: [string, string][] }[],
+    ] as { key: string; title: string; links: [string, string][] }[],
   },
 
   landing: {
@@ -1390,10 +1394,10 @@ export const content = {
     },
     overview: {
       topicSections: [
-        { label: "Business", ids: ["P01", "P02", "P03", "P04", "P05"], color: "var(--commerce-deep)" },
-        { label: "Goals", ids: ["P06", "P07", "P08", "P09"], color: "#439574" },
-        { label: "Requirements", ids: ["P10", "P11", "P12"], color: "var(--commerce-mint)" },
-        { label: "Confirmation", ids: ["P13", "P14", "P15", "P16"], color: "#b4ae97" },
+        { key: "business", label: "Business", ids: ["P01", "P02", "P03", "P04", "P05"], color: "var(--commerce-deep)" },
+        { key: "goals", label: "Goals", ids: ["P06", "P07", "P08", "P09"], color: "#439574" },
+        { key: "requirements", label: "Requirements", ids: ["P10", "P11", "P12"], color: "var(--commerce-mint)" },
+        { key: "confirmation", label: "Confirmation", ids: ["P13", "P14", "P15", "P16"], color: "#b4ae97" },
       ],
       eyebrow: "A little clarity. A lot of possibility.",
       welcomeBack: "Welcome back",
@@ -1854,12 +1858,12 @@ export const content = {
       },
       reviewSummary: {
         groups: [
-          { title: "Business and contact", ids: ["P01", "P02", "P03", "P04", "P05"] },
-          { title: "Goals and current process", ids: ["P06", "P07", "P09"] },
-          { title: "Selected work and requirements", ids: ["P08", "P10", "P11", "P12"] },
-          { title: "Responsibilities and engagement", ids: ["P13", "P14", "P15"] },
-          { title: "Final notes and onboarding feedback", ids: ["P16"] },
-        ] as { title: string; ids: string[] }[],
+          { key: "business", title: "Business and contact", ids: ["P01", "P02", "P03", "P04", "P05"] },
+          { key: "goals", title: "Goals and current process", ids: ["P06", "P07", "P09"] },
+          { key: "work", title: "Selected work and requirements", ids: ["P08", "P10", "P11", "P12"] },
+          { key: "responsibilities", title: "Responsibilities and engagement", ids: ["P13", "P14", "P15"] },
+          { key: "notes", title: "Final notes and onboarding feedback", ids: ["P16"] },
+        ] as { key: string; title: string; ids: string[] }[],
         additionalTitle: "Additional project details",
         topicsToReview: " topics to review",
         edit: "Edit",
@@ -2243,6 +2247,9 @@ export const content = {
     firstPriorityPrefix: "First priority: ",
   },
 };
+
+/** The full shape of the site content. Translation dictionaries extend this. */
+export type Content = typeof content;
 
 export const hasConceptPreviews = (content.projects as Project[]).some(
   (project) => project.status === "Concept preview",

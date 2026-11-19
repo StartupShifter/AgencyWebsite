@@ -3,9 +3,13 @@ import { ArrowUpRight, Bot, LayoutTemplate, Store, type LucideIcon } from "lucid
 import { Badge } from "@/components/ui/badge";
 import { ProjectPreview } from "@/components/projects/project-preview";
 import { MarkedTitle, ResourcePage, ResourceSection } from "@/components/landing/resource-page";
-import { content, hasConceptPreviews } from "@/context/content";
+import { hasConceptPreviews } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = content.metadata.products;
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return content.metadata.products;
+}
 
 const buildAreaIcons: Record<string, LucideIcon> = {
   store: Store,
@@ -13,14 +17,14 @@ const buildAreaIcons: Record<string, LucideIcon> = {
   bot: Bot,
 };
 
-const buildAreas = content.pages.products.buildAreas.map((area) => ({
-  ...area,
-  icon: buildAreaIcons[area.icon] ?? Store,
-}));
-
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const { content } = await getLocalizedContent();
   const page = content.pages.products;
   const projects = content.projects;
+  const buildAreas = content.pages.products.buildAreas.map((area) => ({
+    ...area,
+    icon: buildAreaIcons[area.icon] ?? Store,
+  }));
   return (
     <ResourcePage
       eyebrow={page.eyebrow}

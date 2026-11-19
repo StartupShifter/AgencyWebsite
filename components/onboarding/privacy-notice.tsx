@@ -1,10 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronDown, ShieldCheck } from "lucide-react";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export type PrivacySettings = { approved: boolean; text: string; contact: string; retention: string; version: string };
 
 export function PrivacyNotice({ privacy, compact = false, preview = false }: { privacy: PrivacySettings; compact?: boolean; preview?: boolean }) {
+  const { content } = useI18n();
   const copy = content.onboarding.privacyNotice;
   const privacyCopy = content.onboarding.privacyCopy;
   return <section className={`ob-privacy ${compact ? "ob-privacy-compact" : ""}`} aria-label={copy.ariaLabel}>

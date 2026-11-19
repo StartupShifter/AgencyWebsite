@@ -29,13 +29,10 @@ import {
   MAX_DOCUMENT_BYTES,
   formatFileSize,
 } from "@/lib/onboarding/documents";
-import {
-  DELIVERY_STAGE_STATUS_LABELS,
-  type DeliveryStageStatus,
-} from "@/lib/onboarding/delivery";
+import { type DeliveryStageStatus } from "@/lib/onboarding/delivery";
 import type { DashboardModel, WorkspaceData } from "@/lib/onboarding/dashboard";
 import { panelClass } from "./dashboard-overview";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function ViewHeading({
   title,
@@ -70,6 +67,7 @@ export function JourneyView({
   data: WorkspaceData;
   onboardingHref: string;
 }) {
+  const { content } = useI18n();
   const persistedStages = model.deliveryStages;
   const journey = content.dashboard.journey;
   const fallbackStages = journey.fallbackStages.map((stage) => ({
@@ -107,7 +105,7 @@ export function JourneyView({
         id: stage.stageId,
         title: stage.title,
         status:
-          DELIVERY_STAGE_STATUS_LABELS[
+          content.shared.deliveryStageStatusLabels[
             stage.status as DeliveryStageStatus
           ] ?? stage.status,
         description: stage.description,
@@ -344,6 +342,7 @@ export function ResourcesView({
   documents: WorkspaceData["documents"];
   preview?: boolean;
 }) {
+  const { content } = useI18n();
   const urls = [
     ...new Set(
       Object.values(model.answers)
@@ -500,6 +499,7 @@ function DocumentUploader({
 }: {
   documents: WorkspaceData["documents"];
 }) {
+  const { content } = useI18n();
   const generateUploadUrl = useMutation(api.documents.generateUploadUrl);
   const saveUpload = useMutation(api.documents.saveUpload);
   const removeDocument = useMutation(api.documents.removeMine);
@@ -690,6 +690,7 @@ function DocumentUploader({
 }
 
 export function AgreementView({ data }: { data: WorkspaceData }) {
+  const { content } = useI18n();
   const engagement = data.engagement;
   return (
     <>

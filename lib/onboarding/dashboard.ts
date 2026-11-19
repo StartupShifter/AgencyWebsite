@@ -1,6 +1,6 @@
 import type { FunctionReturnType } from "convex/server";
 import type { api } from "@/convex/_generated/api";
-import { content } from "../../context/content";
+import { content as defaultContent, type Content } from "../../context/content";
 import { getOnboardingPhases } from "./phase-engine";
 import { getGuidedProgress, getGuidedSteps } from "./guided-flow";
 import {
@@ -20,9 +20,9 @@ export type WorkspaceData = NonNullable<
 export type WorkspaceDraft = WorkspaceData["draft"];
 export type WorkspaceView =
   "overview" | "brief" | "journey" | "resources" | "agreement";
-export const viewNames = content.shared.workspaceViewNames as Record<WorkspaceView, string>;
+export const viewNames = defaultContent.shared.workspaceViewNames as Record<WorkspaceView, string>;
 
-export function getDashboardModel(data: WorkspaceData) {
+export function getDashboardModel(data: WorkspaceData, content: Content = defaultContent) {
   const { getPages, getOpenItems, getPageById } = createQuestionnaire(
     data.questionnaire.definition,
   );

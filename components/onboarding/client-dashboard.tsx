@@ -8,9 +8,10 @@ import { useConvexAuth, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { ClientWorkspace } from "@/components/dashboard/client-workspace";
 import { DashboardLoading } from "@/components/dashboard/dashboard-shell";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function ClientDashboard({ name }: { name: string }) {
+  const { content } = useI18n();
   const router = useRouter();
   const { isLoading, isAuthenticated } = useConvexAuth();
   const assignment = useAssignedQuestionnaire(isAuthenticated);

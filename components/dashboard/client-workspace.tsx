@@ -22,7 +22,7 @@ import { DashboardShell } from "./dashboard-shell";
 import { DashboardOverview } from "./dashboard-overview";
 import { BriefView, type BriefFilter } from "./project-brief";
 import { AgreementView, JourneyView, ResourcesView } from "./dashboard-details";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export function ClientWorkspace({
   data,
@@ -33,6 +33,7 @@ export function ClientWorkspace({
   name: string;
   preview?: boolean;
 }) {
+  const { content } = useI18n();
   const params = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -57,7 +58,7 @@ export function ClientWorkspace({
   const [updatesOpen, setUpdatesOpen] = useState(false);
   const [exportStatus, setExportStatus] = useState<"idle" | "preparing" | "downloaded" | "error">("idle");
   const exportInFlight = useRef(false);
-  const model = getDashboardModel(data);
+  const model = getDashboardModel(data, content);
   const displayName = name || answerText(model.answers, "P01.1");
   const onboardingBase = preview ? "/onboarding/preview" : "/onboarding";
   const onboardingHref = `${onboardingBase}?question=review`;

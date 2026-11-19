@@ -1,6 +1,8 @@
+"use client";
+
 import { ArrowUpRight, Check, Compass, Fingerprint, Layers, PartyPopper, Store, type LucideIcon } from "lucide-react";
 import { OnboardingMascot, type MascotMood } from "./onboarding-mascot";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 const sceneIcons: Record<string, LucideIcon> = {
   store: Store,
@@ -10,13 +12,13 @@ const sceneIcons: Record<string, LucideIcon> = {
   partyPopper: PartyPopper,
 };
 
-const scenes = content.onboarding.journeyArtwork.scenes.map((scene) => ({
-  ...scene,
-  icon: sceneIcons[scene.icon] ?? Store,
-}));
-
 /** A decorative, code-native illustration built from the existing brand companion. */
 export function JourneyArtwork({ scene = 0, mood = "welcome" }: { scene?: number; mood?: MascotMood }) {
+  const { content } = useI18n();
+  const scenes = content.onboarding.journeyArtwork.scenes.map((scene) => ({
+    ...scene,
+    icon: sceneIcons[scene.icon] ?? Store,
+  }));
   const { icon: Icon, title, subtitle, tag } = scenes[scene] ?? scenes[0];
   return <div className="ob-artwork" aria-hidden="true">
     <div className="ob-art-orbit" />

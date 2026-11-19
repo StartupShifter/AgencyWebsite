@@ -1,5 +1,7 @@
+"use client";
+
 import { LoadingRegion, SkeletonBlock } from "./loading";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 const panelClass =
   "rounded-[20px] border border-[var(--workspace-line)] bg-white p-5 sm:p-6";
@@ -42,6 +44,7 @@ function TopicRows({ rows = 4 }: { rows?: number }) {
 }
 
 export function WorkspaceSkeletonContent() {
+  const { content } = useI18n();
   return (
     <LoadingRegion label={content.common.loading.workspace}>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">

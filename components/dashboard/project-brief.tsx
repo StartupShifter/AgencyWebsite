@@ -21,11 +21,10 @@ import {
 import { ViewHeading } from "./dashboard-details";
 import { ProgressRing } from "./dashboard-overview";
 import type { QuestionStatus } from "@/lib/onboarding/progress-state";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 export type BriefFilter = "all" | "remaining" | "answered" | "follow-ups";
 type BriefQuestion = DashboardModel["phases"][number]["questions"][number];
-const statusLabels = content.dashboard.brief.statusLabels as Record<QuestionStatus, string>;
 const statusIcons = {
   answered: CircleCheck,
   pending: CircleDashed,
@@ -53,7 +52,9 @@ export function BriefView({
   filter: BriefFilter;
   onFilter: (filter: BriefFilter) => void;
 }) {
+  const { content } = useI18n();
   const copy = content.dashboard.brief;
+  const statusLabels = content.dashboard.brief.statusLabels as Record<QuestionStatus, string>;
   const { briefProgress: progress } = model;
   const normalized = query.trim().toLowerCase();
   const followupIds = new Set([

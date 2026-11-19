@@ -20,9 +20,12 @@ import {
   ResourcePage,
   ResourceSection,
 } from "@/components/landing/resource-page";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = content.metadata.support;
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return content.metadata.support;
+}
 
 const coverageIcons: Record<string, LucideIcon> = {
   wrench: Wrench,
@@ -33,13 +36,13 @@ const coverageIcons: Record<string, LucideIcon> = {
   messagesSquare: MessagesSquare,
 };
 
-const coverage = content.pages.support.coverage.map((item) => ({
-  ...item,
-  icon: coverageIcons[item.icon] ?? Wrench,
-}));
-
-export default function SupportPage() {
+export default async function SupportPage() {
+  const { content } = await getLocalizedContent();
   const page = content.pages.support;
+  const coverage = content.pages.support.coverage.map((item) => ({
+    ...item,
+    icon: coverageIcons[item.icon] ?? Wrench,
+  }));
   return (
     <ResourcePage
       eyebrow={page.eyebrow}

@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 import "./onboarding.css";
 
 export function PortalShell({ children, preview = false, focused = false, beforeLeave, businessName, userName }: { children: ReactNode; preview?: boolean; focused?: boolean; beforeLeave?: () => Promise<unknown>; businessName?: string; userName?: string }) {
+  const { content } = useI18n();
   const router = useRouter();
   const portal = content.onboarding.portal;
   const [error, setError] = useState("");

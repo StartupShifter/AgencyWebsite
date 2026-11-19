@@ -5,13 +5,17 @@ import type { Metadata } from "next";
 import { api } from "@/convex/_generated/api";
 import { InformationPage } from "@/components/landing/information-page";
 import { InformationSkeleton } from "@/components/skeletons/information-skeleton";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = { title: content.metadata.onboardingPrivacy.title, robots: { index: false, follow: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return { title: content.metadata.onboardingPrivacy.title, robots: { index: false, follow: false } };
+}
 
 async function CurrentNotice() {
   await connection();
   const privacy = await fetchQuery(api.onboarding.getPrivacySettings, {});
+  const { content } = await getLocalizedContent();
   const page = content.pages.policies.onboardingPrivacy;
   const copy = content.onboarding.privacyCopy;
   return <InformationPage policy={!privacy.approved} title={page.title} description={copy.purpose}>

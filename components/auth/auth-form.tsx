@@ -11,7 +11,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 
 type Provider = "google" | "facebook";
 
@@ -27,6 +27,7 @@ export function AuthForm({ googleEnabled, facebookEnabled, redirectTo, initialEr
   redirectTo: string;
   initialError?: string;
 }) {
+  const { content } = useI18n();
   const auth = content.auth;
   const [emailOpen, setEmailOpen] = useState(false);
   const emailTriggerRef = useRef<HTMLButtonElement>(null);
@@ -93,6 +94,7 @@ export function AuthForm({ googleEnabled, facebookEnabled, redirectTo, initialEr
 }
 
 function EmailAuthForm({ redirectTo, onBack }: { redirectTo: string; onBack: () => void }) {
+  const { content } = useI18n();
   const auth = content.auth;
   const [signup, setSignup] = useState(false);
   const [pending, setPending] = useState(false);

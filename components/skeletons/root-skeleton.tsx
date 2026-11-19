@@ -1,7 +1,8 @@
 import { SkeletonBlock } from "./loading";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export function RootSkeleton() {
+export async function RootSkeleton() {
+  const { content } = await getLocalizedContent();
   return (
     <div
       role="status"

@@ -3,9 +3,11 @@ import { SiteHeader } from "@/components/landing/site-header";
 import { twLanding } from "@/lib/landing-styles";
 
 import { LoadingRegion, SkeletonBlock } from "./loading";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export function PageSkeleton({ label = content.common.loadingPage }: { label?: string }) {
+export async function PageSkeleton({ label }: { label?: string }) {
+  const { content } = await getLocalizedContent();
+  const resolvedLabel = label ?? content.common.loadingPage;
   return (
     <div id="top" className="min-h-svh">
       <a className={twLanding("skip-link")} href="#main">
@@ -16,7 +18,7 @@ export function PageSkeleton({ label = content.common.loadingPage }: { label?: s
         id="main"
         className={`${twLanding("section-shell")} py-16 sm:py-24`}
       >
-        <LoadingRegion label={label}>
+        <LoadingRegion label={resolvedLabel}>
           <div className="max-w-4xl">
             <SkeletonBlock className="h-3 w-28" />
             <SkeletonBlock className="mt-5 h-12 w-full max-w-3xl sm:h-16" />

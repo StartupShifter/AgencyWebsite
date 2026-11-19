@@ -4,7 +4,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowUpRight, ChartNoAxesCombined, Globe, MessagesSquare, Network, ScanSearch, type LucideIcon } from "lucide-react";
 import { twLanding } from "@/lib/landing-styles";
-import { content } from "@/context/content";
+import { useI18n } from "@/context/i18n-context";
 import "./process-section.css";
 
 const stepIcons: Record<string, LucideIcon> = {
@@ -15,12 +15,12 @@ const stepIcons: Record<string, LucideIcon> = {
   chartNoAxesCombined: ChartNoAxesCombined,
 };
 
-const steps = content.landing.process.steps.map((step) => ({
-  ...step,
-  icon: stepIcons[step.icon] ?? Globe,
-}));
-
 export function ProcessSection() {
+  const { content } = useI18n();
+  const steps = content.landing.process.steps.map((step) => ({
+    ...step,
+    icon: stepIcons[step.icon] ?? Globe,
+  }));
   const sectionRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLDivElement>(null);
 

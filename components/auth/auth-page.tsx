@@ -9,18 +9,19 @@ import { safeAuthRedirect } from "@/lib/auth-redirect";
 import { AuthShell } from "./auth-shell";
 import { AuthForm } from "./auth-form";
 import { AuthSkeleton } from "@/components/skeletons/auth-skeleton";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
 export type AuthSearchParams = Promise<{ error?: string; next?: string }>;
 
 async function AuthPageContent({ searchParams }: { searchParams: AuthSearchParams }) {
   await connection();
-  const [user, options, params] = await Promise.all([
+  const [user, options, params, { content }] = await Promise.all([
     getCurrentUser(),
     isConvexConfigured
       ? fetchQuery(api.auth.getLoginOptions, {})
       : Promise.resolve({ googleEnabled: false, facebookEnabled: false }),
     searchParams,
+    getLocalizedContent(),
   ]);
   const redirectTo = safeAuthRedirect(params.next);
   if (user) redirect(redirectTo);

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Brand } from "./brand";
 import { ContactSection } from "./contact-section";
 import { FooterShader } from "./footer-shader";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 import "./site-footer.css";
 
 export type FooterSocialLink = {
@@ -12,15 +12,15 @@ export type FooterSocialLink = {
   platform: "instagram" | "linkedin" | "website";
 };
 
-const navigation = content.footer.navigation;
-
-export function SiteFooter({
+export async function SiteFooter({
   socialLinks = [],
   contactEmail,
 }: {
   socialLinks?: FooterSocialLink[];
   contactEmail?: string;
 }) {
+  const { content } = await getLocalizedContent();
+  const navigation = content.footer.navigation;
   return (
     <footer id="footer" className="agencyFooter" aria-label={content.footer.ariaLabel}>
       <div className="agencyFooter-contact">
@@ -61,7 +61,7 @@ export function SiteFooter({
                   <li key={label}><Link href={href}>{label}</Link></li>
                 ))}
               </ul>
-              {group.title === "Information" && (
+              {group.key === "information" && (
                 <p className="agencyFooter-policyNote">{content.footer.policyNote}</p>
               )}
             </nav>

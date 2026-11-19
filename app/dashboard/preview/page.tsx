@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PreviewDashboard } from "@/components/onboarding/preview-dashboard";
-import { content } from "@/context/content";
+import { getLocalizedContent } from "@/lib/i18n-server";
 
-export const metadata: Metadata = { title: content.metadata.dashboardPreview.title, robots: { index: false, follow: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { content } = await getLocalizedContent();
+  return { title: content.metadata.dashboardPreview.title, robots: { index: false, follow: false } };
+}
 
 export default function PreviewDashboardPage() {
   if (process.env.NODE_ENV !== "development") notFound();
