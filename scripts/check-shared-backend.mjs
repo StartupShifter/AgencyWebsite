@@ -7,12 +7,14 @@ const client = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const admin = path.resolve(client, "../admin");
 for (const folder of ["convex", "lib/onboarding"]) {
   const files = await Promise.all([client, admin].map(root => readdir(path.join(root, folder))));
-  const names = [...new Set(files.flat())].filter(name => /\.(ts|json)$/.test(name));
+  // Reports are client-only features, not shared backend dependencies.
+  const names = [...new Set(files.flat())].filter(name => /\.(ts|json)$/.test(name) && !["project-report.ts", "project-report-pdf.ts"].includes(name));
   for (const name of names) {
     const content = await Promise.all([client, admin].map(root => readFile(path.join(root, folder, name), "utf8")));
     assert.equal(content[0], content[1], `Shared source drift: ${folder}/${name}. Update both repositories before deploying.`);
   }
 }
+assert.equal(await readFile(path.join(client, "context/content.ts"), "utf8"), await readFile(path.join(admin, "context/content.ts"), "utf8"), "Shared backend copy constants must match.");
 if (process.argv.includes("--environment")) {
   const environments = await Promise.all([client, admin].map(async root => {
     const text = await readFile(path.join(root, ".env.local"), "utf8");

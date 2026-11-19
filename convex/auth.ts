@@ -14,11 +14,23 @@ export const authComponent = createClient<DataModel>(components.betterAuth);
 export function createAuth(ctx: GenericCtx<DataModel>, opts: { autoSignIn?: boolean } = {}) {
   const googleEnabled = Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
   const facebookEnabled = Boolean(process.env.FACEBOOK_CLIENT_ID && process.env.FACEBOOK_CLIENT_SECRET);
+  const trustedOrigins = [...new Set([
+    "http://localhost:3000",
+    "http://localhost:3001",
+    process.env.SITE_URL,
+    ...(process.env.AUTH_TRUSTED_ORIGINS ?? "").split(","),
+  ].filter((origin): origin is string => Boolean(origin?.trim())).map(origin => origin.trim()))];
   return betterAuth({
-    baseURL: process.env.SITE_URL!,
+    // The two Next.js proxies forward their own host. Restrict resolution to
+    // configured origins so callbacks and secure cookies stay on that app.
+    baseURL: {
+      allowedHosts: trustedOrigins.map(origin => new URL(origin).host),
+      fallback: process.env.SITE_URL!,
+    },
+    advanced: { trustedProxyHeaders: true },
     secret: process.env.BETTER_AUTH_SECRET!,
     database: authComponent.adapter(ctx),
-    trustedOrigins: ["http://localhost:3000", "http://localhost:3001"],
+    trustedOrigins,
     emailAndPassword: {
       enabled: true,
       minPasswordLength: 12,
