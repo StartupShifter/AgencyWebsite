@@ -9,6 +9,10 @@ import { getLocalizedContent } from "@/lib/i18n-server";
 import { I18nProvider } from "@/context/i18n-context";
 import "./globals.css";
 
+// The document language and direction depend on this request's locale cookie.
+// Wait for that choice before sending the root HTML shell.
+export const instant = false;
+
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
   subsets: ["latin"],
